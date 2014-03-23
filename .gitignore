@@ -1,0 +1,7 @@
+DerivedData/
+*.xcworkspace/
+*.xcodeproj/
+obj/
+src/hlsl_parser/HLSL.tokens
+src/hlsl_parser/HLSLLexer.*
+src/hlsl_parser/HLSLParser.*
