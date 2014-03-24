@@ -10,75 +10,7 @@ options {
 @lexer::traits
 {
     #include <sstream>
-
-    class HLSLLexer; class HLSLParser;
-
-    template<class ImplTraits>
-    class HLSLUserTraits : public antlr3::CustomTraitsBase<ImplTraits> {};
-
-    class HLSLLexerTraits : public antlr3::Traits< HLSLLexer, HLSLParser, HLSLUserTraits >
-    {
-        public:
-
-        static int ConvertToInt32( const std::string & type )
-        {
-            int
-                return_value;
-
-            std::istringstream( type ) >> return_value;
-
-            return return_value;
-        }
-    };
-
-    typedef HLSLLexerTraits HLSLParserTraits;
-
-    extern void ( *read_file_content_callback )( void * content, size_t & size, const char * );
-
-    ANTLR_BEGIN_NAMESPACE()
-
-    template<>
-    class FileUtils< TraitsBase< HLSLUserTraits > > : public FileUtils< TraitsBase< CustomTraitsBase > >
-    {
-    public:
-        typedef TraitsBase< HLSLUserTraits > ImplTraits;
-
-        template<typename InputStreamType>
-        static ANTLR_UINT32 AntlrRead8Bit(InputStreamType* input, const ANTLR_UINT8* fileName)
-        {
-            if ( read_file_content_callback )
-            {
-                size_t
-                    length;
-                void
-                    * content;
-
-                read_file_content_callback( NULL, length, ( const char * ) fileName );
-
-                if ( !length )
-                {
-                    return ANTLR_FAIL;
-                }
-
-                content = InputStreamType::AllocPolicyType::alloc( length );
-                read_file_content_callback( content, length, ( const char * ) fileName );
-
-                input->set_data( (unsigned char*) content );
-                input->set_sizeBuf( length );
-
-                input->set_isAllocated( true );
-
-                return ANTLR_SUCCESS;
-            }
-            else
-            {
-                return FileUtils< TraitsBase< CustomTraitsBase > >::AntlrRead8Bit( input, fileName );
-            }
-        }
-    };
-
-    ANTLR_END_NAMESPACE()
-
+    #include "hlsl_traits.h"
     using std::string;
 }
 
@@ -86,9 +18,10 @@ options {
 {
     #include "HLSLLexer.hpp"
     #include <iostream>
-	#include <string>
-	#include <set>
-	#include <algorithm>
+    #include <string>
+    #include <set>
+    #include <algorithm>
+    #include "ast/node.h"
 }
 
 @parser::members
@@ -115,19 +48,21 @@ options {
 
     std::set<std::string>
         TypeTable;
+    AST::TranslationUnit
+        * TranslationUnit;
 }
 
 translation_unit
-	: global_declaration* technique* EOF
-	;
+    : global_declaration* technique* EOF
+    ;
 
 global_declaration
     : variable_declaration
-	| texture_declaration
-	| sampler_declaration
-	| struct_definition
-	| function_declaration
-	;
+    | texture_declaration
+    | sampler_declaration
+    | struct_definition
+    | function_declaration
+    ;
 
 technique
     : TECHNIQUE Name=ID LCURLY pass* RCURLY
@@ -350,7 +285,7 @@ function_declaration
         LCURLY
             ( statement  )*
         RCURLY
-	;
+    ;
 
 argument_list
     : argument  ( COMMA argument  )*
@@ -401,7 +336,7 @@ sampler_body
 
 variable_declaration
     : (storage_class )* ( type_modifier )* type variable_declaration_body ( COMMA variable_declaration_body )* SEMI
-	;
+    ;
 
 variable_declaration_body
     : ID ( LBRACKET INT RBRACKET )?
@@ -629,10 +564,10 @@ STRING_TYPE
     : 'string'
     ;
 
-ID  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
+ID  :   ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
     ;
 
-INT :	'0'..'9'+
+INT :   '0'..'9'+
     ;
 
 FLOAT
