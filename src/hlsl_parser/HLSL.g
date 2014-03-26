@@ -48,16 +48,15 @@ options {
 
     std::set<std::string>
         TypeTable;
-    AST::TranslationUnit
-        * TranslationUnit;
 }
 
-translation_unit
-    : global_declaration* technique* EOF
+translation_unit returns [ AST::TranslationUnit * unit ]
+    : { unit = new AST::TranslationUnit;}
+        ( global_declaration{ unit->AddGlobalDeclaration( $global_declaration.declaration ); })* technique* EOF
     ;
 
-global_declaration
-    : variable_declaration
+global_declaration returns [ AST::GlobalDeclaration * declaration = 0 ]
+    : variable_declaration { declaration = $variable_declaration.declaration; }
     | texture_declaration
     | sampler_declaration
     | struct_definition
@@ -334,8 +333,12 @@ sampler_body
 
 // Variables
 
-variable_declaration
-    : (storage_class )* ( type_modifier )* type variable_declaration_body ( COMMA variable_declaration_body )* SEMI
+variable_declaration returns [ AST::VariableDeclaration * declaration ]
+    : { declaration = new AST::VariableDeclaration; }
+        ( storage_class { declaration->AddStorageClass( $storage_class.storage ); } )*
+        ( type_modifier { declaration->AddTypeModifier( $type_modifier.modifier ); })*
+        type { declaration->SetType( $type.type ); }
+        variable_declaration_body ( COMMA variable_declaration_body )* SEMI
     ;
 
 variable_declaration_body
@@ -347,8 +350,10 @@ variable_declaration_body
         ( ASSIGN initial_value ) ?
     ;
 
-storage_class
-    : EXTERN
+storage_class returns [ AST::StorageClass * storage ]
+    :
+    s =
+    ( EXTERN
     | NOINTERPOLATION
     | PRECISE
     | SHARED
@@ -356,12 +361,15 @@ storage_class
     | STATIC
     | UNIFORM
     | VOLATILE
+    ) { storage = new AST::StorageClass( $s.text ); }
     ;
 
-type_modifier
-    : 'const'
+type_modifier returns [ AST::TypeModifier * modifier ]
+    : m =
+    ('const'
     | 'row_major'
     | 'column_major'
+    ) { modifier = new AST::TypeModifier( $m.text ); }
     ;
 
 packoffset
@@ -386,18 +394,22 @@ initial_value
     | LCURLY expression  ( COMMA expression  )* RCURLY
     ;
 
-type
-    : ( intrinsic_type | user_defined_type | SAMPLER_TYPE )
+type returns [ AST::Type * type ]
+    : intrinsic_type { type = $intrinsic_type.type; }
+        | user_defined_type { type = $user_defined_type.type; }
+        | SAMPLER_TYPE { type = new AST::SamplerType( $SAMPLER_TYPE.text ); }
     ;
 
-intrinsic_type
-    : MATRIX_TYPE
-    | VECTOR_TYPE
-    | SCALAR_TYPE
+intrinsic_type returns [ AST::IntrinsicType * type ]
+    : t =
+        ( MATRIX_TYPE
+        | VECTOR_TYPE
+        | SCALAR_TYPE
+        ) { type = new AST::IntrinsicType( $t.text ); }
     ;
 
-user_defined_type // :TODO: validates that it's a valid type
-    : ID  { TypeTable.find( $ID.text) != TypeTable.end() }? =>
+user_defined_type returns [ AST::UserDefinedType * type ]
+    : ID  { TypeTable.find( $ID.text) != TypeTable.end() }? => { type = new AST::UserDefinedType( $ID.text ); }
     ;
 
 struct_definition

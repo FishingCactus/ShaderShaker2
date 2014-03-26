@@ -12,8 +12,5 @@ AST::TranslationUnit * ParseHLSL( const char * filename )
     HLSLLexerTraits::TokenStreamType token_stream( ANTLR_SIZE_HINT, lexer.get_tokSource() );
     HLSLParser parser( &token_stream );
 
-    parser.TranslationUnit = new AST::TranslationUnit;
-    parser.translation_unit();
-
-    return parser.TranslationUnit;
+    return parser.translation_unit();
 }

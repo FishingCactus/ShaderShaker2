@@ -10,7 +10,7 @@ solution "ShaderShaker"
     targetname  "shader_shaker"
     language    "C++"
     flags       { "ExtraWarnings" }
-    includedirs { "include", "contrib", "src/hlsl_parser" }
+    includedirs { "include", "contrib", "src" }
 
     files
     {
