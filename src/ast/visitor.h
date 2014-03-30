@@ -16,6 +16,7 @@
         struct Technique;
         struct TypeModifier;
         struct StorageClass;
+        struct VariableDeclarationBody;
 
         class Visitor
         {
@@ -29,6 +30,7 @@
             virtual void Visit( SamplerType & type ) = 0;
             virtual void Visit( TypeModifier & modifier ) = 0;
             virtual void Visit( StorageClass & storage_class ) = 0;
+            virtual void Visit( VariableDeclarationBody & body ) = 0;
         };
     }
 

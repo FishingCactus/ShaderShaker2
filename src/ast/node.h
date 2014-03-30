@@ -18,7 +18,9 @@
         struct Technique;
         struct TypeModifier;
         struct StorageClass;
-
+        struct VariableDeclarationBody;
+        struct Expression;
+        struct InitialValue;
 
         #define AST_HandleVisitor() \
             virtual void Visit( AST::Visitor & visitor ) override { visitor.Visit( *this ); }
@@ -55,10 +57,12 @@
             void SetType( Type * type ){ assert( type ); m_Type.reset( type ); }
             void AddStorageClass( StorageClass * storage_class ){ assert( storage_class ); m_StorageClass.emplace_back( storage_class ); }
             void AddTypeModifier( TypeModifier * type_modifier ){ assert( type_modifier ); m_TypeModifier.emplace_back( type_modifier ); }
+            void AddBody( VariableDeclarationBody * body ){ assert( body ); m_BodyTable.emplace_back( body ); }
 
             std::shared_ptr<Type> m_Type;
             std::vector<std::shared_ptr<StorageClass> > m_StorageClass;
             std::vector<std::shared_ptr<TypeModifier> > m_TypeModifier;
+            std::vector<std::shared_ptr<VariableDeclarationBody> > m_BodyTable;
         };
 
         struct Type : Node
@@ -99,6 +103,39 @@
             AST_HandleVisitor()
             StorageClass( const std::string & storage_class ) : m_Value( storage_class ){}
             std::string m_Value;
+        };
+
+        struct VariableDeclarationBody : Node
+        {
+            AST_HandleVisitor()
+
+            VariableDeclarationBody() : m_ArraySize( 0 ) {}
+
+            std::string
+                m_Name,
+                m_Semantic;
+            std::shared_ptr<InitialValue>
+                m_InitialValue;
+            int
+                m_ArraySize;
+
+        };
+
+        struct Expression : Node
+        {
+
+        };
+
+        struct InitialValue : Node
+        {
+            InitialValue() : m_Vector( false ){}
+
+            void AddExpression( Expression * expression ){ assert( expression ); m_ExpressionTable.emplace_back( expression ); }
+
+            std::vector<std::shared_ptr<Expression> >
+                m_ExpressionTable;
+            bool
+                m_Vector;
         };
 
         struct Technique : Node

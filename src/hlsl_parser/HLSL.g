@@ -171,8 +171,8 @@ variable_expression
     : ID( LBRACKET expression RBRACKET )?
     ;
 
-expression
-    : conditional_expression
+expression returns [ AST::Expression * expression = 0 ]
+    : { expression = new AST::Expression; } conditional_expression
     ;
 
 conditional_expression
@@ -338,16 +338,18 @@ variable_declaration returns [ AST::VariableDeclaration * declaration ]
         ( storage_class { declaration->AddStorageClass( $storage_class.storage ); } )*
         ( type_modifier { declaration->AddTypeModifier( $type_modifier.modifier ); })*
         type { declaration->SetType( $type.type ); }
-        variable_declaration_body ( COMMA variable_declaration_body )* SEMI
+        a=variable_declaration_body { declaration->AddBody( $a.body ); }
+        ( COMMA b=variable_declaration_body { declaration->AddBody( $b.body ); } )* SEMI
     ;
 
-variable_declaration_body
-    : ID ( LBRACKET INT RBRACKET )?
-        ( COLON semantic ) ?
+variable_declaration_body returns [ AST::VariableDeclarationBody * body ]
+    : { body = new AST::VariableDeclarationBody; }
+        ID { body->m_Name = $ID.text; } ( LBRACKET INT RBRACKET { body->m_ArraySize = atoi( $INT.text.c_str() ); } )?
+        ( COLON semantic {body->m_Semantic = $semantic.text; } ) ?
         ( COLON packoffset )?
         ( COLON register_rule ) ?
         ( annotations ) ?
-        ( ASSIGN initial_value ) ?
+        ( ASSIGN initial_value { body->m_InitialValue = std::shared_ptr<AST::InitialValue>( $initial_value.value ); } ) ?
     ;
 
 storage_class returns [ AST::StorageClass * storage ]
@@ -388,10 +390,12 @@ annotation_entry
     ASSIGN ( STRING | literal_value  ) SEMI
     ;
 
-initial_value
+initial_value returns [ AST::InitialValue * value ]
     :
-    expression
-    | LCURLY expression  ( COMMA expression  )* RCURLY
+    { value = new AST::InitialValue; }
+    expression { value->AddExpression( $expression.expression ); }
+    | { value = new AST::InitialValue; } { value->m_Vector = true; } LCURLY a=expression { value->AddExpression( $a.expression ); }
+        ( COMMA b=expression { value->AddExpression( $b.expression ); } )* RCURLY
     ;
 
 type returns [ AST::Type * type ]

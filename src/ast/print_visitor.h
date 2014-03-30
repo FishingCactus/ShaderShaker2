@@ -30,6 +30,7 @@
             virtual void Visit( SamplerType & type ) override;
             virtual void Visit( TypeModifier & modifier ) override;
             virtual void Visit( StorageClass & storage_class ) override;
+            virtual void Visit( VariableDeclarationBody & body ) override;
 
         };
     }

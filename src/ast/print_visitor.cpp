@@ -51,6 +51,8 @@ namespace AST
         VisitTable( *this, variable_declaration.m_StorageClass );
         VisitTable( *this, variable_declaration.m_TypeModifier );
 
+        VisitTable( *this, variable_declaration.m_BodyTable );
+
         std::cerr << dec_ind << endl_ind << "}" << endl_ind;
     }
 
@@ -80,6 +82,33 @@ namespace AST
     void PrintVisitor::Visit( StorageClass & storage_class )
     {
         std::cerr << "StorageClass{ " << storage_class.m_Value << " }" << endl_ind;
+    }
+
+    void PrintVisitor::Visit( VariableDeclarationBody & body )
+    {
+
+        std::cerr
+            << "VariableDeclarationBody" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Name{ " << body.m_Name << " }" << endl_ind;
+
+        if( !body.m_Semantic.empty() )
+        {
+            std::cerr << "Semantic{ " << body.m_Semantic << " }" << endl_ind;
+        }
+
+        if( body.m_InitialValue )
+        {
+            std::cerr << "InitialValue{ " << body.m_InitialValue << " }" << endl_ind;
+        }
+
+        if( body.m_ArraySize != 0 )
+        {
+            std::cerr << "ArraySize{ " << body.m_ArraySize << " }" << endl_ind;
+        }
+
+        std::cerr << dec_ind << endl_ind << "}" << endl_ind;
+
     }
 
 };
