@@ -126,8 +126,20 @@
 
         };
 
+        struct ConditionalExpression : Expression
+        {
+            AST_HandleVisitor()
+
+            std::shared_ptr<Expression> m_Condition;
+            std::shared_ptr<Expression> m_IfTrue;
+            std::shared_ptr<Expression> m_IfFalse;
+
+        };
+
         struct InitialValue : Node
         {
+            AST_HandleVisitor()
+
             InitialValue() : m_Vector( false ){}
 
             void AddExpression( Expression * expression ){ assert( expression ); m_ExpressionTable.emplace_back( expression ); }

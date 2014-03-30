@@ -171,15 +171,25 @@ variable_expression
     : ID( LBRACKET expression RBRACKET )?
     ;
 
-expression returns [ AST::Expression * expression = 0 ]
-    : { expression = new AST::Expression; } conditional_expression
+expression returns [ AST::Expression * exp = 0 ]
+    : conditional_expression { exp = $conditional_expression.exp; }
     ;
 
-conditional_expression
-    : logical_or_expression ( QUESTION expression COLON conditional_expression  )?
+conditional_expression returns [ AST::Expression * exp = 0 ]
+    : logical_or_expression
+        ( QUESTION a=expression COLON b=conditional_expression
+            {
+                AST::ConditionalExpression * ce = new AST::ConditionalExpression;
+                ce->m_Condition = std::shared_ptr<AST::Expression>( $logical_or_expression.exp );
+                ce->m_IfTrue = std::shared_ptr<AST::Expression>( $a.exp );
+                ce->m_IfFalse = std::shared_ptr<AST::Expression>( $b.exp );
+                exp = ce;
+             }
+            )?
+        { if( exp == 0 ) { exp = $logical_or_expression.exp; } }
     ;
 
-logical_or_expression
+logical_or_expression returns [ AST::Expression * exp = 0 ]
     :  logical_and_expression ( OR logical_and_expression  )*
     ;
 
@@ -393,9 +403,9 @@ annotation_entry
 initial_value returns [ AST::InitialValue * value ]
     :
     { value = new AST::InitialValue; }
-    expression { value->AddExpression( $expression.expression ); }
-    | { value = new AST::InitialValue; } { value->m_Vector = true; } LCURLY a=expression { value->AddExpression( $a.expression ); }
-        ( COMMA b=expression { value->AddExpression( $b.expression ); } )* RCURLY
+    expression { value->AddExpression( $expression.exp ); }
+    | { value = new AST::InitialValue; } { value->m_Vector = true; } LCURLY a=expression { value->AddExpression( $a.exp ); }
+        ( COMMA b=expression { value->AddExpression( $b.exp ); } )* RCURLY
     ;
 
 type returns [ AST::Type * type ]
