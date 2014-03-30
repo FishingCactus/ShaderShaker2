@@ -2,6 +2,10 @@
     #define NODE_H
 
     #include <vector>
+    #include <string>
+    #include <assert.h>
+
+    #include "Visitor.h"
 
     namespace AST
     {
@@ -15,14 +19,20 @@
         struct TypeModifier;
         struct StorageClass;
 
+
+        #define AST_HandleVisitor() \
+            virtual void Visit( AST::Visitor & visitor ) override { visitor.Visit( *this ); }
+
         struct Node
         {
+            virtual void Visit( AST::Visitor & visitor ){ visitor.Visit( *this ); };
             virtual ~Node(){}
 
         };
 
         struct TranslationUnit : Node
         {
+            AST_HandleVisitor()
             void AddGlobalDeclaration( GlobalDeclaration * declaration )
             {
                 assert( declaration );
@@ -37,11 +47,11 @@
 
         struct GlobalDeclaration : Node
         {
-
         };
 
         struct VariableDeclaration : GlobalDeclaration
         {
+            AST_HandleVisitor()
             void SetType( Type * type ){ assert( type ); m_Type.reset( type ); }
             void AddStorageClass( StorageClass * storage_class ){ assert( storage_class ); m_StorageClass.emplace_back( storage_class ); }
             void AddTypeModifier( TypeModifier * type_modifier ){ assert( type_modifier ); m_TypeModifier.emplace_back( type_modifier ); }
@@ -53,6 +63,7 @@
 
         struct Type : Node
         {
+            AST_HandleVisitor()
             Type( const std::string & name ) : m_Name( name ) {}
 
             std::string
@@ -61,11 +72,13 @@
 
         struct IntrinsicType : Type
         {
+            AST_HandleVisitor()
             IntrinsicType( const std::string & name ) : Type( name ) {}
         };
 
         struct UserDefinedType : Type
         {
+            AST_HandleVisitor()
             UserDefinedType( const std::string & name ) : Type( name ) {}
         };
 
@@ -76,14 +89,21 @@
 
         struct TypeModifier : Node
         {
+            AST_HandleVisitor()
             TypeModifier( const std::string & modifier ) : m_Value( modifier ){}
             std::string m_Value;
         };
 
         struct StorageClass : Node
         {
+            AST_HandleVisitor()
             StorageClass( const std::string & storage_class ) : m_Value( storage_class ){}
             std::string m_Value;
+        };
+
+        struct Technique : Node
+        {
+
         };
 
     }
