@@ -46,6 +46,31 @@ options {
                 );
     }
 
+    static AST::BinaryOperationExpression::Operation GetFromToken(
+        const int type
+        )
+    {
+        switch( type )
+        {
+            case EQUAL: return AST::BinaryOperationExpression::Equality;
+            case NOT_EQUAL: return AST::BinaryOperationExpression::Difference;
+            case LT_TOKEN: return AST::BinaryOperationExpression::LessThan;
+            case GT_TOKEN: return AST::BinaryOperationExpression::GreaterThan;
+            case LTE: return AST::BinaryOperationExpression::LessThanOrEqual;
+            case GTE: return AST::BinaryOperationExpression::GreaterThanOrEqual;
+            case BITWISE_SHIFTL: return AST::BinaryOperationExpression::BitwiseLeftShift;
+            case BITWISE_SHIFTR: return AST::BinaryOperationExpression::BitwiseRightShift;
+            case PLUS: return AST::BinaryOperationExpression::Addition;
+            case MINUS: return AST::BinaryOperationExpression::Subtraction;
+            case MUL: return AST::BinaryOperationExpression::Multiplication;
+            case DIV: return AST::BinaryOperationExpression::Division;
+            case MOD: return AST::BinaryOperationExpression::Modulo;
+        }
+
+        assert( !"error" );
+        return AST::BinaryOperationExpression::LogicalOr;
+    }
+
     std::set<std::string>
         TypeTable;
 }
@@ -190,46 +215,46 @@ conditional_expression returns [ AST::Expression * exp = 0 ]
     ;
 
 logical_or_expression returns [ AST::Expression * exp = 0 ]
-    :  logical_and_expression ( OR logical_and_expression  )*
+    :  a=logical_and_expression {exp = $a.exp;} ( OR b=logical_and_expression { exp = new AST::BinaryOperationExpression( AST::BinaryOperationExpression::LogicalOr, exp, $b.exp ); }  )*
     ;
 
-logical_and_expression
-    : inclusive_or_expression ( AND inclusive_or_expression  )*
+logical_and_expression returns [ AST::Expression * exp = 0 ]
+    : a=inclusive_or_expression {exp = $a.exp;} ( AND b=inclusive_or_expression { exp = new AST::BinaryOperationExpression( AST::BinaryOperationExpression::LogicalAnd, exp, $b.exp ); } )*
     ;
 
-inclusive_or_expression
-    : exclusive_or_expression ( BITWISE_OR exclusive_or_expression )*
+inclusive_or_expression returns [ AST::Expression * exp = 0 ]
+    : a=exclusive_or_expression {exp = $a.exp;}( BITWISE_OR b=exclusive_or_expression { exp = new AST::BinaryOperationExpression( AST::BinaryOperationExpression::BitwiseOr, exp, $b.exp ); } )*
     ;
 
-exclusive_or_expression
-  : and_expression ( BITWISE_XOR and_expression)*
+exclusive_or_expression returns [ AST::Expression * exp = 0 ]
+  : a=and_expression {exp = $a.exp;}( BITWISE_XOR b=and_expression { exp = new AST::BinaryOperationExpression( AST::BinaryOperationExpression::BitwiseXor, exp, $b.exp ); } )*
   ;
 
-and_expression
-    : equality_expression ( BITWISE_AND equality_expression )*
+and_expression returns [ AST::Expression * exp = 0 ]
+    : a=equality_expression {exp = $a.exp;} ( BITWISE_AND b=equality_expression { exp = new AST::BinaryOperationExpression( AST::BinaryOperationExpression::BitwiseAnd, exp, $b.exp ); } )*
     ;
 
-equality_expression
-    : relational_expression (op=(EQUAL|NOT_EQUAL) relational_expression )*
+equality_expression returns [ AST::Expression * exp = 0 ]
+    : a=relational_expression {exp = $a.exp;} (op=(EQUAL|NOT_EQUAL) b=relational_expression { exp = new AST::BinaryOperationExpression( GetFromToken( $op.type ), exp, $b.exp ); } )*
     ;
 
-relational_expression
-    : shift_expression ( op=(LT_TOKEN|GT_TOKEN|LTE|GTE) shift_expression )?
+relational_expression returns [ AST::Expression * exp = 0 ]
+    : a=shift_expression {exp = $a.exp;} ( op=(LT_TOKEN|GT_TOKEN|LTE|GTE) b=shift_expression { exp = new AST::BinaryOperationExpression( GetFromToken( $op.type ), exp, $b.exp ); } )?
     ;
 
-shift_expression
-    : additive_expression (op=(BITWISE_SHIFTL|BITWISE_SHIFTR) additive_expression )*
+shift_expression returns [ AST::Expression * exp = 0 ]
+    : a=additive_expression {exp = $a.exp;} (op=(BITWISE_SHIFTL|BITWISE_SHIFTR) b=additive_expression { exp = new AST::BinaryOperationExpression( GetFromToken( $op.type ), exp, $b.exp ); } )*
     ;
 
-additive_expression
-    : multiplicative_expression ( op=(PLUS|MINUS) multiplicative_expression )*
+additive_expression returns [ AST::Expression * exp = 0 ]
+    : a=multiplicative_expression {exp = $a.exp;} ( op=(PLUS|MINUS) b=multiplicative_expression { exp = new AST::BinaryOperationExpression( GetFromToken( $op.type ), exp, $b.exp ); } )*
     ;
 
-multiplicative_expression
-    : cast_expression ( op=(MUL|DIV|MOD) cast_expression )*
+multiplicative_expression returns [ AST::Expression * exp = 0 ]
+    : a=cast_expression {exp = $a.exp;} ( op=(MUL|DIV|MOD) b=cast_expression { exp = new AST::BinaryOperationExpression( GetFromToken( $op.type ), exp, $b.exp ); } )*
     ;
 
-cast_expression
+cast_expression returns [ AST::Expression * exp = 0 ]
     : LPAREN type ( LBRACKET INT RBRACKET )?  RPAREN cast_expression
     | unary_expression
     ;
@@ -400,7 +425,7 @@ annotation_entry
     ASSIGN ( STRING | literal_value  ) SEMI
     ;
 
-initial_value returns [ AST::InitialValue * value ]
+initial_value returns [ AST::InitialValue * value = 0 ]
     :
     { value = new AST::InitialValue; }
     expression { value->AddExpression( $expression.exp ); }
@@ -408,13 +433,13 @@ initial_value returns [ AST::InitialValue * value ]
         ( COMMA b=expression { value->AddExpression( $b.exp ); } )* RCURLY
     ;
 
-type returns [ AST::Type * type ]
+type returns [ AST::Type * type = 0 ]
     : intrinsic_type { type = $intrinsic_type.type; }
         | user_defined_type { type = $user_defined_type.type; }
         | SAMPLER_TYPE { type = new AST::SamplerType( $SAMPLER_TYPE.text ); }
     ;
 
-intrinsic_type returns [ AST::IntrinsicType * type ]
+intrinsic_type returns [ AST::IntrinsicType * type = 0 ]
     : t =
         ( MATRIX_TYPE
         | VECTOR_TYPE
@@ -422,7 +447,7 @@ intrinsic_type returns [ AST::IntrinsicType * type ]
         ) { type = new AST::IntrinsicType( $t.text ); }
     ;
 
-user_defined_type returns [ AST::UserDefinedType * type ]
+user_defined_type returns [ AST::UserDefinedType * type = 0 ]
     : ID  { TypeTable.find( $ID.text) != TypeTable.end() }? => { type = new AST::UserDefinedType( $ID.text ); }
     ;
 

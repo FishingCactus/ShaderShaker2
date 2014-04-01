@@ -136,6 +136,48 @@
 
         };
 
+        struct BinaryOperationExpression : Expression
+        {
+            enum Operation
+            {
+                LogicalOr,
+                LogicalAnd,
+                BitwiseOr,
+                BitwiseXor,
+                BitwiseAnd,
+                Equality,
+                Difference,
+                LessThan,
+                GreaterThan,
+                LessThanOrEqual,
+                GreaterThanOrEqual,
+                BitwiseLeftShift,
+                BitwiseRightShift,
+                Addition,
+                Subtraction,
+                Multiplication,
+                Division,
+                Modulo,
+            };
+
+            BinaryOperationExpression(
+                Operation operation,
+                Expression * left_expression,
+                Expression * right_expression
+                ) :
+                m_Operation( operation ),
+                m_LeftExpression( left_expression ),
+                m_RightExpression( right_expression )
+            {}
+
+            Operation
+                m_Operation;
+            std::shared_ptr<Expression>
+                m_LeftExpression,
+                m_RightExpression;
+
+        };
+
         struct InitialValue : Node
         {
             AST_HandleVisitor()
