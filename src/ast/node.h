@@ -273,6 +273,26 @@
 
         };
 
+        struct LiteralExpression : Expression
+        {
+            enum Type
+            {
+                Int,
+                Float,
+                Bool
+            };
+
+            LiteralExpression( Type type, std::string & value ) : m_Type( type ), m_Value( value )
+            {
+
+            }
+
+            Type
+                m_Type;
+            std::string
+                m_Value;
+        };
+
         struct PostfixExpression : Expression
         {
             PostfixExpression( Expression *expression, PostfixSuffix * suffix ) : m_Expression( expression ), m_Suffix( suffix ){}

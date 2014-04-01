@@ -87,6 +87,23 @@ options {
         return AST::UnaryOperationExpression::Plus;
     }
 
+    static AST::LiteralExpression::Type GetLiteralFromToken(
+        const int type
+        )
+    {
+        switch( type )
+        {
+            case INT: return AST::LiteralExpression::Int;
+            case FLOAT: return AST::LiteralExpression::Float;
+            case TRUE_TOKEN:
+            case FALSE_TOKEN:
+                return AST::LiteralExpression::Bool;
+        }
+        assert( !"error" );
+
+        return AST::LiteralExpression::Int;
+    }
+
     std::set<std::string>
         TypeTable;
 }
@@ -311,7 +328,7 @@ primary_expression returns [ AST::Expression * exp = 0 ]
     : constructor
     | call_expression
     | variable_expression
-    | literal_value
+    | literal_value { exp = $literal_value.exp; }
     | LPAREN expression RPAREN
     ;
 
@@ -481,10 +498,13 @@ constant_expression
     | literal_value
     ;
 
-literal_value
-    : value= FLOAT
-    | value= INT
-    | value= ( TRUE_TOKEN | FALSE_TOKEN )
+literal_value  returns [ AST::Expression * exp = 0 ]
+    : value =
+        (
+        FLOAT
+        | INT
+        | TRUE_TOKEN | FALSE_TOKEN
+        ) { exp = new AST::LiteralExpression( GetLiteralFromToken( $value.type ), $value.text ); }
     ;
 
 semantic
