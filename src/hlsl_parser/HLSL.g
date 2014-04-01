@@ -71,6 +71,22 @@ options {
         return AST::BinaryOperationExpression::LogicalOr;
     }
 
+    static AST::UnaryOperationExpression::Operation GetUnaryFromToken(
+        const int type
+        )
+    {
+        switch( type )
+        {
+            case PLUS: return AST::UnaryOperationExpression::Plus;
+            case MINUS: return AST::UnaryOperationExpression::Minus;
+            case NOT: return AST::UnaryOperationExpression::Not;
+            case BITWISE_NOT: return AST::UnaryOperationExpression::BitwiseNot;
+        }
+        assert( !"error" );
+
+        return AST::UnaryOperationExpression::Plus;
+    }
+
     std::set<std::string>
         TypeTable;
 }
@@ -254,23 +270,24 @@ multiplicative_expression returns [ AST::Expression * exp = 0 ]
     : a=cast_expression {exp = $a.exp;} ( op=(MUL|DIV|MOD) b=cast_expression { exp = new AST::BinaryOperationExpression( GetFromToken( $op.type ), exp, $b.exp ); } )*
     ;
 
-cast_expression returns [ AST::Expression * exp = 0 ]
-    : LPAREN type ( LBRACKET INT RBRACKET )?  RPAREN cast_expression
-    | unary_expression
+cast_expression returns [ AST::Expression * exp = 0 ] @init { int array_size = -1; }
+    : LPAREN type ( LBRACKET INT RBRACKET {array_size = atoi( $INT.text.c_str() );} )? RPAREN cast_expression { exp = new AST::CastExpression( $type.type, array_size, $cast_expression.exp ); }
+    | unary_expression {exp = $unary_expression.exp; }
     ;
 
-unary_expression
-    : op=(PLUS|MINUS|NOT|BITWISE_NOT) unary_expression
-    | postfix_expression
+unary_expression returns [ AST::Expression * exp = 0 ]
+    : op=(PLUS|MINUS|NOT|BITWISE_NOT) unary_expression { exp = new AST::UnaryOperationExpression( GetUnaryFromToken( $op.type ), $unary_expression.exp ); }
+    | postfix_expression { exp = $postfix_expression.exp; }
     ;
 
-postfix_expression
-    : primary_expression ( postfix_suffix )?
+postfix_expression returns [ AST::Expression * exp = 0 ]
+    : primary_expression { exp = $primary_expression.exp; }( postfix_suffix { exp = new AST::PostfixExpression( exp, $postfix_suffix.suffix ); } )?
     ;
 
-postfix_suffix
-    : DOT swizzle
-    | DOT primary_expression  ( postfix_suffix )?
+postfix_suffix returns [ AST::PostfixSuffix * suffix = 0 ]
+    : DOT swizzle { suffix = new AST::Swizzle( $swizzle.text ); }
+    | DOT primary_expression ( postfix_suffix )?
+    // Not sure about primary_expression here, should be variable_expression or call, not more
     ;
 
 swizzle
@@ -290,7 +307,7 @@ assignment_operator
     | BITWISE_SHIFTR_ASSIGN
     ;
 
-primary_expression
+primary_expression returns [ AST::Expression * exp = 0 ]
     : constructor
     | call_expression
     | variable_expression

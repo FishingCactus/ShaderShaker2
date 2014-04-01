@@ -21,6 +21,7 @@
         struct VariableDeclarationBody;
         struct Expression;
         struct InitialValue;
+        struct PostfixSuffix;
 
         #define AST_HandleVisitor() \
             virtual void Visit( AST::Visitor & visitor ) override { visitor.Visit( *this ); }
@@ -176,6 +177,78 @@
                 m_LeftExpression,
                 m_RightExpression;
 
+        };
+
+        struct UnaryOperationExpression : Expression
+        {
+            enum Operation
+            {
+                Plus,
+                Minus,
+                Not,
+                BitwiseNot
+            };
+
+            UnaryOperationExpression(
+                Operation operation,
+                Expression * expression
+                ) :
+                m_Operation( operation ),
+                m_Expression( expression )
+            {}
+
+            Operation
+                m_Operation;
+            std::shared_ptr<Expression>
+                m_Expression;
+
+        };
+
+        struct CastExpression: Expression
+        {
+            CastExpression( 
+                Type * type, 
+                int array_size,
+                Expression * expression 
+                ) :
+                m_Type( type ),
+                m_ArraySize( array_size ),
+                m_Expression( expression )
+            {
+
+            }
+
+            std::shared_ptr<Type>
+                m_Type;
+            int
+                m_ArraySize;
+            std::shared_ptr<Expression>
+                m_Expression;
+
+        };
+
+        struct PostfixExpression : Expression
+        {
+            PostfixExpression( Expression *expression, PostfixSuffix * suffix ) : m_Expression( expression ), m_Suffix( suffix ){}
+
+            std::shared_ptr<Expression>
+                m_Expression;
+            std::shared_ptr<PostfixSuffix>
+                m_Suffix;
+        };
+
+        struct PostfixSuffix : Node
+        {
+
+        };
+
+
+        struct Swizzle : PostfixSuffix
+        {
+            Swizzle( const std::string & swizzle ) : m_Swizzle( swizzle ) {}
+
+            std::string
+                m_Swizzle;
         };
 
         struct InitialValue : Node
