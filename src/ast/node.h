@@ -66,6 +66,52 @@
             std::vector<std::shared_ptr<VariableDeclarationBody> > m_BodyTable;
         };
 
+        struct StructDefinition: GlobalDeclaration
+        {
+            StructDefinition( const std::string & name ) : m_Name( name ) {}
+
+            struct Member
+            {
+                Member(
+                    Type * type,
+                    const std::string & name,
+                    const std::string & semantic,
+                    const std::string & interpolation_modifier
+                    ) :
+                    m_Type( type ),
+                    m_Name( name ),
+                    m_Semantic( semantic ),
+                    m_InterpolationModifier( interpolation_modifier )
+                {
+
+                }
+
+                std::shared_ptr<Type>
+                    m_Type;
+                std::string
+                    m_Name,
+                    m_Semantic,
+                    m_InterpolationModifier;
+            };
+
+            void AddMember(
+                const std::string & name,
+                Type * type,
+                const std::string & semantic,
+                const std::string & interpolation_modifier
+                )
+            {
+                // :HACK: Visual studio 2010 does not support mutliple argument emplace_back, replace when fully C++11 compliant
+                m_MemberTable.emplace_back( Member( type, name, semantic, interpolation_modifier ) );
+            }
+
+            std::string
+                m_Name;
+            std::vector<Member>
+                m_MemberTable;
+
+        };
+
         struct Type : Node
         {
             AST_HandleVisitor()
@@ -206,10 +252,10 @@
 
         struct CastExpression: Expression
         {
-            CastExpression( 
-                Type * type, 
+            CastExpression(
+                Type * type,
                 int array_size,
-                Expression * expression 
+                Expression * expression
                 ) :
                 m_Type( type ),
                 m_ArraySize( array_size ),

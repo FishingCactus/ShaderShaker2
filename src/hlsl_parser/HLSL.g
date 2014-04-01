@@ -100,7 +100,7 @@ global_declaration returns [ AST::GlobalDeclaration * declaration = 0 ]
     : variable_declaration { declaration = $variable_declaration.declaration; }
     | texture_declaration
     | sampler_declaration
-    | struct_definition
+    | struct_definition { declaration = $struct_definition.definition; }
     | function_declaration
     ;
 
@@ -385,7 +385,7 @@ sampler_body
 
 // Variables
 
-variable_declaration returns [ AST::VariableDeclaration * declaration ]
+variable_declaration returns [ AST::VariableDeclaration * declaration = 0 ]
     : { declaration = new AST::VariableDeclaration; }
         ( storage_class { declaration->AddStorageClass( $storage_class.storage ); } )*
         ( type_modifier { declaration->AddTypeModifier( $type_modifier.modifier ); })*
@@ -394,7 +394,7 @@ variable_declaration returns [ AST::VariableDeclaration * declaration ]
         ( COMMA b=variable_declaration_body { declaration->AddBody( $b.body ); } )* SEMI
     ;
 
-variable_declaration_body returns [ AST::VariableDeclarationBody * body ]
+variable_declaration_body returns [ AST::VariableDeclarationBody * body = 0 ]
     : { body = new AST::VariableDeclarationBody; }
         ID { body->m_Name = $ID.text; } ( LBRACKET INT RBRACKET { body->m_ArraySize = atoi( $INT.text.c_str() ); } )?
         ( COLON semantic {body->m_Semantic = $semantic.text; } ) ?
@@ -468,11 +468,11 @@ user_defined_type returns [ AST::UserDefinedType * type = 0 ]
     : ID  { TypeTable.find( $ID.text) != TypeTable.end() }? => { type = new AST::UserDefinedType( $ID.text ); }
     ;
 
-struct_definition
-    : STRUCT Name=ID { TypeTable.insert( $Name.text ); }
+struct_definition returns [ AST::StructDefinition * definition = 0 ]
+    : STRUCT Name=ID { definition = new AST::StructDefinition( $Name.text ); TypeTable.insert( $Name.text ); }
     LCURLY
         ( INTERPOLATION_MODIFIER? type MemberName=ID
-            ( COLON semantic )? SEMI  )+
+            ( COLON semantic )? SEMI { definition->AddMember( $MemberName.text, $type.type, $semantic.text, $INTERPOLATION_MODIFIER ? $INTERPOLATION_MODIFIER.text : "" ); } )+
     RCURLY SEMI
     ;
 
