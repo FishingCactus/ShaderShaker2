@@ -29,20 +29,19 @@ namespace AST
 
     void PrintVisitor::Visit( TranslationUnit & translation_unit )
     {
-
-        std::cerr
+        std::cout
             << "TranslationUnit" << endl_ind
             << "{" << inc_ind << endl_ind;
 
         VisitTable( *this, translation_unit.m_GlobalDeclarationTable );
         VisitTable( *this, translation_unit.m_TechniqueTable );
 
-        std::cerr << dec_ind << endl_ind << "}" << endl_ind;
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( VariableDeclaration & variable_declaration )
     {
-        std::cerr
+        std::cout
             << "VariableDeclaration" << endl_ind
             << "{" << inc_ind << endl_ind;
 
@@ -53,67 +52,67 @@ namespace AST
 
         VisitTable( *this, variable_declaration.m_BodyTable );
 
-        std::cerr << dec_ind << endl_ind << "}" << endl_ind;
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( IntrinsicType & type )
     {
-        std::cerr << "IntrinsicType{ " << type.m_Name << " }" << endl_ind;
+        std::cout << "IntrinsicType{ " << type.m_Name << " }" << endl_ind;
 
     }
 
     void PrintVisitor::Visit( UserDefinedType & type )
     {
-        std::cerr << "UserDefinedType{ " << type.m_Name << " }" << endl_ind;
+        std::cout << "UserDefinedType{ " << type.m_Name << " }" << endl_ind;
 
     }
 
     void PrintVisitor::Visit( SamplerType & type )
     {
-        std::cerr << "SamplerType{ " << type.m_Name << " }" << endl_ind;
+        std::cout << "SamplerType{ " << type.m_Name << " }" << endl_ind;
     }
 
     void PrintVisitor::Visit( TypeModifier & modifier )
     {
-        std::cerr << "TypeModifier{ " << modifier.m_Value << " }" << endl_ind;
+        std::cout << "TypeModifier{ " << modifier.m_Value << " }" << endl_ind;
 
     }
 
     void PrintVisitor::Visit( StorageClass & storage_class )
     {
-        std::cerr << "StorageClass{ " << storage_class.m_Value << " }" << endl_ind;
+        std::cout << "StorageClass{ " << storage_class.m_Value << " }" << endl_ind;
     }
 
     void PrintVisitor::Visit( VariableDeclarationBody & body )
     {
 
-        std::cerr
+        std::cout
             << "VariableDeclarationBody" << endl_ind
             << "{ " << inc_ind << endl_ind
             << "Name{ " << body.m_Name << " }" << endl_ind;
 
         if( !body.m_Semantic.empty() )
         {
-            std::cerr << "Semantic{ " << body.m_Semantic << " }" << endl_ind;
+            std::cout << "Semantic{ " << body.m_Semantic << " }" << endl_ind;
         }
 
         if( body.m_InitialValue )
         {
-            std::cerr << "InitialValue{ " << body.m_InitialValue << " }" << endl_ind;
+            std::cout << "InitialValue{ " << body.m_InitialValue << " }" << endl_ind;
         }
 
         if( body.m_ArraySize != 0 )
         {
-            std::cerr << "ArraySize{ " << body.m_ArraySize << " }" << endl_ind;
+            std::cout << "ArraySize{ " << body.m_ArraySize << " }" << endl_ind;
         }
 
-        std::cerr << dec_ind << endl_ind << "}" << endl_ind;
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
 
     }
 
     void PrintVisitor::Visit( TextureDeclaration & declaration )
     {
-        std::cerr
+        std::cout
             << "TextureDeclaration" << endl_ind
             << "{ " << inc_ind << endl_ind
             << "Type{ " << declaration.m_Type << " }" << endl_ind
@@ -125,12 +124,12 @@ namespace AST
             declaration.m_Annotations->Visit( *this );
         }
 
-        std::cerr << dec_ind << endl_ind << "}" << endl_ind;
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( SamplerDeclaration & declaration )
     {
-        std::cerr
+        std::cout
             << "SamplerDeclaration" << endl_ind
             << "{ " << inc_ind << endl_ind
             << "Type{ " << declaration.m_Type << " }" << endl_ind
@@ -138,12 +137,12 @@ namespace AST
 
         VisitTable( *this, declaration.m_BodyTable );
 
-        std::cerr << dec_ind << endl_ind << "}" << endl_ind;
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( SamplerBody & body )
     {
-        std::cerr
+        std::cout
             << "SamplerBody" << endl_ind
             << "{ " << inc_ind << endl_ind
             << "Name{ " << body.m_Name << " }" << endl_ind
@@ -153,7 +152,7 @@ namespace AST
 
     void PrintVisitor::Visit( StructDefinition & definition )
     {
-        std::cerr
+        std::cout
             << "StructDefinition" << endl_ind
             << "{ " << inc_ind << endl_ind
             << "Name{ " << definition.m_Name << " }" << endl_ind;
@@ -162,19 +161,19 @@ namespace AST
 
         for( it = definition.m_MemberTable.begin(); it != end; ++it )
         {
-            std::cerr
+            std::cout
                 << "Member" << endl_ind
                 << "{ " << inc_ind << endl_ind
                 << "Name{ " << (*it).m_Name << " }" << endl_ind;
 
             (*it).m_Type->Visit( *this );
 
-            std::cerr
+            std::cout
                 << "Semantic{ " << (*it).m_Semantic << " }" << endl_ind
                 << "InterpolationModifier{" << (*it).m_InterpolationModifier << " }" << endl_ind
                 << dec_ind << endl_ind << "}" << endl_ind;
         }
 
-        std::cerr << dec_ind << endl_ind << "}" << endl_ind;
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 };
