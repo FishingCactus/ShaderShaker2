@@ -288,12 +288,12 @@ multiplicative_expression returns [ AST::Expression * exp = 0 ]
     ;
 
 cast_expression returns [ AST::Expression * exp = 0 ] @init { int array_size = -1; }
-    : LPAREN type ( LBRACKET INT RBRACKET {array_size = atoi( $INT.text.c_str() );} )? RPAREN cast_expression { exp = new AST::CastExpression( $type.type, array_size, $cast_expression.exp ); }
+    : LPAREN type ( LBRACKET INT RBRACKET {array_size = atoi( $INT.text.c_str() );} )? RPAREN ce=cast_expression { exp = new AST::CastExpression( $type.type, array_size, $ce.exp ); }
     | unary_expression {exp = $unary_expression.exp; }
     ;
 
 unary_expression returns [ AST::Expression * exp = 0 ]
-    : op=(PLUS|MINUS|NOT|BITWISE_NOT) unary_expression { exp = new AST::UnaryOperationExpression( GetUnaryFromToken( $op.type ), $unary_expression.exp ); }
+    : op=(PLUS|MINUS|NOT|BITWISE_NOT) ue=unary_expression { exp = new AST::UnaryOperationExpression( GetUnaryFromToken( $op.type ), $ue.exp ); }
     | postfix_expression { exp = $postfix_expression.exp; }
     ;
 
