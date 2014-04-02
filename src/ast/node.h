@@ -22,6 +22,7 @@
         struct Expression;
         struct InitialValue;
         struct PostfixSuffix;
+        struct Annotations;
 
         #define AST_HandleVisitor() \
             virtual void Visit( AST::Visitor & visitor ) override { visitor.Visit( *this ); }
@@ -64,6 +65,30 @@
             std::vector<std::shared_ptr<StorageClass> > m_StorageClass;
             std::vector<std::shared_ptr<TypeModifier> > m_TypeModifier;
             std::vector<std::shared_ptr<VariableDeclarationBody> > m_BodyTable;
+        };
+
+        struct TextureDeclaration : GlobalDeclaration
+        {
+            TextureDeclaration(
+                const std::string & type,
+                const std::string & name,
+                const std::string & semantic,
+                Annotations * annotations
+                ) :
+                m_Type( type ),
+                m_Name( name ),
+                m_Semantic( semantic ),
+                m_Annotations( annotations )
+            {
+
+            }
+
+            std::string
+                m_Type,
+                m_Name,
+                m_Semantic;
+            std::shared_ptr<Annotations>
+                m_Annotations;
         };
 
         struct StructDefinition: GlobalDeclaration
@@ -165,6 +190,8 @@
                 m_InitialValue;
             int
                 m_ArraySize;
+            std::shared_ptr<Annotations>
+                m_Annotations;
 
         };
 
@@ -337,5 +364,7 @@
         };
 
     }
+
+    #include "annotation_node.h"
 
 #endif

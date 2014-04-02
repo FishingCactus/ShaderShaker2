@@ -115,7 +115,7 @@ translation_unit returns [ AST::TranslationUnit * unit ]
 
 global_declaration returns [ AST::GlobalDeclaration * declaration = 0 ]
     : variable_declaration { declaration = $variable_declaration.declaration; }
-    | texture_declaration
+    | texture_declaration { declaration = $texture_declaration.declaration; }
     | sampler_declaration
     | struct_definition { declaration = $struct_definition.definition; }
     | function_declaration
@@ -383,10 +383,11 @@ texture_type
     | TEXTURECUBE
     ;
 
-texture_declaration
+texture_declaration returns [ AST::TextureDeclaration * declaration = 0 ]
     : t=texture_type ID
     ( COLON semantic ) ?
     ( annotations ) ?
+    { declaration = new AST::TextureDeclaration( $t.text, $ID.text, $semantic.text, $annotations.annotations ); }
     SEMI
     ;
 
@@ -417,7 +418,7 @@ variable_declaration_body returns [ AST::VariableDeclarationBody * body = 0 ]
         ( COLON semantic {body->m_Semantic = $semantic.text; } ) ?
         ( COLON packoffset )?
         ( COLON register_rule ) ?
-        ( annotations ) ?
+        ( annotations { body->m_Annotations = std::shared_ptr<AST::Annotations>( $annotations.annotations ); } ) ?
         ( ASSIGN initial_value { body->m_InitialValue = std::shared_ptr<AST::InitialValue>( $initial_value.value ); } ) ?
     ;
 
@@ -449,7 +450,7 @@ packoffset
 register_rule
     :;
 
-annotations
+annotations returns [ AST::Annotations * annotations = 0 ]
     : LT_TOKEN annotation_entry* GT_TOKEN
     ;
 
