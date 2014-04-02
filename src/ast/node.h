@@ -23,6 +23,7 @@
         struct InitialValue;
         struct PostfixSuffix;
         struct Annotations;
+        struct SamplerBody;
 
         #define AST_HandleVisitor() \
             virtual void Visit( AST::Visitor & visitor ) override { visitor.Visit( *this ); }
@@ -89,6 +90,47 @@
                 m_Semantic;
             std::shared_ptr<Annotations>
                 m_Annotations;
+        };
+
+        struct SamplerDeclaration : GlobalDeclaration
+        {
+            SamplerDeclaration(
+                const std::string & type,
+                const std::string & name
+                ) :
+                m_Type( type ),
+                m_Name( name )
+            {
+
+            }
+
+            void AddBody( SamplerBody * body )
+            {
+                m_BodyTable.emplace_back( body );
+            }
+
+            std::string
+                m_Type,
+                m_Name;
+            std::vector< std::shared_ptr<SamplerBody> >
+                m_BodyTable;
+        };
+
+        struct SamplerBody : Node
+        {
+            SamplerBody(
+                const std::string & name,
+                const std::string & value
+                ) :
+                m_Name( name ),
+                m_Value( value )
+            {
+
+            }
+
+            std::string
+                m_Name,
+                m_Value;
         };
 
         struct StructDefinition: GlobalDeclaration

@@ -116,7 +116,7 @@ translation_unit returns [ AST::TranslationUnit * unit ]
 global_declaration returns [ AST::GlobalDeclaration * declaration = 0 ]
     : variable_declaration { declaration = $variable_declaration.declaration; }
     | texture_declaration { declaration = $texture_declaration.declaration; }
-    | sampler_declaration
+    | sampler_declaration { declaration = $sampler_declaration.declaration; }
     | struct_definition { declaration = $struct_definition.definition; }
     | function_declaration
     ;
@@ -391,14 +391,16 @@ texture_declaration returns [ AST::TextureDeclaration * declaration = 0 ]
     SEMI
     ;
 
-sampler_declaration
+sampler_declaration returns [AST::SamplerDeclaration * declaration = 0 ]
     : t=SAMPLER_TYPE
-        Name=ID ( ASSIGN SAMPLER_TYPE )? LCURLY (sampler_body)* RCURLY SEMI
+        Name=ID ( ASSIGN SAMPLER_TYPE )? { declaration = new AST::SamplerDeclaration( $t.text, $Name.text ); }
+            LCURLY (sampler_body { declaration->AddBody( $sampler_body.body ); } )* RCURLY SEMI
+
     ;
 
-sampler_body
-    : TEXTURE ASSIGN LT_TOKEN ID GT_TOKEN SEMI
-    | Name=ID ASSIGN Value=ID SEMI
+sampler_body returns [ AST::SamplerBody * body = 0 ]
+    : TEXTURE ASSIGN LT_TOKEN ID GT_TOKEN SEMI { body = new AST::SamplerBody( "texture", $ID.text ); }
+    | Name=ID ASSIGN Value=ID SEMI { body = new AST::SamplerBody( $Name.text , $Value.text ); }
     ;
 
 // Variables
