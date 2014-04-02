@@ -69,6 +69,20 @@ project "ShaderShakerLib"
     configuration "Release"
         targetdir   "bin/release_lib"
 
+project "Test"
+
+    kind "ConsoleApp"
+    targetname  "test"
+
+    files{ "test/src/**.cpp" }
+    excludes{ "src/main.cpp" }
+
+    configuration "Debug"
+        targetdir   "bin/debug"
+
+    configuration "Release"
+        targetdir   "bin/release"
+
 if _ACTION == "clean" then
     os.rmdir("bin")
     os.rmdir("build")
