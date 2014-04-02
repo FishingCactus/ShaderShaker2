@@ -282,7 +282,7 @@
                 Bool
             };
 
-            LiteralExpression( Type type, std::string & value ) : m_Type( type ), m_Value( value )
+            LiteralExpression( Type type, const std::string & value ) : m_Type( type ), m_Value( value )
             {
 
             }
