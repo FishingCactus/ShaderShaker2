@@ -17,6 +17,10 @@
         struct TypeModifier;
         struct StorageClass;
         struct VariableDeclarationBody;
+        struct TextureDeclaration;
+        struct SamplerDeclaration;
+        struct SamplerBody;
+        struct StructDefinition;
 
         class Visitor
         {
@@ -31,6 +35,10 @@
             virtual void Visit( TypeModifier & modifier ) = 0;
             virtual void Visit( StorageClass & storage_class ) = 0;
             virtual void Visit( VariableDeclarationBody & body ) = 0;
+            virtual void Visit( TextureDeclaration & declaration ) = 0;
+            virtual void Visit( SamplerDeclaration & declaration ) = 0;
+            virtual void Visit( SamplerBody & body ) = 0;
+            virtual void Visit( StructDefinition & definition ) = 0;
         };
     }
 

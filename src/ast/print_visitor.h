@@ -5,19 +5,6 @@
 
     namespace AST
     {
-
-        struct Node;
-        struct TranslationUnit;
-        struct GlobalDeclaration;
-        struct VariableDeclaration;
-        struct Type;
-        struct IntrinsicType;
-        struct UserDefinedType;
-        struct SamplerType;
-        struct Technique;
-        struct TypeModifier;
-        struct StorageClass;
-
         class PrintVisitor : public Visitor
         {
 
@@ -31,6 +18,10 @@
             virtual void Visit( TypeModifier & modifier ) override;
             virtual void Visit( StorageClass & storage_class ) override;
             virtual void Visit( VariableDeclarationBody & body ) override;
+            virtual void Visit( TextureDeclaration & declaration ) override;
+            virtual void Visit( SamplerDeclaration & declaration ) override;
+            virtual void Visit( SamplerBody & body ) override;
+            virtual void Visit( StructDefinition & definition ) override;
 
         };
     }

@@ -70,6 +70,7 @@
 
         struct TextureDeclaration : GlobalDeclaration
         {
+            AST_HandleVisitor()
             TextureDeclaration(
                 const std::string & type,
                 const std::string & name,
@@ -94,6 +95,7 @@
 
         struct SamplerDeclaration : GlobalDeclaration
         {
+            AST_HandleVisitor()
             SamplerDeclaration(
                 const std::string & type,
                 const std::string & name
@@ -118,6 +120,7 @@
 
         struct SamplerBody : Node
         {
+            AST_HandleVisitor()
             SamplerBody(
                 const std::string & name,
                 const std::string & value
@@ -135,6 +138,7 @@
 
         struct StructDefinition: GlobalDeclaration
         {
+            AST_HandleVisitor()
             StructDefinition( const std::string & name ) : m_Name( name ) {}
 
             struct Member
@@ -254,6 +258,7 @@
 
         struct BinaryOperationExpression : Expression
         {
+            AST_HandleVisitor()
             enum Operation
             {
                 LogicalOr,
@@ -296,6 +301,7 @@
 
         struct UnaryOperationExpression : Expression
         {
+            AST_HandleVisitor()
             enum Operation
             {
                 Plus,
@@ -321,6 +327,7 @@
 
         struct CastExpression: Expression
         {
+            AST_HandleVisitor()
             CastExpression(
                 Type * type,
                 int array_size,
@@ -344,6 +351,7 @@
 
         struct LiteralExpression : Expression
         {
+            AST_HandleVisitor()
             enum Type
             {
                 Int,
@@ -364,6 +372,7 @@
 
         struct PostfixExpression : Expression
         {
+            AST_HandleVisitor()
             PostfixExpression( Expression *expression, PostfixSuffix * suffix ) : m_Expression( expression ), m_Suffix( suffix ){}
 
             std::shared_ptr<Expression>
@@ -380,6 +389,7 @@
 
         struct Swizzle : PostfixSuffix
         {
+            AST_HandleVisitor()
             Swizzle( const std::string & swizzle ) : m_Swizzle( swizzle ) {}
 
             std::string

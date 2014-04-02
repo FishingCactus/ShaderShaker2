@@ -111,4 +111,70 @@ namespace AST
 
     }
 
+    void PrintVisitor::Visit( TextureDeclaration & declaration )
+    {
+        std::cerr
+            << "TextureDeclaration" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Type{ " << declaration.m_Type << " }" << endl_ind
+            << "Name{ " << declaration.m_Name << " }" << endl_ind
+            << "Semantic{ " << declaration.m_Semantic << " }" << endl_ind;
+
+        if( declaration.m_Annotations )
+        {
+            declaration.m_Annotations->Visit( *this );
+        }
+
+        std::cerr << dec_ind << endl_ind << "}" << endl_ind;
+    }
+
+    void PrintVisitor::Visit( SamplerDeclaration & declaration )
+    {
+        std::cerr
+            << "SamplerDeclaration" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Type{ " << declaration.m_Type << " }" << endl_ind
+            << "Name{ " << declaration.m_Name << " }" << endl_ind;
+
+        VisitTable( *this, declaration.m_BodyTable );
+
+        std::cerr << dec_ind << endl_ind << "}" << endl_ind;
+    }
+
+    void PrintVisitor::Visit( SamplerBody & body )
+    {
+        std::cerr
+            << "SamplerBody" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Name{ " << body.m_Name << " }" << endl_ind
+            << "Value{ " << body.m_Value << " }" << endl_ind
+            << dec_ind << endl_ind << "}" << endl_ind;
+    }
+
+    void PrintVisitor::Visit( StructDefinition & definition )
+    {
+        std::cerr
+            << "StructDefinition" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Name{ " << definition.m_Name << " }" << endl_ind;
+
+        std::vector<StructDefinition::Member>::iterator it, end = definition.m_MemberTable.end();
+
+        for( it = definition.m_MemberTable.begin(); it != end; ++it )
+        {
+            std::cerr
+                << "Member" << endl_ind
+                << "{ " << inc_ind << endl_ind
+                << "Name{ " << (*it).m_Name << " }" << endl_ind;
+
+            (*it).m_Type->Visit( *this );
+
+            std::cerr
+                << "Semantic{ " << (*it).m_Semantic << " }" << endl_ind
+                << "InterpolationModifier{" << (*it).m_InterpolationModifier << " }" << endl_ind
+                << dec_ind << endl_ind << "}" << endl_ind;
+        }
+
+        std::cerr << dec_ind << endl_ind << "}" << endl_ind;
+    }
 };
