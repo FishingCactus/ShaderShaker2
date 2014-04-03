@@ -425,7 +425,7 @@ variable_declaration_body returns [ AST::VariableDeclarationBody * body = 0 ]
         ( ASSIGN initial_value { body->m_InitialValue = std::shared_ptr<AST::InitialValue>( $initial_value.value ); } ) ?
     ;
 
-storage_class returns [ AST::StorageClass * storage ]
+storage_class returns [ AST::StorageClass * storage = 0 ]
     :
     s =
     ( EXTERN
@@ -439,7 +439,7 @@ storage_class returns [ AST::StorageClass * storage ]
     ) { storage = new AST::StorageClass( $s.text ); }
     ;
 
-type_modifier returns [ AST::TypeModifier * modifier ]
+type_modifier returns [ AST::TypeModifier * modifier = 0 ]
     : m =
     ('const'
     | 'row_major'
