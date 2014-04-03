@@ -42,6 +42,18 @@
         struct Argument : Node
         {
             AST_HandleVisitor()
+
+            std::shared_ptr<Type>
+                m_Type;
+            std::string
+                m_Name,
+                m_InputModifier,
+                m_Semantic,
+                m_InterpolationModifier;
+            std::shared_ptr<TypeModifier>
+                m_TypeModifier;
+            std::shared_ptr<InitialValue>
+                m_InitialValue;
         };
     }
 

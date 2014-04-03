@@ -357,14 +357,18 @@ function_declaration returns [AST::FunctionDeclaration * declaration = 0 ]
     ;
 
 argument_list returns [ AST::ArgumentList * list = 0 ]
-    : { list = new AST::ArgumentList; } argument { list->AddArgument( $argument.argument ); } ( COMMA argument { list->AddArgument( $argument.argument ); } )*
+    : { list = new AST::ArgumentList; } a=argument { list->AddArgument( $a.argument ); } ( COMMA b=argument { list->AddArgument( $b.argument ); } )*
     ;
 
 argument returns [ AST::Argument * argument = 0 ]
-    : input_modifier? ( type_modifier )? type
-        Name=ID
-        ( COLON semantic )?
-        ( INTERPOLATION_MODIFIER )? ( ASSIGN initial_value  )?
+    : { argument = new AST::Argument; }
+        ( input_modifier { argument->m_InputModifier = $input_modifier.text; } )?
+        ( type_modifier { argument->m_TypeModifier = std::shared_ptr<AST::TypeModifier>( $type_modifier.modifier ); } )?
+        type { argument->m_Type = std::shared_ptr<AST::Type>( $type.type ); }
+        Name=ID { argument->m_Name = $Name.text; }
+        ( COLON semantic { argument->m_Semantic = $semantic.text; } )?
+        ( INTERPOLATION_MODIFIER {argument->m_InterpolationModifier = $INTERPOLATION_MODIFIER.text; } )?
+        ( ASSIGN initial_value { argument->m_InitialValue = std::shared_ptr<AST::InitialValue>( $initial_value.value ); } )?
     ;
 
 input_modifier
