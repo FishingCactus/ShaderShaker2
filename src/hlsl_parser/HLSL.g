@@ -157,7 +157,7 @@ statement returns [ AST::Statement * statement = 0 ]
     | block_statement
     | if_statement
     | iteration_statement
-    | jump_statement
+    | jump_statement {statement = $jump_statement.statement;}
     | SEMI
     ;
 
@@ -214,11 +214,13 @@ modify_expression
     | post_modify_expression
     ;
 
-jump_statement
-    : BREAK SEMI
-    | CONTINUE SEMI
-    | RETURN ( expression  )? SEMI
-    | DISCARD SEMI
+jump_statement returns [ AST::Statement * statement = 0 ]
+    : BREAK SEMI { statement = new AST::BreakStatement; }
+    | CONTINUE SEMI { statement = new AST::ContinueStatement; }
+    | RETURN { statement = new AST::ReturnStatement; }
+        ( expression { static_cast<AST::ReturnStatement*>(statement)->m_Expression = std::shared_ptr<AST::Expression>( $expression.exp ); } )?
+        SEMI
+    | DISCARD SEMI { statement = new AST::DiscardStatement; }
     ;
 
 lvalue_expression

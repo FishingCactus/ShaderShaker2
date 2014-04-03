@@ -415,14 +415,10 @@
 
         };
 
-        struct Statement : Node
-        {
-
-        };
-
     }
 
     #include "annotation_node.h"
     #include "function_node.h"
+    #include "statement_node.h"
 
 #endif
