@@ -118,7 +118,7 @@ global_declaration returns [ AST::GlobalDeclaration * declaration = 0 ]
     | texture_declaration { declaration = $texture_declaration.declaration; }
     | sampler_declaration { declaration = $sampler_declaration.declaration; }
     | struct_definition { declaration = $struct_definition.definition; }
-    | function_declaration
+    | function_declaration { declaration = $function_declaration.declaration; }
     ;
 
 technique
@@ -148,7 +148,7 @@ shader_argument
 
 // Statements
 
-statement
+statement returns [ AST::Statement * statement = 0 ]
     : ( lvalue_expression assignment_operator ) => assignment_statement
     | ( lvalue_expression self_modify_operator ) => post_modify_statement
     | variable_declaration
@@ -346,20 +346,21 @@ argument_expression_list
 
 // Function
 
-function_declaration
-    : storage_class* ( PRECISE )?
-        ( type | VOID_TOKEN ) ID LPAREN ( argument_list )? RPAREN
-        ( COLON semantic )?
+function_declaration returns [AST::FunctionDeclaration * declaration = 0 ]
+    : { declaration = new AST::FunctionDeclaration; }( storage_class { declaration->AddStorageClass( $storage_class.storage ); } )* ( PRECISE )?
+        ( type  { declaration->m_Type = std::shared_ptr<AST::Type>( $type.type ); } | VOID_TOKEN ) Name=ID { declaration->m_Name = $Name.text; }
+        LPAREN ( argument_list { declaration->m_ArgumentList = std::shared_ptr<AST::ArgumentList>( $argument_list.list ); } )? RPAREN
+        ( COLON semantic {declaration->m_Semantic = $semantic.text; })?
         LCURLY
-            ( statement  )*
+            ( statement { declaration->AddStatement( $statement.statement ); } )*
         RCURLY
     ;
 
-argument_list
-    : argument  ( COMMA argument  )*
+argument_list returns [ AST::ArgumentList * list = 0 ]
+    : { list = new AST::ArgumentList; } argument { list->AddArgument( $argument.argument ); } ( COMMA argument { list->AddArgument( $argument.argument ); } )*
     ;
 
-argument
+argument returns [ AST::Argument * argument = 0 ]
     : input_modifier? ( type_modifier )? type
         Name=ID
         ( COLON semantic )?
