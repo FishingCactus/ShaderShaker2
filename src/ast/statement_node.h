@@ -68,6 +68,26 @@
                 m_ElseStatement;
         };
 
+        struct WhileStatement : Statement
+        {
+            WhileStatement( Expression * condition, Statement * statement ) : m_Condition( condition ), m_Statement( statement ) {}
+
+            std::shared_ptr<Expression>
+                m_Condition;
+            std::shared_ptr<Statement>
+                m_Statement;
+        };
+
+        struct DoWhileStatement : Statement
+        {
+            DoWhileStatement( Expression * condition, Statement * statement ) : m_Condition( condition ), m_Statement( statement ) {}
+
+            std::shared_ptr<Expression>
+                m_Condition;
+            std::shared_ptr<Statement>
+                m_Statement;
+        };
+
     }
 
 #endif

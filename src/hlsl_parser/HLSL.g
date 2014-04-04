@@ -156,7 +156,7 @@ statement returns [ AST::Statement * statement = 0 ]
     | expression_statement
     | block_statement
     | if_statement {statement = $if_statement._statement;}
-    | iteration_statement
+    | iteration_statement {statement = $iteration_statement._statement;}
     | jump_statement {statement = $jump_statement.statement;}
     | SEMI {statement = new AST::EmptyStatement; }
     ;
@@ -203,11 +203,11 @@ if_statement returns [ AST::IfStatement * _statement = 0 ] @init{ AST::Statement
         { _statement = new AST::IfStatement( $expression.exp, $a.statement, else_statement ); }
     ;
 
-iteration_statement
-    : WHILE LPAREN expression RPAREN statement
+iteration_statement returns [ AST::Statement * _statement = 0 ]
+    : WHILE LPAREN expression RPAREN statement { _statement = new AST::WhileStatement( $expression.exp, $statement.statement ); }
+    | DO statement WHILE LPAREN expression RPAREN SEMI  { _statement = new AST::DoWhileStatement( $expression.exp, $statement.statement ); }
     | FOR LPAREN ( assignment_statement | variable_declaration )
         equality_expression SEMI modify_expression RPAREN statement
-    | DO statement WHILE LPAREN expression RPAREN SEMI
     ;
 
 modify_expression
