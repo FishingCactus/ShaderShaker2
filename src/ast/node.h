@@ -370,6 +370,18 @@
                 m_Value;
         };
 
+        struct VariableExpression: Expression
+        {
+            AST_HandleVisitor()
+
+            VariableExpression( const std::string & name ) : m_Name( name ){}
+
+            std::string
+                m_Name;
+            std::shared_ptr<Expression>
+                m_SubscriptExpression;
+        };
+
         struct PostfixExpression : Expression
         {
             AST_HandleVisitor()

@@ -150,3 +150,35 @@ TEST_CASE( "Arithmetic expression are parsed", "[parser]" )
 
     delete expression;
 }
+
+TEST_CASE( "Variable expression are parsed", "[parser]" )
+{
+    AST::VariableExpression * expression = 0;
+
+    SECTION( "Variable is parsed" )
+    {
+        const char code[] = " a ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        expression = parser.m_Parser.variable_expression();
+
+        REQUIRE( expression );
+        CHECK( expression->m_Name == "a" );
+        CHECK( !expression->m_SubscriptExpression );
+    }
+
+    SECTION( "Indexed variable is parsed" )
+    {
+        const char code[] = " a[ 1 ] ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        expression = parser.m_Parser.variable_expression();
+
+        REQUIRE( expression );
+        CHECK( expression->m_Name == "a" );
+        CHECK( expression->m_SubscriptExpression );
+        CHECK( dynamic_cast<AST::LiteralExpression*>( &*expression->m_SubscriptExpression ) );
+    }
+
+    delete expression;
+}

@@ -230,8 +230,9 @@ lvalue_expression
     : variable_expression ( postfix_suffix )?
     ;
 
-variable_expression
-    : ID( LBRACKET expression RBRACKET )?
+variable_expression returns [ AST::VariableExpression * exp = 0 ]
+    : ID { exp = new AST::VariableExpression( $ID.text ); }
+        ( LBRACKET expression RBRACKET { exp->m_SubscriptExpression = std::shared_ptr<AST::Expression>( $expression.exp ); } )?
     ;
 
 expression returns [ AST::Expression * exp = 0 ]
@@ -332,7 +333,7 @@ assignment_operator
 primary_expression returns [ AST::Expression * exp = 0 ]
     : constructor
     | call_expression
-    | variable_expression
+    | variable_expression { exp = $variable_expression.exp; }
     | literal_value { exp = $literal_value.exp; }
     | LPAREN expression RPAREN
     ;
