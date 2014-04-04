@@ -331,15 +331,15 @@ assignment_operator
     ;
 
 primary_expression returns [ AST::Expression * exp = 0 ]
-    : constructor
+    : constructor { exp = $constructor.exp; }
     | call_expression { exp = $call_expression.exp; }
     | variable_expression { exp = $variable_expression.exp; }
     | literal_value { exp = $literal_value.exp; }
-    | LPAREN expression RPAREN
+    | LPAREN expression RPAREN { exp = $expression.exp; }
     ;
 
-constructor
-    : type LPAREN argument_expression_list RPAREN
+constructor returns [ AST::ConstructorExpression * exp = 0 ]
+    : type LPAREN argument_expression_list RPAREN { exp = new AST::ConstructorExpression( $type.type, $argument_expression_list.list ); }
     ;
 
 call_expression returns [AST::CallExpression * exp = 0]

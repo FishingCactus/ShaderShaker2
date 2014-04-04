@@ -158,6 +158,7 @@
 
         struct ArgumentExpressionList : Node
         {
+            AST_HandleVisitor()
 
             void AddExpression( Expression * expression ){ m_ExpressionList.emplace_back( expression ); }
 
@@ -167,6 +168,8 @@
 
         struct CallExpression : Expression
         {
+            AST_HandleVisitor()
+
             CallExpression( const std::string & name, ArgumentExpressionList * list ) : m_Name( name ), m_ArgumentExpressionList( list ) {}
 
             std::string
@@ -176,5 +179,16 @@
 
         };
 
+        struct ConstructorExpression : Expression
+        {
+            AST_HandleVisitor()
+
+            ConstructorExpression( Type * type, ArgumentExpressionList * list ) : m_Type( type ), m_ArgumentExpressionList( list ) {}
+
+            std::shared_ptr<Type>
+                m_Type;
+            std::shared_ptr<ArgumentExpressionList>
+                m_ArgumentExpressionList;
+        };
     }
 #endif

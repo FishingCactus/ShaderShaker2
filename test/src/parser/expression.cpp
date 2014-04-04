@@ -169,7 +169,7 @@ TEST_CASE( "Variable expressions are parsed", "[parser]" )
 
     SECTION( "Indexed variable is parsed" )
     {
-        const char code[] = " a[ 1 ] ";
+        const char code[] = " a[ 1 ] ";
         Parser parser( code, sizeof( code ) - 1 );
 
         expression = parser.m_Parser.variable_expression();
@@ -211,6 +211,41 @@ TEST_CASE( "Function call expression are parsed", "[parser]" )
         CHECK( expression->m_Name == "b" );
         REQUIRE( expression->m_ArgumentExpressionList );
         REQUIRE( expression->m_ArgumentExpressionList->m_ExpressionList.size() == 3 );
+    }
+
+    delete expression;
+}
+
+TEST_CASE( "Constructor expression are parsed", "[parser]" )
+{
+    AST::ConstructorExpression * expression = 0;
+
+    SECTION( "Constructor call without arguments" )
+    {
+        const char code[] = " float4() ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        expression = parser.m_Parser.constructor();
+
+        REQUIRE( expression );
+        REQUIRE( expression->m_Type );
+        CHECK( expression->m_Type->m_Name == "float4" );
+        REQUIRE( expression->m_ArgumentExpressionList );
+        REQUIRE( expression->m_ArgumentExpressionList->m_ExpressionList.size() == 0 );
+    }
+
+    SECTION( "Constructor call with arguments" )
+    {
+        const char code[] = " float4( 1, 2, 3, 4 ) ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        expression = parser.m_Parser.constructor();
+
+        REQUIRE( expression );
+        REQUIRE( expression->m_Type );
+        CHECK( expression->m_Type->m_Name == "float4" );
+        REQUIRE( expression->m_ArgumentExpressionList );
+        REQUIRE( expression->m_ArgumentExpressionList->m_ExpressionList.size() == 4 );
     }
 
     delete expression;
