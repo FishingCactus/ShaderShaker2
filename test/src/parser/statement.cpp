@@ -101,3 +101,15 @@ TEST_CASE( "Empty statement is parsed", "[parser]" )
 
     REQUIRE( empty_statement );
 }
+
+TEST_CASE( "Expression statement is parsed", "[parser]" )
+{
+    AST::ExpressionStatement * statement = 0;
+    const char code[] = " 1; ";
+    Parser parser( code, sizeof( code ) - 1 );
+
+    statement = parser.m_Parser.expression_statement();
+
+    REQUIRE( statement );
+    REQUIRE( statement->m_Expression );
+}

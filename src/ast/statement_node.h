@@ -38,6 +38,16 @@
             AST_HandleVisitor()
         };
 
+        struct ExpressionStatement : Statement
+        {
+            AST_HandleVisitor()
+
+            ExpressionStatement( Expression * expression ) : m_Expression( expression ) {}
+
+            std::shared_ptr<Expression>
+                m_Expression;
+        };
+
     }
 
 #endif

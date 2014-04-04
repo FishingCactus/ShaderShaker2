@@ -190,8 +190,8 @@ block_statement
     : LCURLY (statement)* RCURLY
     ;
 
-expression_statement
-    : expression SEMI
+expression_statement returns [ AST::ExpressionStatement * statement = 0 ]
+    : expression SEMI { statement = new AST::ExpressionStatement( $expression.exp ); }
     ;
 
 if_statement
