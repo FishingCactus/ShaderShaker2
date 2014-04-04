@@ -33,6 +33,11 @@
             AST_HandleVisitor()
         };
 
+        struct EmptyStatement : Statement
+        {
+            AST_HandleVisitor()
+        };
+
     }
 
 #endif

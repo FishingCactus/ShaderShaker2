@@ -158,7 +158,7 @@ statement returns [ AST::Statement * statement = 0 ]
     | if_statement
     | iteration_statement
     | jump_statement {statement = $jump_statement.statement;}
-    | SEMI
+    | SEMI {statement = new AST::EmptyStatement; }
     ;
 
 assignment_statement

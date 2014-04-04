@@ -85,3 +85,19 @@ TEST_CASE( "Jump statement are parsed", "[parser]" )
 
     delete statement;
 }
+
+TEST_CASE( "Empty statement is parsed", "[parser]" )
+{
+    AST::Statement * statement = 0;
+    AST::EmptyStatement * empty_statement;
+    const char code[] = " ; ";
+    Parser parser( code, sizeof( code ) - 1 );
+
+    statement = parser.m_Parser.statement();
+
+    REQUIRE( statement );
+
+    empty_statement = dynamic_cast<AST::EmptyStatement*>( statement );
+
+    REQUIRE( empty_statement );
+}
