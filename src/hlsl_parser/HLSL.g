@@ -332,7 +332,7 @@ assignment_operator
 
 primary_expression returns [ AST::Expression * exp = 0 ]
     : constructor
-    | call_expression
+    | call_expression { exp = $call_expression.exp; }
     | variable_expression { exp = $variable_expression.exp; }
     | literal_value { exp = $literal_value.exp; }
     | LPAREN expression RPAREN
@@ -342,12 +342,12 @@ constructor
     : type LPAREN argument_expression_list RPAREN
     ;
 
-call_expression
-    : ID LPAREN argument_expression_list RPAREN
+call_expression returns [AST::CallExpression * exp = 0]
+    : ID LPAREN argument_expression_list RPAREN { exp = new AST::CallExpression( $ID.text, $argument_expression_list.list ); }
     ;
 
-argument_expression_list
-    : ( expression ( COMMA expression  )*  )?
+argument_expression_list returns [ AST::ArgumentExpressionList * list = new AST::ArgumentExpressionList ]
+    : ( a=expression { list->AddExpression( $a.exp ); }( COMMA b=expression { list->AddExpression( $b.exp ); } )*  )?
     ;
 
 // Function

@@ -156,6 +156,25 @@
                 m_Suffix;
         };
 
+        struct ArgumentExpressionList : Node
+        {
+
+            void AddExpression( Expression * expression ){ m_ExpressionList.emplace_back( expression ); }
+
+            std::vector<std::shared_ptr<Expression> >
+                m_ExpressionList;
+        };
+
+        struct CallExpression : Expression
+        {
+            CallExpression( const std::string & name, ArgumentExpressionList * list ) : m_Name( name ), m_ArgumentExpressionList( list ) {}
+
+            std::string
+                m_Name;
+            std::shared_ptr<ArgumentExpressionList>
+                m_ArgumentExpressionList;
+
+        };
 
     }
 #endif

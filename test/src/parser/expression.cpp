@@ -110,7 +110,7 @@ TEST_CASE( "Literal are parsed", "[parser]" )
     delete expression;
 }
 
-TEST_CASE( "Arithmetic expression are parsed", "[parser]" )
+TEST_CASE( "Arithmetic expressions are parsed", "[parser]" )
 {
     AST::Expression * expression = 0;
 
@@ -151,7 +151,7 @@ TEST_CASE( "Arithmetic expression are parsed", "[parser]" )
     delete expression;
 }
 
-TEST_CASE( "Variable expression are parsed", "[parser]" )
+TEST_CASE( "Variable expressions are parsed", "[parser]" )
 {
     AST::VariableExpression * expression = 0;
 
@@ -169,7 +169,7 @@ TEST_CASE( "Variable expression are parsed", "[parser]" )
 
     SECTION( "Indexed variable is parsed" )
     {
-        const char code[] = " a[ 1 ] ";
+        const char code[] = " a[ 1 ] ";
         Parser parser( code, sizeof( code ) - 1 );
 
         expression = parser.m_Parser.variable_expression();
@@ -178,6 +178,39 @@ TEST_CASE( "Variable expression are parsed", "[parser]" )
         CHECK( expression->m_Name == "a" );
         CHECK( expression->m_SubscriptExpression );
         CHECK( dynamic_cast<AST::LiteralExpression*>( &*expression->m_SubscriptExpression ) );
+    }
+
+    delete expression;
+}
+
+TEST_CASE( "Function call expression are parsed", "[parser]" )
+{
+    AST::CallExpression * expression = 0;
+
+    SECTION( "Function call without arguments" )
+    {
+        const char code[] = " a() ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        expression = parser.m_Parser.call_expression();
+
+        REQUIRE( expression );
+        CHECK( expression->m_Name == "a" );
+        REQUIRE( expression->m_ArgumentExpressionList );
+        REQUIRE( expression->m_ArgumentExpressionList->m_ExpressionList.size() == 0 );
+    }
+
+    SECTION( "Function call with arguments" )
+    {
+        const char code[] = " b( 1, a, a( 1 ) ) ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        expression = parser.m_Parser.call_expression();
+
+        REQUIRE( expression );
+        CHECK( expression->m_Name == "b" );
+        REQUIRE( expression->m_ArgumentExpressionList );
+        REQUIRE( expression->m_ArgumentExpressionList->m_ExpressionList.size() == 3 );
     }
 
     delete expression;
