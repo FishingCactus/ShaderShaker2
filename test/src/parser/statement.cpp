@@ -100,6 +100,8 @@ TEST_CASE( "Empty statement is parsed", "[parser]" )
     empty_statement = dynamic_cast<AST::EmptyStatement*>( statement );
 
     REQUIRE( empty_statement );
+
+    delete statement;
 }
 
 TEST_CASE( "Expression statement is parsed", "[parser]" )
@@ -112,4 +114,36 @@ TEST_CASE( "Expression statement is parsed", "[parser]" )
 
     REQUIRE( statement );
     REQUIRE( statement->m_Expression );
+
+    delete statement;
 }
+
+TEST_CASE( "Block statement is parsed" )
+{
+    AST::BlockStatement * statement = 0;
+
+    SECTION( "Empty block is parsed" )
+    {
+        const char code[] = " { } ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        statement = parser.m_Parser.block_statement();
+
+        REQUIRE( statement );
+        CHECK( statement->m_StatementTable.size() == 0 );
+    }
+
+    SECTION( "Non empty block is parsed" )
+    {
+        const char code[] = " { 1; 2; 3; } ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        statement = parser.m_Parser.block_statement();
+
+        REQUIRE( statement );
+        CHECK( statement->m_StatementTable.size() == 3 );
+    }
+
+    delete statement;
+}
+

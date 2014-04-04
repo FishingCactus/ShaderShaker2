@@ -88,6 +88,14 @@
                 m_Statement;
         };
 
+        struct BlockStatement : Statement
+        {
+            void AddStatement( Statement * statement ){ m_StatementTable.emplace_back( statement ); }
+
+            std::vector< std::shared_ptr<Statement> >
+                m_StatementTable;
+        };
+
     }
 
 #endif

@@ -154,7 +154,7 @@ statement returns [ AST::Statement * statement = 0 ]
     | variable_declaration
     | pre_modify_statement
     | expression_statement
-    | block_statement
+    | block_statement {statement = $block_statement._statement;}
     | if_statement {statement = $if_statement._statement;}
     | iteration_statement {statement = $iteration_statement._statement;}
     | jump_statement {statement = $jump_statement.statement;}
@@ -186,8 +186,8 @@ self_modify_operator
     | MINUSMINUS
     ;
 
-block_statement
-    : LCURLY (statement)* RCURLY
+block_statement returns [ AST::BlockStatement * _statement = 0 ]
+    : { _statement = new AST::BlockStatement; } LCURLY (statement{_statement->AddStatement($statement.statement);})* RCURLY
     ;
 
 expression_statement returns [ AST::ExpressionStatement * statement = 0 ]
