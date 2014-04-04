@@ -155,7 +155,7 @@ statement returns [ AST::Statement * statement = 0 ]
     | pre_modify_statement
     | expression_statement
     | block_statement
-    | if_statement
+    | if_statement {statement = $if_statement._statement;}
     | iteration_statement
     | jump_statement {statement = $jump_statement.statement;}
     | SEMI {statement = new AST::EmptyStatement; }
@@ -194,10 +194,13 @@ expression_statement returns [ AST::ExpressionStatement * statement = 0 ]
     : expression SEMI { statement = new AST::ExpressionStatement( $expression.exp ); }
     ;
 
-if_statement
-    : IF LPAREN expression  RPAREN statement
-        ( ELSE IF LPAREN expression  RPAREN statement )*
-        ( ELSE statement )?
+if_statement returns [ AST::IfStatement * _statement = 0 ] @init{ AST::Statement * else_statement = 0; }
+    : IF LPAREN expression RPAREN a=statement
+        // Design choice : Despite the risk of heavy recursion, I prefer to treat the
+        // "else if " as a "else if_statement". This can be changed back if ever needed
+        //( ELSE IF LPAREN expression  RPAREN statement )*
+        ( ELSE b=statement {else_statement = $b.statement;})?
+        { _statement = new AST::IfStatement( $expression.exp, $a.statement, else_statement ); }
     ;
 
 iteration_statement
