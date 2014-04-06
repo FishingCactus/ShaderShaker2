@@ -250,3 +250,135 @@ TEST_CASE( "Constructor expression are parsed", "[parser]" )
 
     delete expression;
 }
+
+bool IsPostfixSwizlle( const char * code )
+{
+    AST::PostfixSuffix * suffix = 0;
+    Parser parser( code, strlen( code ) );
+
+    suffix = parser.m_Parser.postfix_suffix();
+
+    if( !suffix )
+    {
+        return false;
+    }
+    else
+    {
+        bool is_swizzle = dynamic_cast<AST::Swizzle*>( suffix ) != 0;
+
+        delete suffix;
+
+        return is_swizzle;
+    }
+}
+
+TEST_CASE( "Suffix expression are parsed", "[parser]" )
+{
+    AST::PostfixSuffix * suffix = 0;
+
+    SECTION( "Swizzle" )
+    {
+        CHECK( IsPostfixSwizlle( ".x " ) );
+        CHECK( IsPostfixSwizlle( ".xy " ) );
+        CHECK( IsPostfixSwizlle( ".xx " ) );
+        CHECK( IsPostfixSwizlle( ".xyzw " ) );
+        CHECK( IsPostfixSwizlle( ".xxyy " ) );
+        CHECK( IsPostfixSwizlle( ".zzzz " ) );
+        CHECK( IsPostfixSwizlle( ".wzxy " ) );
+        CHECK( IsPostfixSwizlle( ".rgba " ) );
+        CHECK( IsPostfixSwizlle( ".r " ) );
+        CHECK( IsPostfixSwizlle( ".rrrr " ) );
+        CHECK( IsPostfixSwizlle( ".ggba " ) );
+        CHECK( IsPostfixSwizlle( ".abgr " ) );
+
+
+        CHECK( !IsPostfixSwizlle( ".xa " ) );
+        CHECK( !IsPostfixSwizlle( ".xyr " ) );
+        CHECK( !IsPostfixSwizlle( ".xxgb " ) );
+        CHECK( !IsPostfixSwizlle( ".xyzww " ) );
+        CHECK( !IsPostfixSwizlle( ".xxyyy " ) );
+        CHECK( !IsPostfixSwizlle( ".zzzzz " ) );
+        CHECK( !IsPostfixSwizlle( ".wzxyx " ) );
+        CHECK( !IsPostfixSwizlle( ".rgbaa " ) );
+        CHECK( !IsPostfixSwizlle( ".rx " ) );
+        CHECK( !IsPostfixSwizlle( ".ry " ) );
+        CHECK( !IsPostfixSwizlle( ".ggbax " ) );
+        CHECK( !IsPostfixSwizlle( ".abgrh " ) );
+    }
+
+    SECTION( "Call suffix is parsed" )
+    {
+        AST::PostfixSuffixCall * call;
+        const char code[] = ".test() ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        suffix = parser.m_Parser.postfix_suffix();
+
+        REQUIRE( suffix );
+
+        call = dynamic_cast<AST::PostfixSuffixCall*>( suffix );
+
+        REQUIRE( call );
+        REQUIRE( call->m_CallExpression );
+        CHECK( call->m_CallExpression->m_Name == "test" );
+        CHECK( !call->m_Suffix );
+    }
+
+    SECTION( "Call suffix is parsed" )
+    {
+        AST::PostfixSuffixCall * call;
+        const char code[] = ".test().xy ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        suffix = parser.m_Parser.postfix_suffix();
+
+        REQUIRE( suffix );
+
+        call = dynamic_cast<AST::PostfixSuffixCall*>( suffix );
+
+        REQUIRE( call );
+        REQUIRE( call->m_CallExpression );
+        CHECK( call->m_CallExpression->m_Name == "test" );
+        CHECK( call->m_Suffix );
+        CHECK( dynamic_cast<AST::Swizzle*>( &*call->m_Suffix ) );
+    }
+    
+    SECTION( "Varialbe suffix is parsed" )
+    {
+        AST::PostfixSuffixVariable * variable;
+        const char code[] = ".test ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        suffix = parser.m_Parser.postfix_suffix();
+
+        REQUIRE( suffix );
+
+        variable = dynamic_cast<AST::PostfixSuffixVariable*>( suffix );
+
+        REQUIRE( variable );
+        REQUIRE( variable->m_VariableExpression );
+        CHECK( variable->m_VariableExpression->m_Name == "test" );
+        CHECK( !variable->m_Suffix );
+    }
+
+    SECTION( "Call suffix is parsed" )
+    {
+        AST::PostfixSuffixVariable * variable;
+        const char code[] = ".test.xy ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        suffix = parser.m_Parser.postfix_suffix();
+
+        REQUIRE( suffix );
+
+        variable = dynamic_cast<AST::PostfixSuffixVariable*>( suffix );
+
+        REQUIRE( variable );
+        REQUIRE( variable->m_VariableExpression );
+        CHECK( variable->m_VariableExpression->m_Name == "test" );
+        CHECK( variable->m_Suffix );
+        CHECK( dynamic_cast<AST::Swizzle*>( &*variable->m_Suffix ) );
+    }
+
+    delete suffix;
+}

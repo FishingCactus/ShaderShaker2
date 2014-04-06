@@ -190,5 +190,43 @@
             std::shared_ptr<ArgumentExpressionList>
                 m_ArgumentExpressionList;
         };
+
+        struct PostfixSuffix : Node
+        {
+
+        };
+
+        struct Swizzle : PostfixSuffix
+        {
+            AST_HandleVisitor()
+            Swizzle( const std::string & swizzle ) : m_Swizzle( swizzle ) {}
+
+            std::string
+                m_Swizzle;
+        };
+
+        struct PostfixSuffixCall :PostfixSuffix
+        {
+            AST_HandleVisitor()
+
+            PostfixSuffixCall( CallExpression * call, PostfixSuffix * suffix ) : m_CallExpression( call ), m_Suffix( suffix ) {}
+
+            std::shared_ptr<CallExpression>
+                m_CallExpression;
+            std::shared_ptr<PostfixSuffix>
+                m_Suffix;
+        };
+
+        struct PostfixSuffixVariable :PostfixSuffix
+        {
+            AST_HandleVisitor()
+
+            PostfixSuffixVariable( VariableExpression * variable, PostfixSuffix * suffix ) : m_VariableExpression( variable ), m_Suffix( suffix ) {}
+
+            std::shared_ptr<VariableExpression>
+                m_VariableExpression;
+            std::shared_ptr<PostfixSuffix>
+                m_Suffix;
+        };
     }
 #endif

@@ -307,10 +307,14 @@ postfix_expression returns [ AST::Expression * exp = 0 ]
     : primary_expression { exp = $primary_expression.exp; }( postfix_suffix { exp = new AST::PostfixExpression( exp, $postfix_suffix.suffix ); } )?
     ;
 
-postfix_suffix returns [ AST::PostfixSuffix * suffix = 0 ]
+postfix_suffix returns [ AST::PostfixSuffix * suffix = 0 ] @init{ AST::PostfixSuffix * next_suffix = 0; }
     : DOT swizzle { suffix = new AST::Swizzle( $swizzle.text ); }
-    | DOT primary_expression ( postfix_suffix )?
+    //| DOT primary_expression ( postfix_suffix )?
     // Not sure about primary_expression here, should be variable_expression or call, not more
+    | DOT call_expression ( a=postfix_suffix {next_suffix = $a.suffix;} )?
+        { suffix = new AST::PostfixSuffixCall( $call_expression.exp, next_suffix ); }
+    | DOT variable_expression ( b=postfix_suffix {next_suffix = $b.suffix;} )?
+        { suffix = new AST::PostfixSuffixVariable( $variable_expression.exp, next_suffix ); }
     ;
 
 swizzle

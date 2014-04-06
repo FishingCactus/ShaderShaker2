@@ -241,21 +241,6 @@
 
         };
 
-        struct PostfixSuffix : Node
-        {
-
-        };
-
-
-        struct Swizzle : PostfixSuffix
-        {
-            AST_HandleVisitor()
-            Swizzle( const std::string & swizzle ) : m_Swizzle( swizzle ) {}
-
-            std::string
-                m_Swizzle;
-        };
-
         struct InitialValue : Node
         {
             AST_HandleVisitor()
