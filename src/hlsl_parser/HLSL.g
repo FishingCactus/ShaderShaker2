@@ -468,13 +468,13 @@ register_rule
     :;
 
 annotations returns [ AST::Annotations * annotations = 0 ]
-    : LT_TOKEN annotation_entry* GT_TOKEN
+    : { annotations = new AST::Annotations; } LT_TOKEN ( annotation_entry { annotations->AddEntry( $annotation_entry.entry ); } )* GT_TOKEN
     ;
 
-annotation_entry
+annotation_entry returns [ AST::AnnotationEntry * entry = 0 ]
     :
     Type=( STRING_TYPE | SCALAR_TYPE ) ID
-    ASSIGN ( STRING | literal_value  ) SEMI
+    ASSIGN ( s=STRING | literal_value ) SEMI { entry = new AST::AnnotationEntry( $Type.text, $ID.text, $s ? $s.text : static_cast<AST::LiteralExpression*>( $literal_value.exp )->m_Value ); }
     ;
 
 initial_value returns [ AST::InitialValue * value = 0 ]

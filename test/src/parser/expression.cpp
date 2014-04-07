@@ -7,7 +7,7 @@ AST::Expression * ParseLiteralExpression( const char * code )
 {
     Parser parser( code, strlen( code ) );
 
-    return  parser.m_Parser.literal_value();
+    return parser.m_Parser.literal_value();
 }
 
 TEST_CASE( "Literal are parsed", "[parser]" )
