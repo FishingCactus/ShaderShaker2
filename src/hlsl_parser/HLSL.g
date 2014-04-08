@@ -151,7 +151,7 @@ shader_argument
 statement returns [ AST::Statement * statement = 0 ]
     : ( lvalue_expression assignment_operator ) => assignment_statement
     | ( lvalue_expression self_modify_operator ) => post_modify_statement
-    | variable_declaration
+    | local_variable_declaration { statement = $local_variable_declaration.statement; }
     | pre_modify_statement
     | expression_statement
     | block_statement {statement = $block_statement._statement;}
@@ -206,7 +206,7 @@ if_statement returns [ AST::IfStatement * _statement = 0 ] @init{ AST::Statement
 iteration_statement returns [ AST::Statement * _statement = 0 ]
     : WHILE LPAREN expression RPAREN statement { _statement = new AST::WhileStatement( $expression.exp, $statement.statement ); }
     | DO statement WHILE LPAREN expression RPAREN SEMI  { _statement = new AST::DoWhileStatement( $expression.exp, $statement.statement ); }
-    | FOR LPAREN ( assignment_statement | variable_declaration )
+    | FOR LPAREN ( assignment_statement | local_variable_declaration )
         equality_expression SEMI modify_expression RPAREN statement
     ;
 
@@ -427,6 +427,15 @@ variable_declaration returns [ AST::VariableDeclaration * declaration = 0 ]
         type { declaration->SetType( $type.type ); }
         a=variable_declaration_body { declaration->AddBody( $a.body ); }
         ( COMMA b=variable_declaration_body { declaration->AddBody( $b.body ); } )* SEMI
+    ;
+
+local_variable_declaration returns [ AST::VariableDeclarationStatement * statement = 0 ]
+    : { statement = new AST::VariableDeclarationStatement; }
+        ( storage_class { statement->AddStorageClass( $storage_class.storage ); } )*
+        ( type_modifier { statement->AddTypeModifier( $type_modifier.modifier ); })*
+        type { statement->SetType( $type.type ); }
+        a=variable_declaration_body { statement->AddBody( $a.body ); }
+        ( COMMA b=variable_declaration_body { statement->AddBody( $b.body ); } )* SEMI
     ;
 
 variable_declaration_body returns [ AST::VariableDeclarationBody * body = 0 ]

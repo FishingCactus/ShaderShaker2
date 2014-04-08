@@ -96,6 +96,21 @@
                 m_StatementTable;
         };
 
+        struct VariableDeclarationStatement : Statement
+        {
+            AST_HandleVisitor()
+
+            void SetType( Type * type ){ assert( type ); m_Type.reset( type ); }
+            void AddStorageClass( StorageClass * storage_class ){ assert( storage_class ); m_StorageClass.emplace_back( storage_class ); }
+            void AddTypeModifier( TypeModifier * type_modifier ){ assert( type_modifier ); m_TypeModifier.emplace_back( type_modifier ); }
+            void AddBody( VariableDeclarationBody * body ){ assert( body ); m_BodyTable.emplace_back( body ); }
+
+            std::shared_ptr<Type> m_Type;
+            std::vector<std::shared_ptr<StorageClass> > m_StorageClass;
+            std::vector<std::shared_ptr<TypeModifier> > m_TypeModifier;
+            std::vector<std::shared_ptr<VariableDeclarationBody> > m_BodyTable;
+        };
+
     }
 
 #endif

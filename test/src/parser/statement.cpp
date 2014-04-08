@@ -147,3 +147,24 @@ TEST_CASE( "Block statement is parsed" )
     delete statement;
 }
 
+TEST_CASE( "Variable declaration statement is parsed" )
+{
+    AST::VariableDeclarationStatement * statement = 0;
+
+    SECTION( "Simple variable is parsed" )
+    {
+        const char code[] = " float test; ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        statement = parser.m_Parser.local_variable_declaration();
+
+        REQUIRE( statement );
+        CHECK( statement->m_Type->m_Name == "float" );
+        REQUIRE( statement->m_BodyTable.size() == 1 );
+        CHECK( statement->m_BodyTable[ 0 ]->m_Name == "test" );
+        CHECK( !statement->m_BodyTable[ 0 ]->m_InitialValue  );
+    }
+
+    delete statement;
+}
+
