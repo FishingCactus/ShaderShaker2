@@ -191,7 +191,7 @@ block_statement returns [ AST::BlockStatement * _statement = 0 ]
     ;
 
 expression_statement returns [ AST::ExpressionStatement * statement = 0 ]
-    : expression SEMI { statement = new AST::ExpressionStatement( $expression.exp ); }
+    : expression SEMI { statement = new AST::ExpressionStatement( $expression.exp ); }
     ;
 
 if_statement returns [ AST::IfStatement * _statement = 0 ] @init{ AST::Statement * else_statement = 0; }
@@ -339,7 +339,7 @@ primary_expression returns [ AST::Expression * exp = 0 ]
     | call_expression { exp = $call_expression.exp; }
     | variable_expression { exp = $variable_expression.exp; }
     | literal_value { exp = $literal_value.exp; }
-    | LPAREN expression RPAREN { exp = $expression.exp; }
+    | LPAREN expression RPAREN { exp = $expression.exp; }
     ;
 
 constructor returns [ AST::ConstructorExpression * exp = 0 ]
