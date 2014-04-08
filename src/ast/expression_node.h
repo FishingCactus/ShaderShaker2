@@ -228,5 +228,15 @@
             std::shared_ptr<PostfixSuffix>
                 m_Suffix;
         };
+
+        struct LValueExpression : Expression
+        {
+            LValueExpression( VariableExpression * variable, PostfixSuffix * suffix ) : m_VariableExpression( variable ), m_Suffix( suffix ) {}
+
+            std::shared_ptr<VariableExpression>
+                m_VariableExpression;
+            std::shared_ptr<PostfixSuffix>
+                m_Suffix;
+        };
     }
 #endif

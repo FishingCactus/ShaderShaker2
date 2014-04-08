@@ -382,3 +382,37 @@ TEST_CASE( "Suffix expression are parsed", "[parser]" )
 
     delete suffix;
 }
+
+TEST_CASE( "LValue expression are parsed", "[parser]" )
+{
+    AST::LValueExpression * expression = 0;
+
+    SECTION( "Constructor call without arguments" )
+    {
+        const char code[] = " a.test ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        expression = parser.m_Parser.lvalue_expression();
+
+        REQUIRE( expression );
+        REQUIRE( expression->m_VariableExpression );
+        CHECK( expression->m_VariableExpression->m_Name == "a" );
+        CHECK( expression->m_Suffix );
+    }
+
+    SECTION( "Constructor call with arguments" )
+    {
+        const char code[] = " a[ 2 ].test ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        expression = parser.m_Parser.lvalue_expression();
+
+        REQUIRE( expression );
+        REQUIRE( expression->m_VariableExpression );
+        CHECK( expression->m_VariableExpression->m_Name == "a" );
+        CHECK( expression->m_VariableExpression->m_SubscriptExpression );
+        CHECK( expression->m_Suffix );
+    }
+
+    delete expression;
+}

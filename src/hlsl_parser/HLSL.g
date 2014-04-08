@@ -226,8 +226,8 @@ jump_statement returns [ AST::Statement * statement = 0 ]
     | DISCARD SEMI { statement = new AST::DiscardStatement; }
     ;
 
-lvalue_expression
-    : variable_expression ( postfix_suffix )?
+lvalue_expression returns [ AST::LValueExpression * exp = 0 ]
+    : variable_expression ( postfix_suffix )? { exp = new AST::LValueExpression( $variable_expression.exp, $postfix_suffix.suffix ); }
     ;
 
 variable_expression returns [ AST::VariableExpression * exp = 0 ]
