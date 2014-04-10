@@ -342,7 +342,7 @@ TEST_CASE( "Suffix expression are parsed", "[parser]" )
         CHECK( call->m_Suffix );
         CHECK( dynamic_cast<AST::Swizzle*>( &*call->m_Suffix ) );
     }
-    
+
     SECTION( "Varialbe suffix is parsed" )
     {
         AST::PostfixSuffixVariable * variable;
@@ -412,6 +412,37 @@ TEST_CASE( "LValue expression are parsed", "[parser]" )
         CHECK( expression->m_VariableExpression->m_Name == "a" );
         CHECK( expression->m_VariableExpression->m_SubscriptExpression );
         CHECK( expression->m_Suffix );
+    }
+
+    delete expression;
+}
+
+TEST_CASE( "Pre modify expression are parsed", "[parser]" )
+{
+    AST::PreModifyExpression * expression = 0;
+
+    SECTION( "++a is parsed" )
+    {
+        const char code[] = " ++a ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        expression = parser.m_Parser.pre_modify_expression();
+
+        REQUIRE( expression );
+        CHECK( expression->m_Operator == AST::SelfModifyOperator_PlusPlus );
+        CHECK( expression->m_Expression );
+    }
+
+    SECTION( "--a is parsed" )
+    {
+        const char code[] = " --a ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        expression = parser.m_Parser.pre_modify_expression();
+
+        REQUIRE( expression );
+        CHECK( expression->m_Operator == AST::SelfModifyOperator_MinusMinus );
+        CHECK( expression->m_Expression );
     }
 
     delete expression;

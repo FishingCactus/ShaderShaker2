@@ -152,7 +152,7 @@ statement returns [ AST::Statement * statement = 0 ]
     : ( lvalue_expression assignment_operator ) => assignment_statement
     | ( lvalue_expression self_modify_operator ) => post_modify_statement
     | local_variable_declaration { statement = $local_variable_declaration.statement; }
-    | pre_modify_statement
+    | pre_modify_statement { statement = $pre_modify_statement.statement; }
     | expression_statement
     | block_statement {statement = $block_statement._statement;}
     | if_statement {statement = $if_statement._statement;}
@@ -165,12 +165,12 @@ assignment_statement
     : lvalue_expression assignment_operator expression SEMI
     ;
 
-pre_modify_statement
-    : pre_modify_expression SEMI
+pre_modify_statement returns [ AST::Statement * statement = 0 ]
+    : pre_modify_expression SEMI { statement = new AST::ExpressionStatement( $pre_modify_expression.exp ); }
     ;
 
-pre_modify_expression
-    : self_modify_operator lvalue_expression
+pre_modify_expression returns [ AST::PreModifyExpression * exp = 0 ]
+    : self_modify_operator lvalue_expression { exp = new AST::PreModifyExpression( $self_modify_operator.op, $lvalue_expression.exp ); }
     ;
 
 post_modify_statement
@@ -178,12 +178,12 @@ post_modify_statement
     ;
 
 post_modify_expression
-    : lvalue_expression  self_modify_operator
+    : lvalue_expression self_modify_operator
     ;
 
-self_modify_operator
-    : PLUSPLUS
-    | MINUSMINUS
+self_modify_operator returns [ AST::SelfModifyOperator op = AST::SelfModifyOperator_None ]
+    : PLUSPLUS { op = AST::SelfModifyOperator_PlusPlus; }
+    | MINUSMINUS { op = AST::SelfModifyOperator_MinusMinus; }
     ;
 
 block_statement returns [ AST::BlockStatement * _statement = 0 ]
@@ -226,8 +226,9 @@ jump_statement returns [ AST::Statement * statement = 0 ]
     | DISCARD SEMI { statement = new AST::DiscardStatement; }
     ;
 
-lvalue_expression returns [ AST::LValueExpression * exp = 0 ]
-    : variable_expression ( postfix_suffix )? { exp = new AST::LValueExpression( $variable_expression.exp, $postfix_suffix.suffix ); }
+lvalue_expression returns [ AST::LValueExpression * exp = 0 ] @init { AST::PostfixSuffix * p = 0; }
+    : variable_expression ( postfix_suffix { p = $postfix_suffix.suffix; } )?
+        { exp = new AST::LValueExpression( $variable_expression.exp, p ); }
     ;
 
 variable_expression returns [ AST::VariableExpression * exp = 0 ]

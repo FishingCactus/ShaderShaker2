@@ -3,6 +3,12 @@
 
     namespace AST
     {
+        enum SelfModifyOperator
+        {
+            SelfModifyOperator_None,
+            SelfModifyOperator_PlusPlus,
+            SelfModifyOperator_MinusMinus
+        };
 
         struct Expression : Node
         {
@@ -237,6 +243,16 @@
                 m_VariableExpression;
             std::shared_ptr<PostfixSuffix>
                 m_Suffix;
+        };
+
+        struct PreModifyExpression : Expression
+        {
+            PreModifyExpression( const SelfModifyOperator op, LValueExpression * expression ) : m_Operator( op ), m_Expression( expression ) {}
+
+            SelfModifyOperator
+                m_Operator;
+            std::shared_ptr<LValueExpression>
+                m_Expression;
         };
     }
 #endif
