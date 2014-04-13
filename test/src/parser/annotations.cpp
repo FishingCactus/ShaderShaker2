@@ -60,7 +60,7 @@ TEST_CASE( "Annotations are parsed", "[parser]" )
     }
 
 
-    SECTION( "Single int annotation is parsed" )
+    SECTION( "Single float annotation is parsed" )
     {
         const char code[] = " <float value=12.0;> ";
         Parser parser( code, sizeof( code ) - 1 );

@@ -251,7 +251,7 @@ TEST_CASE( "Constructor expression are parsed", "[parser]" )
     delete expression;
 }
 
-bool IsPostfixSwizlle( const char * code )
+bool IsPostfixSwizzle( const char * code )
 {
     AST::PostfixSuffix * suffix = 0;
     Parser parser( code, strlen( code ) );
@@ -278,32 +278,32 @@ TEST_CASE( "Suffix expression are parsed", "[parser]" )
 
     SECTION( "Swizzle" )
     {
-        CHECK( IsPostfixSwizlle( ".x " ) );
-        CHECK( IsPostfixSwizlle( ".xy " ) );
-        CHECK( IsPostfixSwizlle( ".xx " ) );
-        CHECK( IsPostfixSwizlle( ".xyzw " ) );
-        CHECK( IsPostfixSwizlle( ".xxyy " ) );
-        CHECK( IsPostfixSwizlle( ".zzzz " ) );
-        CHECK( IsPostfixSwizlle( ".wzxy " ) );
-        CHECK( IsPostfixSwizlle( ".rgba " ) );
-        CHECK( IsPostfixSwizlle( ".r " ) );
-        CHECK( IsPostfixSwizlle( ".rrrr " ) );
-        CHECK( IsPostfixSwizlle( ".ggba " ) );
-        CHECK( IsPostfixSwizlle( ".abgr " ) );
+        CHECK( IsPostfixSwizzle( ".x " ) );
+        CHECK( IsPostfixSwizzle( ".xy " ) );
+        CHECK( IsPostfixSwizzle( ".xx " ) );
+        CHECK( IsPostfixSwizzle( ".xyzw " ) );
+        CHECK( IsPostfixSwizzle( ".xxyy " ) );
+        CHECK( IsPostfixSwizzle( ".zzzz " ) );
+        CHECK( IsPostfixSwizzle( ".wzxy " ) );
+        CHECK( IsPostfixSwizzle( ".rgba " ) );
+        CHECK( IsPostfixSwizzle( ".r " ) );
+        CHECK( IsPostfixSwizzle( ".rrrr " ) );
+        CHECK( IsPostfixSwizzle( ".ggba " ) );
+        CHECK( IsPostfixSwizzle( ".abgr " ) );
 
 
-        CHECK( !IsPostfixSwizlle( ".xa " ) );
-        CHECK( !IsPostfixSwizlle( ".xyr " ) );
-        CHECK( !IsPostfixSwizlle( ".xxgb " ) );
-        CHECK( !IsPostfixSwizlle( ".xyzww " ) );
-        CHECK( !IsPostfixSwizlle( ".xxyyy " ) );
-        CHECK( !IsPostfixSwizlle( ".zzzzz " ) );
-        CHECK( !IsPostfixSwizlle( ".wzxyx " ) );
-        CHECK( !IsPostfixSwizlle( ".rgbaa " ) );
-        CHECK( !IsPostfixSwizlle( ".rx " ) );
-        CHECK( !IsPostfixSwizlle( ".ry " ) );
-        CHECK( !IsPostfixSwizlle( ".ggbax " ) );
-        CHECK( !IsPostfixSwizlle( ".abgrh " ) );
+        CHECK( !IsPostfixSwizzle( ".xa " ) );
+        CHECK( !IsPostfixSwizzle( ".xyr " ) );
+        CHECK( !IsPostfixSwizzle( ".xxgb " ) );
+        CHECK( !IsPostfixSwizzle( ".xyzww " ) );
+        CHECK( !IsPostfixSwizzle( ".xxyyy " ) );
+        CHECK( !IsPostfixSwizzle( ".zzzzz " ) );
+        CHECK( !IsPostfixSwizzle( ".wzxyx " ) );
+        CHECK( !IsPostfixSwizzle( ".rgbaa " ) );
+        CHECK( !IsPostfixSwizzle( ".rx " ) );
+        CHECK( !IsPostfixSwizzle( ".ry " ) );
+        CHECK( !IsPostfixSwizzle( ".ggbax " ) );
+        CHECK( !IsPostfixSwizzle( ".abgrh " ) );
     }
 
     SECTION( "Call suffix is parsed" )
