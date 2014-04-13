@@ -524,12 +524,12 @@ struct_definition returns [ AST::StructDefinition * definition = 0 ]
     RCURLY SEMI
     ;
 
-constant_expression
-    : (ID) => variable_expression
-    | literal_value
+constant_expression returns [ AST::Expression * exp = 0 ]
+    : (ID) => variable_expression { exp = $variable_expression.exp; }
+    | literal_value { exp = $literal_value.exp; }
     ;
 
-literal_value  returns [ AST::Expression * exp = 0 ]
+literal_value returns [ AST::Expression * exp = 0 ]
     : value =
         (
         FLOAT
