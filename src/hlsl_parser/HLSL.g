@@ -322,17 +322,17 @@ swizzle
     : ID { IsValidSwizzle( $ID.text ) }?
     ;
 
-assignment_operator
-    : ASSIGN
-    | MUL_ASSIGN
-    | DIV_ASSIGN
-    | ADD_ASSIGN
-    | SUB_ASSIGN
-    | BITWISE_AND_ASSIGN
-    | BITWISE_OR_ASSIGN
-    | BITWISE_XOR_ASSIGN
-    | BITWISE_SHIFTL_ASSIGN
-    | BITWISE_SHIFTR_ASSIGN
+assignment_operator returns [ AST::AssignmentOperator op = AST::AssignmentOperator_None ]
+    : ASSIGN { op = AST::AssignmentOperator_Assign; }
+    | MUL_ASSIGN { op = AST::AssignmentOperator_Multiply; }
+    | DIV_ASSIGN { op = AST::AssignmentOperator_Divide; }
+    | ADD_ASSIGN { op = AST::AssignmentOperator_Add; }
+    | SUB_ASSIGN { op = AST::AssignmentOperator_Subtract; }
+    | BITWISE_AND_ASSIGN { op = AST::AssignmentOperator_BitwiseAnd; }
+    | BITWISE_OR_ASSIGN { op = AST::AssignmentOperator_BitwiseOr; }
+    | BITWISE_XOR_ASSIGN { op = AST::AssignmentOperator_BitwiseXor; }
+    | BITWISE_SHIFTL_ASSIGN { op = AST::AssignmentOperator_LeftShift; }
+    | BITWISE_SHIFTR_ASSIGN { op = AST::AssignmentOperator_RightShift; }
     ;
 
 primary_expression returns [ AST::Expression * exp = 0 ]

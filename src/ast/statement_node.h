@@ -111,6 +111,21 @@
             std::vector<std::shared_ptr<VariableDeclarationBody> > m_BodyTable;
         };
 
+        enum AssignmentOperator
+        {
+            AssignmentOperator_Assign = 0,
+            AssignmentOperator_Multiply,
+            AssignmentOperator_Divide,
+            AssignmentOperator_Add,
+            AssignmentOperator_Subtract,
+            AssignmentOperator_BitwiseAnd,
+            AssignmentOperator_BitwiseOr,
+            AssignmentOperator_BitwiseXor,
+            AssignmentOperator_LeftShift,
+            AssignmentOperator_RightShift,
+            AssignmentOperator_None = -1
+        };
+
     }
 
 #endif
