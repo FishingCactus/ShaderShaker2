@@ -153,7 +153,7 @@ statement returns [ AST::Statement * statement = 0 ]
     | ( lvalue_expression self_modify_operator ) => post_modify_statement
     | local_variable_declaration { statement = $local_variable_declaration.statement; }
     | pre_modify_statement { statement = $pre_modify_statement.statement; }
-    | expression_statement
+    | expression_statement {statement = $expression_statement.statement;}
     | block_statement {statement = $block_statement._statement;}
     | if_statement {statement = $if_statement._statement;}
     | iteration_statement {statement = $iteration_statement._statement;}
