@@ -36,7 +36,7 @@ TEST_CASE( "Assignment statement are parsed", "[parser]" )
 
     REQUIRE( statement );
 
-    CHECK( statement->m_LValueExpression );
-    CHECK( statement->m_Operator == AST::AssignmentOperator_Add );
-    CHECK( statement->m_Expression );
+    CHECK( statement->m_Expression->m_LValueExpression );
+    CHECK( statement->m_Expression->m_Operator == AST::AssignmentOperator_Add );
+    CHECK( statement->m_Expression->m_Expression );
 }

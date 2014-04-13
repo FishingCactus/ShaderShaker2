@@ -204,18 +204,20 @@ if_statement returns [ AST::IfStatement * _statement = 0 ] @init{ AST::Statement
         { _statement = new AST::IfStatement( $expression.exp, $a.statement, else_statement ); }
     ;
 
-iteration_statement returns [ AST::Statement * _statement = 0 ]
+iteration_statement returns [ AST::Statement * _statement = 0 ] @init{ AST::Statement * init_statement = 0; }
     : WHILE LPAREN expression RPAREN statement { _statement = new AST::WhileStatement( $expression.exp, $statement.statement ); }
     | DO statement WHILE LPAREN expression RPAREN SEMI  { _statement = new AST::DoWhileStatement( $expression.exp, $statement.statement ); }
-    | FOR LPAREN ( assignment_statement | local_variable_declaration )
+    | FOR LPAREN ( a=assignment_statement {init_statement=$a.statement;} | b=local_variable_declaration{init_statement=$b.statement;} )
         equality_expression SEMI modify_expression RPAREN statement
+        { _statement = new AST::ForStatement( init_statement, $equality_expression.exp, $modify_expression.exp, $statement.statement ); }
     ;
 
-modify_expression
+modify_expression returns [ AST::Expression * exp = 0 ]
     : (lvalue_expression assignment_operator ) =>
-         lvalue_expression  assignment_operator expression
-    | pre_modify_expression
-    | post_modify_expression
+         lvalue_expression assignment_operator expression
+         { exp = new AST::AssignmentExpression( $lvalue_expression.exp, $assignment_operator.op, $expression.exp ); }
+    | pre_modify_expression { exp = $pre_modify_expression.exp; }
+    | post_modify_expression { exp = $post_modify_expression.exp; }
     ;
 
 jump_statement returns [ AST::Statement * statement = 0 ]

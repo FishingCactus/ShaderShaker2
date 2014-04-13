@@ -88,6 +88,20 @@
                 m_Statement;
         };
 
+        struct ForStatement : Statement
+        {
+            ForStatement( Statement * init_statement, Expression * equality_expression, Expression * modify_expression, Statement * statement ) :
+                m_InitStatement( init_statement ), m_Statement( statement ),
+                m_EqualityExpression( equality_expression ), m_ModifyExpression( modify_expression ){}
+
+            std::shared_ptr<Statement>
+                m_InitStatement,
+                m_Statement;
+            std::shared_ptr<Expression>
+                m_EqualityExpression,
+                m_ModifyExpression;
+        };
+
         struct BlockStatement : Statement
         {
             void AddStatement( Statement * statement ){ m_StatementTable.emplace_back( statement ); }
@@ -111,34 +125,15 @@
             std::vector<std::shared_ptr<VariableDeclarationBody> > m_BodyTable;
         };
 
-        enum AssignmentOperator
-        {
-            AssignmentOperator_Assign = 0,
-            AssignmentOperator_Multiply,
-            AssignmentOperator_Divide,
-            AssignmentOperator_Add,
-            AssignmentOperator_Subtract,
-            AssignmentOperator_BitwiseAnd,
-            AssignmentOperator_BitwiseOr,
-            AssignmentOperator_BitwiseXor,
-            AssignmentOperator_LeftShift,
-            AssignmentOperator_RightShift,
-            AssignmentOperator_None = -1
-        };
-
         struct AssignmentStatement : Statement
         {
             AssignmentStatement( LValueExpression * lvexp, AssignmentOperator op, Expression * exp ) :
-                m_LValueExpression( lvexp ), m_Operator( op ), m_Expression( exp )
+                m_Expression( new AssignmentExpression( lvexp, op, exp ) )
             {
 
             }
 
-            std::shared_ptr<LValueExpression>
-                m_LValueExpression;
-            AssignmentOperator
-                m_Operator;
-            std::shared_ptr<Expression>
+            std::shared_ptr<AssignmentExpression>
                 m_Expression;
         };
 

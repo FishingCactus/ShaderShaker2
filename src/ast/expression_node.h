@@ -264,5 +264,36 @@
             std::shared_ptr<LValueExpression>
                 m_Expression;
         };
+
+        enum AssignmentOperator
+        {
+            AssignmentOperator_Assign = 0,
+            AssignmentOperator_Multiply,
+            AssignmentOperator_Divide,
+            AssignmentOperator_Add,
+            AssignmentOperator_Subtract,
+            AssignmentOperator_BitwiseAnd,
+            AssignmentOperator_BitwiseOr,
+            AssignmentOperator_BitwiseXor,
+            AssignmentOperator_LeftShift,
+            AssignmentOperator_RightShift,
+            AssignmentOperator_None = -1
+        };
+
+        struct AssignmentExpression : Expression
+        {
+            AssignmentExpression( LValueExpression * lvexp, AssignmentOperator op, Expression * exp ) :
+                m_LValueExpression( lvexp ), m_Operator( op ), m_Expression( exp )
+            {
+
+            }
+
+            std::shared_ptr<LValueExpression>
+                m_LValueExpression;
+            AssignmentOperator
+                m_Operator;
+            std::shared_ptr<Expression>
+                m_Expression;
+        };
     }
 #endif
