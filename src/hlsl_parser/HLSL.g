@@ -149,7 +149,7 @@ shader_argument
 // Statements
 
 statement returns [ AST::Statement * statement = 0 ]
-    : ( lvalue_expression assignment_operator ) => assignment_statement
+    : ( lvalue_expression assignment_operator ) => assignment_statement { statement = $assignment_statement.statement; }
     | ( lvalue_expression self_modify_operator ) => post_modify_statement { statement = $post_modify_statement.statement; }
     | local_variable_declaration { statement = $local_variable_declaration.statement; }
     | pre_modify_statement { statement = $pre_modify_statement.statement; }
@@ -161,8 +161,9 @@ statement returns [ AST::Statement * statement = 0 ]
     | SEMI {statement = new AST::EmptyStatement; }
     ;
 
-assignment_statement
+assignment_statement returns [ AST::AssignmentStatement * statement = 0 ]
     : lvalue_expression assignment_operator expression SEMI
+        { statement = new AST::AssignmentStatement( $lvalue_expression.exp, $assignment_operator.op, $expression.exp ); }
     ;
 
 pre_modify_statement returns [ AST::Statement * statement = 0 ]

@@ -24,3 +24,19 @@ TEST_CASE( "Assignment operator are parsed", "[parser]" )
     CHECK( AST::AssignmentOperator_LeftShift == ParseOperator( " <<= " ) );
     CHECK( AST::AssignmentOperator_RightShift == ParseOperator( " >>= " ) );
 }
+
+
+TEST_CASE( "Assignment statement are parsed", "[parser]" )
+{
+    AST::AssignmentStatement * statement = 0;
+    const char code[] = " a += 2; ";
+    Parser parser( code, sizeof( code ) - 1 );
+
+    statement = parser.m_Parser.assignment_statement();
+
+    REQUIRE( statement );
+
+    CHECK( statement->m_LValueExpression );
+    CHECK( statement->m_Operator == AST::AssignmentOperator_Add );
+    CHECK( statement->m_Expression );
+}

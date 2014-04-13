@@ -126,6 +126,22 @@
             AssignmentOperator_None = -1
         };
 
+        struct AssignmentStatement : Statement
+        {
+            AssignmentStatement( LValueExpression * lvexp, AssignmentOperator op, Expression * exp ) :
+                m_LValueExpression( lvexp ), m_Operator( op ), m_Expression( exp )
+            {
+
+            }
+
+            std::shared_ptr<LValueExpression>
+                m_LValueExpression;
+            AssignmentOperator
+                m_Operator;
+            std::shared_ptr<Expression>
+                m_Expression;
+        };
+
     }
 
 #endif
