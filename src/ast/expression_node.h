@@ -254,5 +254,15 @@
             std::shared_ptr<LValueExpression>
                 m_Expression;
         };
+
+        struct PostModifyExpression : Expression
+        {
+            PostModifyExpression( const SelfModifyOperator op, LValueExpression * expression ) : m_Operator( op ), m_Expression( expression ) {}
+
+            SelfModifyOperator
+                m_Operator;
+            std::shared_ptr<LValueExpression>
+                m_Expression;
+        };
     }
 #endif

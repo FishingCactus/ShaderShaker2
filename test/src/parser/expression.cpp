@@ -447,3 +447,34 @@ TEST_CASE( "Pre modify expression are parsed", "[parser]" )
 
     delete expression;
 }
+
+TEST_CASE( "Post modify expression are parsed", "[parser]" )
+{
+    AST::PostModifyExpression * expression = 0;
+
+    SECTION( "a++ is parsed" )
+    {
+        const char code[] = " a++ ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        expression = parser.m_Parser.post_modify_expression();
+
+        REQUIRE( expression );
+        CHECK( expression->m_Operator == AST::SelfModifyOperator_PlusPlus );
+        CHECK( expression->m_Expression );
+    }
+
+    SECTION( "a-- is parsed" )
+    {
+        const char code[] = " a-- ";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        expression = parser.m_Parser.post_modify_expression();
+
+        REQUIRE( expression );
+        CHECK( expression->m_Operator == AST::SelfModifyOperator_MinusMinus );
+        CHECK( expression->m_Expression );
+    }
+
+    delete expression;
+}

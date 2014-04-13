@@ -150,7 +150,7 @@ shader_argument
 
 statement returns [ AST::Statement * statement = 0 ]
     : ( lvalue_expression assignment_operator ) => assignment_statement
-    | ( lvalue_expression self_modify_operator ) => post_modify_statement
+    | ( lvalue_expression self_modify_operator ) => post_modify_statement { statement = $post_modify_statement.statement; }
     | local_variable_declaration { statement = $local_variable_declaration.statement; }
     | pre_modify_statement { statement = $pre_modify_statement.statement; }
     | expression_statement {statement = $expression_statement.statement;}
@@ -173,12 +173,12 @@ pre_modify_expression returns [ AST::PreModifyExpression * exp = 0 ]
     : self_modify_operator lvalue_expression { exp = new AST::PreModifyExpression( $self_modify_operator.op, $lvalue_expression.exp ); }
     ;
 
-post_modify_statement
-    : post_modify_expression SEMI
+post_modify_statement returns [ AST::Statement * statement = 0 ]
+    : post_modify_expression SEMI { statement = new AST::ExpressionStatement( $post_modify_expression.exp ); }
     ;
 
-post_modify_expression
-    : lvalue_expression self_modify_operator
+post_modify_expression returns [ AST::PostModifyExpression * exp = 0 ]
+    : lvalue_expression self_modify_operator { exp = new AST::PostModifyExpression( $self_modify_operator.op, $lvalue_expression.exp ); }
     ;
 
 self_modify_operator returns [ AST::SelfModifyOperator op = AST::SelfModifyOperator_None ]
