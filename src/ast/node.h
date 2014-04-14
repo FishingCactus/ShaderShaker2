@@ -38,10 +38,17 @@
         struct TranslationUnit : Node
         {
             AST_HandleVisitor()
+
             void AddGlobalDeclaration( GlobalDeclaration * declaration )
             {
                 assert( declaration );
                 m_GlobalDeclarationTable.emplace_back( declaration );
+            }
+
+            void AddTechnique( Technique * technique )
+            {
+                assert( technique );
+                m_TechniqueTable.emplace_back( technique );
             }
 
             std::vector< std::shared_ptr<GlobalDeclaration> >
@@ -255,16 +262,12 @@
                 m_Vector;
         };
 
-        struct Technique : Node
-        {
-
-        };
-
     }
 
     #include "expression_node.h"
     #include "annotation_node.h"
     #include "function_node.h"
     #include "statement_node.h"
+    #include "technique_node.h"
 
 #endif

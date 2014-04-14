@@ -110,7 +110,8 @@ options {
 
 translation_unit returns [ AST::TranslationUnit * unit ]
     : { unit = new AST::TranslationUnit;}
-        ( global_declaration{ unit->AddGlobalDeclaration( $global_declaration.declaration ); })* technique* EOF
+        ( global_declaration { unit->AddGlobalDeclaration( $global_declaration.declaration ); })*
+        ( technique { unit->AddTechnique( $technique.technique ); } )* EOF
     ;
 
 global_declaration returns [ AST::GlobalDeclaration * declaration = 0 ]
@@ -121,28 +122,36 @@ global_declaration returns [ AST::GlobalDeclaration * declaration = 0 ]
     | function_declaration { declaration = $function_declaration.declaration; }
     ;
 
-technique
-    : TECHNIQUE Name=ID LCURLY pass* RCURLY
+technique returns [ AST::Technique * technique = 0 ]
+    : TECHNIQUE Name=ID { technique = new AST::Technique( $Name.text ); }
+        LCURLY ( pass { technique->AddPass( $pass.pass ); } )* RCURLY
     ;
 
-pass
-    : PASS Name=ID LCURLY shader_definition* RCURLY
+pass returns [ AST::Pass * pass = 0 ]
+    : PASS Name=ID { pass = new AST::Pass( $Name.text ); }
+        LCURLY ( shader_definition { pass->AddShaderDefinition( $shader_definition.definition ); } )* RCURLY
     ;
 
-shader_definition
+shader_definition returns [ AST::ShaderDefinition * definition = 0 ]
     : Type=( VERTEX_SHADER|PIXEL_SHADER )
     ASSIGN COMPILE ShaderType=ID
     FunctionName=ID
     LPAREN shader_argument_list RPAREN SEMI
+    {
+        AST::ShaderType type = ( $Type.type == VERTEX_SHADER ) ? AST::ShaderType_Vertex : AST::ShaderType_Pixel ;
+        definition = new AST::ShaderDefinition( type, $FunctionName.text, $shader_argument_list.list );
+    }
     ;
 
-shader_argument_list
-    : ( shader_argument ( COMMA shader_argument )* )?
+shader_argument_list returns [ AST::ShaderArgumentList * list = 0 ]
+    : ( a=shader_argument { list = new AST::ShaderArgumentList( $a.exp ); }
+        ( COMMA b=shader_argument { list->AddArgument( $b.exp ); } )*
+        )?
     ;
 
-shader_argument
-    : constant_expression
-    | constructor
+shader_argument returns [ AST::Expression * exp = 0 ]
+    : constant_expression { exp = $constant_expression.exp; }
+    | constructor { exp = $constructor.exp; }
     ;
 
 
@@ -525,8 +534,8 @@ struct_definition returns [ AST::StructDefinition * definition = 0 ]
     ;
 
 constant_expression returns [ AST::Expression * exp = 0 ]
-    : (ID) => variable_expression { exp = $variable_expression.exp; }
-    | literal_value { exp = $literal_value.exp; }
+    : (ID) => variable_expression { exp = $variable_expression.exp; }
+    | literal_value { exp = $literal_value.exp; }
     ;
 
 literal_value returns [ AST::Expression * exp = 0 ]
