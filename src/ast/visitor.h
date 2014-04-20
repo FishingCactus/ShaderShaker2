@@ -22,6 +22,8 @@
         struct SamplerBody;
         struct StructDefinition;
 
+        struct LiteralExpression;
+
         class Visitor
         {
 
@@ -39,6 +41,7 @@
             virtual void Visit( SamplerDeclaration & declaration ) = 0;
             virtual void Visit( SamplerBody & body ) = 0;
             virtual void Visit( StructDefinition & definition ) = 0;
+            virtual void Visit( LiteralExpression & expression ) = 0;
         };
     }
 

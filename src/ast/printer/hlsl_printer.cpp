@@ -1,12 +1,15 @@
 #include "hlsl_printer.h"
 
+#include <cassert>
+#include "utils/indentation.h"
+#include "ast/node.h"
 
 namespace AST
 {
 
     void HLSLPrinter::Visit( Node & node )
     {
-        assert( "Unsupported node type, implement in base class" );
+        assert( !"Unsupported node type, implement in base class" );
     }
 
     void HLSLPrinter::Visit( TranslationUnit & translation_unit )
@@ -80,4 +83,11 @@ namespace AST
 
 
     }
+
+    void HLSLPrinter::Visit( LiteralExpression & expression )
+    {
+
+        m_Stream << expression.m_Value;
+    }
+
 }
