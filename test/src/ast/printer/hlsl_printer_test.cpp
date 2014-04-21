@@ -184,3 +184,76 @@ TEST_CASE( "Call expressions are printed", "[ast][hlsl][printer]" )
     }
 }
 
+TEST_CASE( "Postfix Suffixes are printed", "[ast][hlsl][printer]" )
+{
+
+    SECTION( "Swizzle is printed" )
+    {
+        AST::Swizzle
+            node( "xyzw" );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == ".xyzw" );
+    }
+
+    SECTION( "Postfix Suffix Call is printed" )
+    {
+        AST::PostfixSuffixCall
+            node( new AST::CallExpression( "test", 0 ), 0 );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == ".test()" );
+    }
+
+    SECTION( "Postfix Suffix Call is printed" )
+    {
+        AST::PostfixSuffixCall
+            node( new AST::CallExpression( "test", 0 ), new AST::Swizzle( "xxxx" ) );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == ".test().xxxx" );
+    }
+
+    SECTION( "Postfix Suffix Variable is printed" )
+    {
+        AST::PostfixSuffixVariable
+            node( new AST::VariableExpression( "test" ), 0 );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == ".test" );
+    }
+
+    SECTION( "Postfix Suffix Variable is printed" )
+    {
+        AST::PostfixSuffixVariable
+            node( new AST::VariableExpression( "test" ), new AST::Swizzle( "xxxx" ) );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == ".test.xxxx" );
+    }
+}

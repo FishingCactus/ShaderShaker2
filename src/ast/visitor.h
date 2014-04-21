@@ -27,6 +27,9 @@
         struct UnaryOperationExpression;
         struct CallExpression;
         struct ArgumentExpressionList;
+        struct Swizzle;
+        struct PostfixSuffixCall;
+        struct PostfixSuffixVariable;
 
         class Visitor
         {
@@ -50,6 +53,9 @@
             virtual void Visit( UnaryOperationExpression & expression ) = 0;
             virtual void Visit( CallExpression & expression ) = 0;
             virtual void Visit( ArgumentExpressionList & list ) = 0;
+            virtual void Visit( Swizzle & swizzle ) = 0;
+            virtual void Visit( PostfixSuffixCall & postfix_suffix ) = 0;
+            virtual void Visit( PostfixSuffixVariable & postfix_suffix ) = 0;
         };
     }
 

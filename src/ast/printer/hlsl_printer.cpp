@@ -156,4 +156,31 @@ namespace AST
         }
     }
 
+    void HLSLPrinter::Visit( Swizzle & swizzle )
+    {
+        m_Stream << "." << swizzle.m_Swizzle;
+    }
+
+    void HLSLPrinter::Visit( PostfixSuffixCall & postfix_suffix )
+    {
+        m_Stream << ".";
+        postfix_suffix.m_CallExpression->Visit( *this );
+
+        if( postfix_suffix.m_Suffix )
+        {
+            postfix_suffix.m_Suffix->Visit( *this );
+        }
+    }
+
+    void HLSLPrinter::Visit( PostfixSuffixVariable & postfix_suffix )
+    {
+        m_Stream << ".";
+        postfix_suffix.m_VariableExpression->Visit( *this );
+
+        if( postfix_suffix.m_Suffix )
+        {
+            postfix_suffix.m_Suffix->Visit( *this );
+        }
+    }
+
 }
