@@ -144,3 +144,43 @@ TEST_CASE( "Unary Operators are printed", "[ast][hlsl][printer]" )
 
 }
 
+TEST_CASE( "Call expressions are printed", "[ast][hlsl][printer]" )
+{
+
+    SECTION( "Simple call is printed" )
+    {
+        AST::CallExpression
+            node( "test", 0 );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "test()" );
+    }
+
+    SECTION( "Call with arguments is printed" )
+    {
+        AST::ArgumentExpressionList
+            * argument_list;
+
+        argument_list = new AST::ArgumentExpressionList();
+        argument_list->AddExpression( new AST::VariableExpression( "a" ) );
+        argument_list->AddExpression( new AST::VariableExpression( "b" ) );
+        argument_list->AddExpression( new AST::VariableExpression( "c" ) );
+
+        AST::CallExpression
+            node( "test", argument_list );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "test(a, b, c)" );
+    }
+}
+

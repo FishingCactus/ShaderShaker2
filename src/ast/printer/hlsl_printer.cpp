@@ -129,4 +129,31 @@ namespace AST
         expression.m_Expression->Visit( *this );
     }
 
+    void HLSLPrinter::Visit( CallExpression & expression )
+    {
+        m_Stream << expression.m_Name << "(";
+
+        if( expression.m_ArgumentExpressionList )
+        {
+            expression.m_ArgumentExpressionList->Visit( *this );
+        }
+
+        m_Stream << ")";
+    }
+
+    void HLSLPrinter::Visit( ArgumentExpressionList & list )
+    {
+        size_t
+            index,
+            count;
+
+        count = list.m_ExpressionList.size();
+
+        for( index = 0; index < count; ++index )
+        {
+            if( index != 0 ) m_Stream << ", ";
+            list.m_ExpressionList[ index ]->Visit( *this );
+        }
+    }
+
 }
