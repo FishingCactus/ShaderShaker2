@@ -258,6 +258,47 @@ TEST_CASE( "Postfix Suffixes are printed", "[ast][hlsl][printer]" )
     }
 }
 
+TEST_CASE( "Constructors are printed", "[ast][hlsl][printer]" )
+{
+
+    SECTION( "Simple constructor is printed" )
+    {
+        AST::ConstructorExpression
+            node( new AST::IntrinsicType( "float4" ), 0 );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "float4()" );
+    }
+
+    SECTION( "Constructor with arguments is printed" )
+    {
+        AST::ArgumentExpressionList
+            * argument_list;
+
+        argument_list = new AST::ArgumentExpressionList();
+        argument_list->AddExpression( new AST::VariableExpression( "a" ) );
+        argument_list->AddExpression( new AST::VariableExpression( "b" ) );
+        argument_list->AddExpression( new AST::VariableExpression( "c" ) );
+        argument_list->AddExpression( new AST::VariableExpression( "d" ) );
+
+        AST::ConstructorExpression
+            node( new AST::IntrinsicType( "float4" ), argument_list );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "float4(a, b, c, d)" );
+    }
+}
+
 TEST_CASE( "Types are printed", "[ast][hlsl][printer]" )
 {
     SECTION( "Intrinsic type is printed" )

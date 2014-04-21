@@ -30,6 +30,7 @@
         struct Swizzle;
         struct PostfixSuffixCall;
         struct PostfixSuffixVariable;
+        struct ConstructorExpression;
 
         class Visitor
         {
@@ -56,6 +57,7 @@
             virtual void Visit( Swizzle & swizzle ) = 0;
             virtual void Visit( PostfixSuffixCall & postfix_suffix ) = 0;
             virtual void Visit( PostfixSuffixVariable & postfix_suffix ) = 0;
+            virtual void Visit( ConstructorExpression & expression ) = 0;
         };
     }
 

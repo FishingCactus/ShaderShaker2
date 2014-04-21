@@ -34,6 +34,7 @@
             virtual void Visit( Swizzle & swizzle ) override;
             virtual void Visit( PostfixSuffixCall & postfix_suffix ) override;
             virtual void Visit( PostfixSuffixVariable & postfix_suffix ) override;
+            virtual void Visit( ConstructorExpression & expression ) override;
 
         private:
 

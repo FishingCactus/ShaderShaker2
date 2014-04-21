@@ -180,4 +180,18 @@ namespace AST
         }
     }
 
+
+    void HLSLPrinter::Visit( ConstructorExpression & expression )
+    {
+        expression.m_Type->Visit( *this );
+        m_Stream << "(";
+
+        if( expression.m_ArgumentExpressionList )
+        {
+            expression.m_ArgumentExpressionList->Visit( *this );
+        }
+
+        m_Stream << ")";
+    }
+
 }
