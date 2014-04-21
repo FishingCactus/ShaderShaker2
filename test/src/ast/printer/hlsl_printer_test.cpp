@@ -299,6 +299,25 @@ TEST_CASE( "Constructors are printed", "[ast][hlsl][printer]" )
     }
 }
 
+TEST_CASE( "Conditionnals expression are printed", "[ast][hlsl][printer]" )
+{
+
+    AST::ConditionalExpression
+        node;
+    std::ostringstream
+        output;
+    AST::HLSLPrinter
+        printer( output );
+
+    node.m_Condition = std::shared_ptr<AST::Expression>( new AST::VariableExpression( "a" ) );
+    node.m_IfTrue = std::shared_ptr<AST::Expression>( new AST::VariableExpression( "b" ) );
+    node.m_IfFalse = std::shared_ptr<AST::Expression>( new AST::VariableExpression( "c" ) );
+
+    node.Visit( printer );
+
+    CHECK( output.str() == "( a ) ? ( b ) : ( c )" );
+}
+
 TEST_CASE( "Types are printed", "[ast][hlsl][printer]" )
 {
     SECTION( "Intrinsic type is printed" )

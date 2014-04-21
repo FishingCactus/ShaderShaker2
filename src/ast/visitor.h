@@ -31,6 +31,7 @@
         struct PostfixSuffixCall;
         struct PostfixSuffixVariable;
         struct ConstructorExpression;
+        struct ConditionalExpression;
 
         class Visitor
         {
@@ -58,6 +59,7 @@
             virtual void Visit( PostfixSuffixCall & postfix_suffix ) = 0;
             virtual void Visit( PostfixSuffixVariable & postfix_suffix ) = 0;
             virtual void Visit( ConstructorExpression & expression ) = 0;
+            virtual void Visit( ConditionalExpression & expression ) = 0;
         };
     }
 

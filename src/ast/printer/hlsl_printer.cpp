@@ -194,4 +194,16 @@ namespace AST
         m_Stream << ")";
     }
 
+    void HLSLPrinter::Visit( ConditionalExpression & expression )
+    {
+        //:TODO: generate parenthesis only when required ( using operator precedence )
+        m_Stream << "( ";
+        expression.m_Condition->Visit( *this );
+        m_Stream << " ) ? ( ";
+        expression.m_IfTrue->Visit( *this );
+        m_Stream << " ) : ( ";
+        expression.m_IfFalse->Visit( *this );
+        m_Stream << " )";
+    }
+
 }
