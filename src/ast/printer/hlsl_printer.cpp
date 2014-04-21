@@ -90,4 +90,16 @@ namespace AST
         m_Stream << expression.m_Value;
     }
 
+    void HLSLPrinter::Visit( VariableExpression & expression )
+    {
+        m_Stream << expression.m_Name;
+
+        if( expression.m_SubscriptExpression )
+        {
+            m_Stream << '[';
+            expression.m_SubscriptExpression->Visit( *this );
+            m_Stream << ']';
+        }
+    }
+
 }

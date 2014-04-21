@@ -23,6 +23,7 @@
         struct StructDefinition;
 
         struct LiteralExpression;
+        struct VariableExpression;
 
         class Visitor
         {
@@ -42,6 +43,7 @@
             virtual void Visit( SamplerBody & body ) = 0;
             virtual void Visit( StructDefinition & definition ) = 0;
             virtual void Visit( LiteralExpression & expression ) = 0;
+            virtual void Visit( VariableExpression & expression ) = 0;
         };
     }
 

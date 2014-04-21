@@ -48,3 +48,37 @@ TEST_CASE( "Literals are printed", "[ast][hlsl][printer]" )
         CHECK( output.str() == "true" );
     }
 }
+
+TEST_CASE( "Variables are printed", "[ast][hlsl][printer]" )
+{
+
+    SECTION( "Simple variables are printed" )
+    {
+        AST::VariableExpression
+            node( "test" );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "test" );
+    }
+
+    SECTION( "Float are printed" )
+    {
+        AST::VariableExpression
+            node( "test" );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.m_SubscriptExpression = std::shared_ptr<AST::Expression>( new AST::LiteralExpression( AST::LiteralExpression::Int, "1" ) );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "test[1]" );
+    }
+}

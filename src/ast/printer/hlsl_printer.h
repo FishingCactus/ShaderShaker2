@@ -27,6 +27,7 @@
             virtual void Visit( SamplerBody & body ) override;
             virtual void Visit( StructDefinition & definition ) override;
             virtual void Visit( LiteralExpression & expression ) override;
+            virtual void Visit( VariableExpression & expression ) override;
 
 
         private:
