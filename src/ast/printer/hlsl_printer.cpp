@@ -26,20 +26,17 @@ namespace AST
 
     void HLSLPrinter::Visit( IntrinsicType & type )
     {
-
-
+        m_Stream << type.m_Name;
     }
 
     void HLSLPrinter::Visit( UserDefinedType & type )
     {
-
-
+        m_Stream << type.m_Name;
     }
 
     void HLSLPrinter::Visit( SamplerType & type )
     {
-
-
+        m_Stream << type.m_Name;
     }
 
     void HLSLPrinter::Visit( TypeModifier & modifier )

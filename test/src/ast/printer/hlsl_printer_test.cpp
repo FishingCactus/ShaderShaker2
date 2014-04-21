@@ -257,3 +257,48 @@ TEST_CASE( "Postfix Suffixes are printed", "[ast][hlsl][printer]" )
         CHECK( output.str() == ".test.xxxx" );
     }
 }
+
+TEST_CASE( "Types are printed", "[ast][hlsl][printer]" )
+{
+    SECTION( "Intrinsic type is printed" )
+    {
+        AST::IntrinsicType
+            node( "float4" );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "float4" );
+    }
+
+    SECTION( "User defined type is printed" )
+    {
+        AST::UserDefinedType
+            node( "VS_INPUT" );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "VS_INPUT" );
+    }
+
+    SECTION( "Sampler type is printed" )
+    {
+        AST::IntrinsicType
+            node( "texture2D" );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "texture2D" );
+    }
+}
