@@ -82,3 +82,65 @@ TEST_CASE( "Variables are printed", "[ast][hlsl][printer]" )
         CHECK( output.str() == "test[1]" );
     }
 }
+
+TEST_CASE( "Unary Operators are printed", "[ast][hlsl][printer]" )
+{
+
+    SECTION( "+ operator is printed" )
+    {
+        AST::UnaryOperationExpression
+            node( AST::UnaryOperationExpression::Plus, new AST::LiteralExpression( AST::LiteralExpression::Int, "1" ) );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "+1" );
+    }
+
+    SECTION( "- operator is printed" )
+    {
+        AST::UnaryOperationExpression
+            node( AST::UnaryOperationExpression::Minus, new AST::LiteralExpression( AST::LiteralExpression::Int, "1" ) );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "-1" );
+    }
+
+    SECTION( "! operator is printed" )
+    {
+        AST::UnaryOperationExpression
+            node( AST::UnaryOperationExpression::Not, new AST::LiteralExpression( AST::LiteralExpression::Int, "1" ) );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "!1" );
+    }
+
+    SECTION( "~ operator is printed" )
+    {
+        AST::UnaryOperationExpression
+            node( AST::UnaryOperationExpression::BitwiseNot, new AST::LiteralExpression( AST::LiteralExpression::Int, "1" ) );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "~1" );
+    }
+
+}
+

@@ -102,4 +102,31 @@ namespace AST
         }
     }
 
+    void HLSLPrinter::Visit( UnaryOperationExpression & expression )
+    {
+        switch( expression.m_Operation )
+        {
+            case UnaryOperationExpression::Plus:
+                m_Stream << "+";
+                break;
+
+            case UnaryOperationExpression::Minus:
+                m_Stream << "-";
+                break;
+
+            case UnaryOperationExpression::Not:
+                m_Stream << "!";
+                break;
+
+            case UnaryOperationExpression::BitwiseNot:
+                m_Stream << "~";
+                break;
+
+            default:
+                assert( !"Unsupported operator" );
+        }
+
+        expression.m_Expression->Visit( *this );
+    }
+
 }
