@@ -266,4 +266,19 @@ namespace AST
         m_Stream << ";" << endl_ind;
     }
 
+    void HLSLPrinter::Visit( BreakStatement & statement )
+    {
+        m_Stream << "break;" << endl_ind;
+    }
+
+    void HLSLPrinter::Visit( ContinueStatement & statement )
+    {
+        m_Stream << "continue;" << endl_ind;
+    }
+
+    void HLSLPrinter::Visit( DiscardStatement & statement )
+    {
+        m_Stream << "discard;" << endl_ind;
+    }
+
 }

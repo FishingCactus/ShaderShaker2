@@ -42,6 +42,9 @@
             virtual void Visit( PostModifyExpression & expression ) override;
 
             virtual void Visit( ReturnStatement & statement ) override;
+            virtual void Visit( BreakStatement & statement ) override;
+            virtual void Visit( ContinueStatement & statement ) override;
+            virtual void Visit( DiscardStatement & statement ) override;
 
         private:
 

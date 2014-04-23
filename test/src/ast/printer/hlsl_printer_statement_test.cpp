@@ -35,3 +35,48 @@ TEST_CASE( "Returns are printed", "[ast][hlsl][printer]" )
         CHECK( output.str() == "return a;\n" );
     }
 }
+
+TEST_CASE( "Jumps are printed", "[ast][hlsl][printer]" )
+{
+    SECTION( "Break is printed" )
+    {
+        AST::BreakStatement
+            node;
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "break;\n" );
+    }
+
+    SECTION( "Continue is printed" )
+    {
+        AST::ContinueStatement
+            node;
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "continue;\n" );
+    }
+
+    SECTION( "Discard is printed" )
+    {
+        AST::DiscardStatement
+            node;
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "discard;\n" );
+    }
+}

@@ -37,6 +37,9 @@
         struct PostModifyExpression;
 
         struct ReturnStatement;
+        struct BreakStatement;
+        struct ContinueStatement;
+        struct DiscardStatement;
 
         class Visitor
         {
@@ -74,6 +77,9 @@
             // Statements
 
             virtual void Visit( ReturnStatement & statement ) = 0;
+            virtual void Visit( BreakStatement & statement ) = 0;
+            virtual void Visit( ContinueStatement & statement ) = 0;
+            virtual void Visit( DiscardStatement & statement ) = 0;
         };
     }
 
