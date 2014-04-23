@@ -237,6 +237,8 @@
 
         struct LValueExpression : Expression
         {
+            AST_HandleVisitor()
+
             LValueExpression( VariableExpression * variable, PostfixSuffix * suffix ) : m_VariableExpression( variable ), m_Suffix( suffix ) {}
 
             std::shared_ptr<VariableExpression>
@@ -247,6 +249,8 @@
 
         struct PreModifyExpression : Expression
         {
+            AST_HandleVisitor()
+
             PreModifyExpression( const SelfModifyOperator op, LValueExpression * expression ) : m_Operator( op ), m_Expression( expression ) {}
 
             SelfModifyOperator
@@ -257,6 +261,8 @@
 
         struct PostModifyExpression : Expression
         {
+            AST_HandleVisitor()
+
             PostModifyExpression( const SelfModifyOperator op, LValueExpression * expression ) : m_Operator( op ), m_Expression( expression ) {}
 
             SelfModifyOperator

@@ -180,7 +180,6 @@ namespace AST
         }
     }
 
-
     void HLSLPrinter::Visit( ConstructorExpression & expression )
     {
         expression.m_Type->Visit( *this );
@@ -204,6 +203,54 @@ namespace AST
         m_Stream << " ) : ( ";
         expression.m_IfFalse->Visit( *this );
         m_Stream << " )";
+    }
+
+    void HLSLPrinter::Visit( LValueExpression & expression )
+    {
+        expression.m_VariableExpression->Visit( *this );
+
+        if( expression.m_Suffix )
+        {
+            expression.m_Suffix->Visit( *this );
+        }
+    }
+
+    void HLSLPrinter::Visit( PreModifyExpression & expression )
+    {
+        switch( expression.m_Operator )
+        {
+            case SelfModifyOperator_PlusPlus:
+                m_Stream << "++";
+                break;
+
+            case SelfModifyOperator_MinusMinus:
+                m_Stream << "--";
+                break;
+
+            default:
+                assert( !"Unsupported enum" );
+        }
+
+        expression.m_Expression->Visit( *this );
+    }
+
+    void HLSLPrinter::Visit( PostModifyExpression & expression )
+    {
+        expression.m_Expression->Visit( *this );
+
+        switch( expression.m_Operator )
+        {
+            case SelfModifyOperator_PlusPlus:
+                m_Stream << "++";
+                break;
+
+            case SelfModifyOperator_MinusMinus:
+                m_Stream << "--";
+                break;
+
+            default:
+                assert( !"Unsupported enum" );
+        }
     }
 
 }

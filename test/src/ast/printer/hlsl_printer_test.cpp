@@ -362,3 +362,108 @@ TEST_CASE( "Types are printed", "[ast][hlsl][printer]" )
         CHECK( output.str() == "texture2D" );
     }
 }
+
+TEST_CASE( "LValue expression are printed", "[ast][hlsl][printer]" )
+{
+    SECTION( "LValue without postfix is printed" )
+    {
+        AST::LValueExpression
+            node( new AST::VariableExpression( "X" ), 0 );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "X" );
+    }
+
+    SECTION( "LValue with postfix is printed" )
+    {
+        AST::LValueExpression
+            node( new AST::VariableExpression( "X" ), new AST::Swizzle( "xyzw" ) );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "X.xyzw" );
+    }
+}
+
+TEST_CASE( "Premodify expression are printed", "[ast][hlsl][printer]" )
+{
+    SECTION( "++X is printed" )
+    {
+        AST::PreModifyExpression
+            node(
+                AST::SelfModifyOperator_PlusPlus,
+                new AST::LValueExpression( new AST::VariableExpression( "X" ), 0 )
+                );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "++X" );
+    }
+
+    SECTION( "--X is printed" )
+    {
+        AST::PreModifyExpression
+            node(
+                AST::SelfModifyOperator_MinusMinus,
+                new AST::LValueExpression( new AST::VariableExpression( "X" ), 0 )
+                );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "--X" );
+    }
+}
+
+TEST_CASE( "Postmodify expression are printed", "[ast][hlsl][printer]" )
+{
+    SECTION( "X++ is printed" )
+    {
+        AST::PostModifyExpression
+            node(
+                AST::SelfModifyOperator_PlusPlus,
+                new AST::LValueExpression( new AST::VariableExpression( "X" ), 0 )
+                );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "X++" );
+    }
+
+    SECTION( "--X is printed" )
+    {
+        AST::PostModifyExpression
+            node(
+                AST::SelfModifyOperator_MinusMinus,
+                new AST::LValueExpression( new AST::VariableExpression( "X" ), 0 )
+                );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "X--" );
+    }
+}

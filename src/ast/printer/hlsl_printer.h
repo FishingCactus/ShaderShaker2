@@ -36,6 +36,9 @@
             virtual void Visit( PostfixSuffixVariable & postfix_suffix ) override;
             virtual void Visit( ConstructorExpression & expression ) override;
             virtual void Visit( ConditionalExpression & expression ) override;
+            virtual void Visit( LValueExpression & expression ) override;
+            virtual void Visit( PreModifyExpression & expression ) override;
+            virtual void Visit( PostModifyExpression & expression ) override;
 
         private:
 

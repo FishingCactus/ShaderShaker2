@@ -32,6 +32,9 @@
         struct PostfixSuffixVariable;
         struct ConstructorExpression;
         struct ConditionalExpression;
+        struct LValueExpression;
+        struct PreModifyExpression;
+        struct PostModifyExpression;
 
         class Visitor
         {
@@ -60,6 +63,9 @@
             virtual void Visit( PostfixSuffixVariable & postfix_suffix ) = 0;
             virtual void Visit( ConstructorExpression & expression ) = 0;
             virtual void Visit( ConditionalExpression & expression ) = 0;
+            virtual void Visit( LValueExpression & expression ) = 0;
+            virtual void Visit( PreModifyExpression & expression ) = 0;
+            virtual void Visit( PostModifyExpression & expression ) = 0;
         };
     }
 
