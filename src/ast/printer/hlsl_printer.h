@@ -26,6 +26,7 @@
             virtual void Visit( SamplerDeclaration & declaration ) override;
             virtual void Visit( SamplerBody & body ) override;
             virtual void Visit( StructDefinition & definition ) override;
+
             virtual void Visit( LiteralExpression & expression ) override;
             virtual void Visit( VariableExpression & expression ) override;
             virtual void Visit( UnaryOperationExpression & expression ) override;
@@ -39,6 +40,8 @@
             virtual void Visit( LValueExpression & expression ) override;
             virtual void Visit( PreModifyExpression & expression ) override;
             virtual void Visit( PostModifyExpression & expression ) override;
+
+            virtual void Visit( ReturnStatement & statement ) override;
 
         private:
 

@@ -253,4 +253,17 @@ namespace AST
         }
     }
 
+    void HLSLPrinter::Visit( ReturnStatement & statement )
+    {
+        m_Stream << "return";
+
+        if( statement.m_Expression )
+        {
+            m_Stream << " ";
+            statement.m_Expression->Visit( *this );
+        }
+
+        m_Stream << ";" << endl_ind;
+    }
+
 }

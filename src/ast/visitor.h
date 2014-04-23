@@ -36,6 +36,8 @@
         struct PreModifyExpression;
         struct PostModifyExpression;
 
+        struct ReturnStatement;
+
         class Visitor
         {
 
@@ -53,6 +55,8 @@
             virtual void Visit( SamplerDeclaration & declaration ) = 0;
             virtual void Visit( SamplerBody & body ) = 0;
             virtual void Visit( StructDefinition & definition ) = 0;
+
+            // Expressions
             virtual void Visit( LiteralExpression & expression ) = 0;
             virtual void Visit( VariableExpression & expression ) = 0;
             virtual void Visit( UnaryOperationExpression & expression ) = 0;
@@ -66,6 +70,10 @@
             virtual void Visit( LValueExpression & expression ) = 0;
             virtual void Visit( PreModifyExpression & expression ) = 0;
             virtual void Visit( PostModifyExpression & expression ) = 0;
+
+            // Statements
+
+            virtual void Visit( ReturnStatement & statement ) = 0;
         };
     }
 
