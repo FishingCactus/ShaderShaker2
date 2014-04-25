@@ -1,7 +1,7 @@
 ShaderShaker2
 =============
 
-Shader Shaker has bee developed to solve our two main problems with shader development :
+Shader Shaker has been developed to solve our two main problems with shader development :
 
 - The multiple languages our engine needs to support
 - The combinational number of shader with the supported rendering technique
