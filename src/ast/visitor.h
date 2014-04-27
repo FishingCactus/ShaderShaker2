@@ -43,6 +43,7 @@
         struct EmptyStatement;
         struct ExpressionStatement;
         struct IfStatement;
+        struct WhileStatement;
 
         class Visitor
         {
@@ -86,6 +87,7 @@
             virtual void Visit( EmptyStatement & statement ) = 0;
             virtual void Visit( ExpressionStatement & statement ) = 0;
             virtual void Visit( IfStatement & statement ) = 0;
+            virtual void Visit( WhileStatement & statement ) = 0;
         };
     }
 

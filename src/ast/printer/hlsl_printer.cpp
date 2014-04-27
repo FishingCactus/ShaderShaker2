@@ -305,4 +305,12 @@ namespace AST
             statement.m_ElseStatement->Visit( *this );
         }
     }
+
+    void HLSLPrinter::Visit( WhileStatement & statement )
+    {
+        m_Stream << "while( ";
+        statement.m_Condition->Visit( *this );
+        m_Stream << " ) ";
+        statement.m_Statement->Visit( *this );
+    }
 }
