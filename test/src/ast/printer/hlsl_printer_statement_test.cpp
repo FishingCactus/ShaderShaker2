@@ -108,3 +108,43 @@ TEST_CASE( "Expression statement is printed", "[ast][hlsl][printer]" )
 
     CHECK( output.str() == "SomeFunction();\n" );
 }
+
+TEST_CASE( "If statements are printed", "[ast][hlsl][printer]" )
+{
+    SECTION( "If is printed" )
+    {
+        AST::IfStatement
+            node(
+                new AST::VariableExpression( "a" ),
+                new AST::ReturnStatement(),
+                0
+                );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "if( a ) return;\n" );
+    }
+
+    SECTION( "If with else is printed" )
+    {
+        AST::IfStatement
+            node(
+                new AST::VariableExpression( "a" ),
+                new AST::ReturnStatement( new AST::VariableExpression( "b" ) ),
+                new AST::ReturnStatement( new AST::VariableExpression( "c" ) )
+                );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "if( a ) return b;\nelse return c;\n" );
+    }
+
+}

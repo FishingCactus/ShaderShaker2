@@ -292,4 +292,17 @@ namespace AST
         m_Stream << ";" << endl_ind;
     }
 
+    void HLSLPrinter::Visit( IfStatement & statement )
+    {
+        m_Stream << "if( ";
+        statement.m_Condition->Visit( *this );
+        m_Stream << " ) ";
+        statement.m_ThenStatement->Visit( *this );
+
+        if( statement.m_ElseStatement)
+        {
+            m_Stream << "else ";
+            statement.m_ElseStatement->Visit( *this );
+        }
+    }
 }

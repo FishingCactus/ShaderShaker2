@@ -14,6 +14,9 @@
         {
             AST_HandleVisitor()
 
+            ReturnStatement(){}
+            ReturnStatement( Expression * expression ) : m_Expression( expression ) {}
+
             std::shared_ptr<Expression>
                 m_Expression;
         };
