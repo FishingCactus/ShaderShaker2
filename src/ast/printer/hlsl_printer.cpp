@@ -313,4 +313,13 @@ namespace AST
         m_Stream << " ) ";
         statement.m_Statement->Visit( *this );
     }
+
+    void HLSLPrinter::Visit( DoWhileStatement & statement )
+    {
+        m_Stream << "do ";
+        statement.m_Statement->Visit( *this );
+        m_Stream << "while( ";
+        statement.m_Condition->Visit( *this );
+        m_Stream << " );\n";
+    }
 }

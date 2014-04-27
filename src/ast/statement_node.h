@@ -85,6 +85,8 @@
 
         struct DoWhileStatement : Statement
         {
+            AST_HandleVisitor()
+
             DoWhileStatement( Expression * condition, Statement * statement ) : m_Condition( condition ), m_Statement( statement ) {}
 
             std::shared_ptr<Expression>

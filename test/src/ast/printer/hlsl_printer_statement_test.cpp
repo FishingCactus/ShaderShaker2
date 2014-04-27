@@ -166,3 +166,21 @@ TEST_CASE( "While statement is printed", "[ast][hlsl][printer]" )
 
     CHECK( output.str() == "while( a ) Function();\n" );
 }
+
+TEST_CASE( "Do While statement is printed", "[ast][hlsl][printer]" )
+{
+
+    AST::DoWhileStatement
+        node(
+            new AST::VariableExpression( "a" ),
+            new AST::ExpressionStatement( new AST::CallExpression( "Function", 0 ) )
+            );
+    std::ostringstream
+        output;
+    AST::HLSLPrinter
+        printer( output );
+
+    node.Visit( printer );
+
+    CHECK( output.str() == "do Function();\nwhile( a );\n" );
+}

@@ -44,6 +44,7 @@
         struct ExpressionStatement;
         struct IfStatement;
         struct WhileStatement;
+        struct DoWhileStatement;
 
         class Visitor
         {
@@ -88,6 +89,7 @@
             virtual void Visit( ExpressionStatement & statement ) = 0;
             virtual void Visit( IfStatement & statement ) = 0;
             virtual void Visit( WhileStatement & statement ) = 0;
+            virtual void Visit( DoWhileStatement & statement ) = 0;
         };
     }
 
