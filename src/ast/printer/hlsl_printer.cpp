@@ -322,4 +322,26 @@ namespace AST
         statement.m_Condition->Visit( *this );
         m_Stream << " );\n";
     }
+
+    void HLSLPrinter::Visit( BlockStatement & statement )
+    {
+        if( statement.m_StatementTable.empty() )
+        {
+            m_Stream << "{}" << endl_ind;
+        }
+        else
+        {
+            m_Stream << "{" << inc_ind << endl_ind;
+
+            std::vector< std::shared_ptr<Statement> >::iterator
+                it, end = statement.m_StatementTable.end();
+
+            for ( it = statement.m_StatementTable.begin(); it != end; ++it )
+            {
+                (*it)->Visit( *this );
+            }
+
+            m_Stream << dec_ind << endl_ind << "}" << endl_ind;
+        }
+    }
 }

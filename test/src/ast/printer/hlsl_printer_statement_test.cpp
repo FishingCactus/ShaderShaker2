@@ -184,3 +184,53 @@ TEST_CASE( "Do While statement is printed", "[ast][hlsl][printer]" )
 
     CHECK( output.str() == "do Function();\nwhile( a );\n" );
 }
+
+TEST_CASE( "Block statements are printed", "[ast][hlsl][printer]" )
+{
+    SECTION( "Empty block is printed" )
+    {
+        AST::BlockStatement
+            node;
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "{}\n" );
+    }
+
+    SECTION( "Block with one item is printed" )
+    {
+        AST::BlockStatement
+            node;
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.AddStatement( new AST::ExpressionStatement( new AST::CallExpression( "CallFunction", 0 ) ) );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "{\n\tCallFunction();\n\t\n}\n" );
+    }
+
+    SECTION( "Block with more item is printed" )
+    {
+        AST::BlockStatement
+            node;
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.AddStatement( new AST::ExpressionStatement( new AST::CallExpression( "CallFunction", 0 ) ) );
+        node.AddStatement( new AST::ExpressionStatement( new AST::CallExpression( "CallFunction2", 0 ) ) );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "{\n\tCallFunction();\n\tCallFunction2();\n\t\n}\n" );
+    }
+}

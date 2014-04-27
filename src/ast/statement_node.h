@@ -111,6 +111,8 @@
 
         struct BlockStatement : Statement
         {
+            AST_HandleVisitor()
+
             void AddStatement( Statement * statement ){ m_StatementTable.emplace_back( statement ); }
 
             std::vector< std::shared_ptr<Statement> >
