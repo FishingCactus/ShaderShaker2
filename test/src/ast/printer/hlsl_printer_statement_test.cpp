@@ -94,3 +94,17 @@ TEST_CASE( "Empty statement is printed", "[ast][hlsl][printer]" )
 
     CHECK( output.str() == ";\n" );
 }
+
+TEST_CASE( "Expression statement is printed", "[ast][hlsl][printer]" )
+{
+    AST::ExpressionStatement
+        node( new AST::CallExpression( "SomeFunction", 0 ) );
+    std::ostringstream
+        output;
+    AST::HLSLPrinter
+        printer( output );
+
+    node.Visit( printer );
+
+    CHECK( output.str() == "SomeFunction();\n" );
+}

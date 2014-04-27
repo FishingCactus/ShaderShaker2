@@ -286,4 +286,10 @@ namespace AST
         m_Stream << ";" << endl_ind;
     }
 
+    void HLSLPrinter::Visit( ExpressionStatement & statement )
+    {
+        statement.m_Expression->Visit( *this );
+        m_Stream << ";" << endl_ind;
+    }
+
 }
