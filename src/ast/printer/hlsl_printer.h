@@ -45,6 +45,7 @@
             virtual void Visit( BreakStatement & statement ) override;
             virtual void Visit( ContinueStatement & statement ) override;
             virtual void Visit( DiscardStatement & statement ) override;
+            virtual void Visit( EmptyStatement & statement ) override;
 
         private:
 

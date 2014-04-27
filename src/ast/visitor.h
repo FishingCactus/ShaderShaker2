@@ -40,6 +40,7 @@
         struct BreakStatement;
         struct ContinueStatement;
         struct DiscardStatement;
+        struct EmptyStatement;
 
         class Visitor
         {
@@ -80,6 +81,7 @@
             virtual void Visit( BreakStatement & statement ) = 0;
             virtual void Visit( ContinueStatement & statement ) = 0;
             virtual void Visit( DiscardStatement & statement ) = 0;
+            virtual void Visit( EmptyStatement & statement ) = 0;
         };
     }
 

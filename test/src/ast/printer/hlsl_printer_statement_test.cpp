@@ -80,3 +80,17 @@ TEST_CASE( "Jumps are printed", "[ast][hlsl][printer]" )
         CHECK( output.str() == "discard;\n" );
     }
 }
+
+TEST_CASE( "Empty statement is printed", "[ast][hlsl][printer]" )
+{
+    AST::EmptyStatement
+        node;
+    std::ostringstream
+        output;
+    AST::HLSLPrinter
+        printer( output );
+
+    node.Visit( printer );
+
+    CHECK( output.str() == ";\n" );
+}

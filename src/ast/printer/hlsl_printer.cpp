@@ -281,4 +281,9 @@ namespace AST
         m_Stream << "discard;" << endl_ind;
     }
 
+    void HLSLPrinter::Visit( EmptyStatement & statement )
+    {
+        m_Stream << ";" << endl_ind;
+    }
+
 }
