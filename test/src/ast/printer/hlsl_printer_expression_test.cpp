@@ -97,7 +97,7 @@ TEST_CASE( "Unary Operators are printed", "[ast][hlsl][printer]" )
 
         node.Visit( printer );
 
-        CHECK( output.str() == "+1" );
+        CHECK( output.str() == "+( 1 )" );
     }
 
     SECTION( "- operator is printed" )
@@ -111,7 +111,7 @@ TEST_CASE( "Unary Operators are printed", "[ast][hlsl][printer]" )
 
         node.Visit( printer );
 
-        CHECK( output.str() == "-1" );
+        CHECK( output.str() == "-( 1 )" );
     }
 
     SECTION( "! operator is printed" )
@@ -125,7 +125,7 @@ TEST_CASE( "Unary Operators are printed", "[ast][hlsl][printer]" )
 
         node.Visit( printer );
 
-        CHECK( output.str() == "!1" );
+        CHECK( output.str() == "!( 1 )" );
     }
 
     SECTION( "~ operator is printed" )
@@ -139,7 +139,7 @@ TEST_CASE( "Unary Operators are printed", "[ast][hlsl][printer]" )
 
         node.Visit( printer );
 
-        CHECK( output.str() == "~1" );
+        CHECK( output.str() == "~( 1 )" );
     }
 
 }

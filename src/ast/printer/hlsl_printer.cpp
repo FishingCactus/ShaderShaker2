@@ -123,7 +123,9 @@ namespace AST
                 assert( !"Unsupported operator" );
         }
 
+        m_Stream << "( ";
         expression.m_Expression->Visit( *this );
+        m_Stream << " )";
     }
 
     void HLSLPrinter::Visit( BinaryOperationExpression & expression )
