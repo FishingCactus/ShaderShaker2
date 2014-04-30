@@ -126,6 +126,40 @@ namespace AST
         expression.m_Expression->Visit( *this );
     }
 
+    void HLSLPrinter::Visit( BinaryOperationExpression & expression )
+    {
+        m_Stream << "( ";
+        expression.m_LeftExpression->Visit( *this );
+        m_Stream << " ) ";
+
+        switch( expression.m_Operation )
+        {
+            case BinaryOperationExpression::LogicalOr : m_Stream << "||"; break;
+            case BinaryOperationExpression::LogicalAnd : m_Stream << "&&"; break;
+            case BinaryOperationExpression::BitwiseOr : m_Stream << "|"; break;
+            case BinaryOperationExpression::BitwiseXor : m_Stream << "^"; break;
+            case BinaryOperationExpression::BitwiseAnd : m_Stream << "&"; break;
+            case BinaryOperationExpression::Equality : m_Stream << "=="; break;
+            case BinaryOperationExpression::Difference : m_Stream << "!="; break;
+            case BinaryOperationExpression::LessThan : m_Stream << "<"; break;
+            case BinaryOperationExpression::GreaterThan : m_Stream << ">"; break;
+            case BinaryOperationExpression::LessThanOrEqual : m_Stream << "<="; break;
+            case BinaryOperationExpression::GreaterThanOrEqual : m_Stream << ">="; break;
+            case BinaryOperationExpression::BitwiseLeftShift : m_Stream << "<<"; break;
+            case BinaryOperationExpression::BitwiseRightShift : m_Stream << ">>"; break;
+            case BinaryOperationExpression::Addition : m_Stream << "+"; break;
+            case BinaryOperationExpression::Subtraction : m_Stream << "-"; break;
+            case BinaryOperationExpression::Multiplication : m_Stream << "*"; break;
+            case BinaryOperationExpression::Division : m_Stream << "/"; break;
+            case BinaryOperationExpression::Modulo : m_Stream << "%"; break;
+            default : assert( !"Unsupported" );
+        }
+
+        m_Stream << " ( ";
+        expression.m_RightExpression->Visit( *this );
+        m_Stream << " )";
+    }
+
     void HLSLPrinter::Visit( CallExpression & expression )
     {
         m_Stream << expression.m_Name << "(";

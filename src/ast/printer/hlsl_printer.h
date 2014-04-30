@@ -30,6 +30,7 @@
             virtual void Visit( LiteralExpression & expression ) override;
             virtual void Visit( VariableExpression & expression ) override;
             virtual void Visit( UnaryOperationExpression & expression ) override;
+            virtual void Visit( BinaryOperationExpression & expression ) override;
             virtual void Visit( CallExpression & expression ) override;
             virtual void Visit( ArgumentExpressionList & list ) override;
             virtual void Visit( Swizzle & swizzle ) override;

@@ -467,3 +467,43 @@ TEST_CASE( "Postmodify expression are printed", "[ast][hlsl][printer]" )
         CHECK( output.str() == "X--" );
     }
 }
+
+std::string PrintBinaryOperator( AST::BinaryOperationExpression::Operation operation )
+{
+    AST::BinaryOperationExpression
+        node(
+            operation,
+            new AST::VariableExpression( "X" ),
+            new AST::VariableExpression( "Y" )
+            );
+    std::ostringstream
+        output;
+    AST::HLSLPrinter
+        printer( output );
+
+    node.Visit( printer );
+
+    return output.str();
+}
+
+TEST_CASE( "Binary operations are printed", "[ast][hlsl][printer]" )
+{
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::LogicalOr ) == "( X ) || ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::LogicalAnd ) == "( X ) && ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::BitwiseOr ) == "( X ) | ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::BitwiseXor ) == "( X ) ^ ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::BitwiseAnd ) == "( X ) & ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::Equality ) == "( X ) == ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::Difference ) == "( X ) != ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::LessThan ) == "( X ) < ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::GreaterThan ) == "( X ) > ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::LessThanOrEqual ) == "( X ) <= ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::GreaterThanOrEqual ) == "( X ) >= ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::BitwiseLeftShift ) == "( X ) << ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::BitwiseRightShift ) == "( X ) >> ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::Addition ) == "( X ) + ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::Subtraction ) == "( X ) - ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::Multiplication ) == "( X ) * ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::Division ) == "( X ) / ( Y )" );
+    CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::Modulo ) == "( X ) % ( Y )" );
+}

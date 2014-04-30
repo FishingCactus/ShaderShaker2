@@ -25,6 +25,7 @@
         struct LiteralExpression;
         struct VariableExpression;
         struct UnaryOperationExpression;
+        struct BinaryOperationExpression;
         struct CallExpression;
         struct ArgumentExpressionList;
         struct Swizzle;
@@ -69,6 +70,7 @@
             virtual void Visit( LiteralExpression & expression ) = 0;
             virtual void Visit( VariableExpression & expression ) = 0;
             virtual void Visit( UnaryOperationExpression & expression ) = 0;
+            virtual void Visit( BinaryOperationExpression & expression ) = 0;
             virtual void Visit( CallExpression & expression ) = 0;
             virtual void Visit( ArgumentExpressionList & list ) = 0;
             virtual void Visit( Swizzle & swizzle ) = 0;
