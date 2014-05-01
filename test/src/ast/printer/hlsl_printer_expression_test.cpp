@@ -507,3 +507,42 @@ TEST_CASE( "Binary operations are printed", "[ast][hlsl][printer]" )
     CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::Division ) == "( X ) / ( Y )" );
     CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::Modulo ) == "( X ) % ( Y )" );
 }
+
+TEST_CASE( "Cast expression is printed", "[ast][hlsl][printer]" )
+{
+    SECTION( "Simple type cast is printed" )
+    {
+        AST::CastExpression
+            node(
+                new AST::UserDefinedType( "SomeType" ),
+                -1,
+                new AST::VariableExpression( "X" )
+                );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "( SomeType )( X )" );
+    }
+
+    SECTION( "Array like cast is printed" )
+    {
+        AST::CastExpression
+            node(
+                new AST::UserDefinedType( "SomeType" ),
+                123,
+                new AST::VariableExpression( "X" )
+                );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "( SomeType[123] )( X )" );
+    }
+}

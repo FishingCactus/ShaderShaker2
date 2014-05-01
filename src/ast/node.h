@@ -192,7 +192,6 @@
 
         struct Type : Node
         {
-            AST_HandleVisitor()
             Type( const std::string & name ) : m_Name( name ) {}
 
             std::string

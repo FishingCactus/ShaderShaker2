@@ -36,6 +36,7 @@
         struct LValueExpression;
         struct PreModifyExpression;
         struct PostModifyExpression;
+        struct CastExpression;
 
         struct ReturnStatement;
         struct BreakStatement;
@@ -81,6 +82,7 @@
             virtual void Visit( LValueExpression & expression ) = 0;
             virtual void Visit( PreModifyExpression & expression ) = 0;
             virtual void Visit( PostModifyExpression & expression ) = 0;
+            virtual void Visit( CastExpression & expression ) = 0;
 
             // Statements
 

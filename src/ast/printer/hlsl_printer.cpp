@@ -289,6 +289,23 @@ namespace AST
         }
     }
 
+    void HLSLPrinter::Visit( CastExpression & expression )
+    {
+        m_Stream << "( ";
+        expression.m_Type->Visit( *this );
+
+        if( expression.m_ArraySize != -1 )
+        {
+            m_Stream << "[" << expression.m_ArraySize << "]";
+        }
+
+        m_Stream <<" )( ";
+
+        expression.m_Expression->Visit( *this );
+
+        m_Stream << " )";
+    }
+
     void HLSLPrinter::Visit( ReturnStatement & statement )
     {
         m_Stream << "return";
