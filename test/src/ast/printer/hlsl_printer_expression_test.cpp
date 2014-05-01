@@ -546,3 +546,35 @@ TEST_CASE( "Cast expression is printed", "[ast][hlsl][printer]" )
         CHECK( output.str() == "( SomeType[123] )( X )" );
     }
 }
+
+std::string PrintAssignmentExpression( AST::AssignmentOperator operation )
+{
+    AST::AssignmentExpression
+        node(
+            new AST::LValueExpression( new AST::VariableExpression( "X" ), 0 ),
+            operation,
+            new AST::VariableExpression( "Y" )
+            );
+    std::ostringstream
+        output;
+    AST::HLSLPrinter
+        printer( output );
+
+    node.Visit( printer );
+
+    return output.str();
+}
+
+TEST_CASE( "Assignment expression are printed", "[ast][hlsl][printer]" )
+{
+    CHECK( PrintAssignmentExpression( AST::AssignmentOperator_Assign ) == "X = Y" );
+    CHECK( PrintAssignmentExpression( AST::AssignmentOperator_Multiply ) == "X *= Y" );
+    CHECK( PrintAssignmentExpression( AST::AssignmentOperator_Divide ) == "X /= Y" );
+    CHECK( PrintAssignmentExpression( AST::AssignmentOperator_Add ) == "X += Y" );
+    CHECK( PrintAssignmentExpression( AST::AssignmentOperator_Subtract ) == "X -= Y" );
+    CHECK( PrintAssignmentExpression( AST::AssignmentOperator_BitwiseAnd ) == "X &= Y" );
+    CHECK( PrintAssignmentExpression( AST::AssignmentOperator_BitwiseOr ) == "X |= Y" );
+    CHECK( PrintAssignmentExpression( AST::AssignmentOperator_BitwiseXor ) == "X ^= Y" );
+    CHECK( PrintAssignmentExpression( AST::AssignmentOperator_LeftShift ) == "X <<= Y" );
+    CHECK( PrintAssignmentExpression( AST::AssignmentOperator_RightShift ) == "X >>= Y" );
+}

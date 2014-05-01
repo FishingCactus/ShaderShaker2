@@ -288,6 +288,8 @@
 
         struct AssignmentExpression : Expression
         {
+            AST_HandleVisitor()
+
             AssignmentExpression( LValueExpression * lvexp, AssignmentOperator op, Expression * exp ) :
                 m_LValueExpression( lvexp ), m_Operator( op ), m_Expression( exp )
             {

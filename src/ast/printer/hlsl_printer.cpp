@@ -306,6 +306,31 @@ namespace AST
         m_Stream << " )";
     }
 
+    void HLSLPrinter::Visit( AssignmentExpression & expression )
+    {
+        expression.m_LValueExpression->Visit( *this );
+        m_Stream << " ";
+
+        switch( expression.m_Operator )
+        {
+            case AssignmentOperator_Assign : m_Stream << "="; break;
+            case AssignmentOperator_Multiply : m_Stream << "*="; break;
+            case AssignmentOperator_Divide : m_Stream << "/="; break;
+            case AssignmentOperator_Add : m_Stream << "+="; break;
+            case AssignmentOperator_Subtract : m_Stream << "-="; break;
+            case AssignmentOperator_BitwiseAnd : m_Stream << "&="; break;
+            case AssignmentOperator_BitwiseOr : m_Stream << "|="; break;
+            case AssignmentOperator_BitwiseXor : m_Stream << "^="; break;
+            case AssignmentOperator_LeftShift : m_Stream << "<<="; break;
+            case AssignmentOperator_RightShift : m_Stream << ">>="; break;
+            default : assert( !"Unsupported" );
+        }
+
+        m_Stream << " ";
+
+        expression.m_Expression->Visit( *this );
+    }
+
     void HLSLPrinter::Visit( ReturnStatement & statement )
     {
         m_Stream << "return";
@@ -397,4 +422,5 @@ namespace AST
             m_Stream << dec_ind << endl_ind << "}" << endl_ind;
         }
     }
+
 }
