@@ -176,4 +176,139 @@ namespace AST
 
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
+
+    // Expressions
+    void PrintVisitor::Visit( LiteralExpression & expression )
+    {
+
+    }
+
+    void PrintVisitor::Visit( VariableExpression & expression )
+    {
+
+    }
+
+    void PrintVisitor::Visit( UnaryOperationExpression & expression )
+    {
+
+    }
+
+    void PrintVisitor::Visit( BinaryOperationExpression & expression )
+    {
+
+    }
+
+    void PrintVisitor::Visit( CallExpression & expression )
+    {
+
+    }
+
+    void PrintVisitor::Visit( ArgumentExpressionList & list )
+    {
+
+    }
+
+    void PrintVisitor::Visit( Swizzle & swizzle )
+    {
+
+    }
+
+    void PrintVisitor::Visit( PostfixSuffixCall & postfix_suffix )
+    {
+
+    }
+
+    void PrintVisitor::Visit( PostfixSuffixVariable & postfix_suffix )
+    {
+
+    }
+
+    void PrintVisitor::Visit( ConstructorExpression & expression )
+    {
+
+    }
+
+    void PrintVisitor::Visit( ConditionalExpression & expression )
+    {
+
+    }
+
+    void PrintVisitor::Visit( LValueExpression & expression )
+    {
+
+    }
+
+    void PrintVisitor::Visit( PreModifyExpression & expression )
+    {
+
+    }
+
+    void PrintVisitor::Visit( PostModifyExpression & expression )
+    {
+
+    }
+
+    void PrintVisitor::Visit( CastExpression & expression )
+    {
+
+    }
+
+    void PrintVisitor::Visit( AssignmentExpression & expression )
+    {
+
+    }
+
+
+    // Statements
+
+    void PrintVisitor::Visit( ReturnStatement & statement )
+    {
+
+    }
+
+    void PrintVisitor::Visit( BreakStatement & statement )
+    {
+
+    }
+
+    void PrintVisitor::Visit( ContinueStatement & statement )
+    {
+
+    }
+
+    void PrintVisitor::Visit( DiscardStatement & statement )
+    {
+
+    }
+
+    void PrintVisitor::Visit( EmptyStatement & statement )
+    {
+
+    }
+
+    void PrintVisitor::Visit( ExpressionStatement & statement )
+    {
+
+    }
+
+    void PrintVisitor::Visit( IfStatement & statement )
+    {
+
+    }
+
+    void PrintVisitor::Visit( WhileStatement & statement )
+    {
+
+    }
+
+    void PrintVisitor::Visit( DoWhileStatement & statement )
+    {
+
+    }
+
+    void PrintVisitor::Visit( BlockStatement & statement )
+    {
+
+    }
+
 };
