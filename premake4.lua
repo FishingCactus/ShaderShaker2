@@ -6,6 +6,7 @@ newoption
 
 solution "ShaderShaker"
     configurations { "Release", "Debug" }
+        buildoptions "-std=c++11"
 
     targetname  "shader_shaker"
     language    "C++"
