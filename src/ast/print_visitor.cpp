@@ -378,21 +378,7 @@ namespace AST
         std::cout
             << "PreModifyExpression" << endl_ind
             << "{ " << inc_ind << endl_ind
-            << "Operator{ ";
-
-        switch( expression.m_Operator )
-        {
-            case SelfModifyOperator_PlusPlus:
-                std::cout << "++";
-                break;
-
-            case SelfModifyOperator_MinusMinus:
-                std::cout << "--";
-                break;
-
-            default:
-                assert( !"Unsupported enum" );
-        }
+            << "Operator{ " << expression.m_Operator << " }" << endl_ind;
 
         std::cout << " }" << endl_ind;
 
@@ -409,23 +395,7 @@ namespace AST
         std::cout
             << "PostModifyExpression" << endl_ind
             << "{ " << inc_ind << endl_ind
-            << "Operator{ ";
-
-        switch( expression.m_Operator )
-        {
-            case SelfModifyOperator_PlusPlus:
-                std::cout << "++";
-                break;
-
-            case SelfModifyOperator_MinusMinus:
-                std::cout << "--";
-                break;
-
-            default:
-                assert( !"Unsupported enum" );
-        }
-
-        std::cout << " }" << endl_ind;
+            << "Operator{ " << expression.m_Operator << " }" << endl_ind;
 
         if( expression.m_Expression )
         {
@@ -467,24 +437,7 @@ namespace AST
             expression.m_LValueExpression->Visit( *this );
         }
 
-        std::cout << "ArraySize{ ";
-
-        switch( expression.m_Operator )
-        {
-            case AssignmentOperator_Assign : std::cout << "="; break;
-            case AssignmentOperator_Multiply : std::cout << "*="; break;
-            case AssignmentOperator_Divide : std::cout << "/="; break;
-            case AssignmentOperator_Add : std::cout << "+="; break;
-            case AssignmentOperator_Subtract : std::cout << "-="; break;
-            case AssignmentOperator_BitwiseAnd : std::cout << "&="; break;
-            case AssignmentOperator_BitwiseOr : std::cout << "|="; break;
-            case AssignmentOperator_BitwiseXor : std::cout << "^="; break;
-            case AssignmentOperator_LeftShift : std::cout << "<<="; break;
-            case AssignmentOperator_RightShift : std::cout << ">>="; break;
-            default : assert( !"Unsupported" );
-        }
-
-        std::cout << " }" << endl_ind;
+        std::cout << "ArraySize{ " << expression.m_Operator << " }" << endl_ind;
 
         if( expression.m_Expression )
         {

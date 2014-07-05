@@ -101,29 +101,7 @@ namespace AST
 
     void HLSLPrinter::Visit( UnaryOperationExpression & expression )
     {
-        switch( expression.m_Operation )
-        {
-            case UnaryOperationExpression::Plus:
-                m_Stream << "+";
-                break;
-
-            case UnaryOperationExpression::Minus:
-                m_Stream << "-";
-                break;
-
-            case UnaryOperationExpression::Not:
-                m_Stream << "!";
-                break;
-
-            case UnaryOperationExpression::BitwiseNot:
-                m_Stream << "~";
-                break;
-
-            default:
-                assert( !"Unsupported operator" );
-        }
-
-        m_Stream << "( ";
+        m_Stream << expression.m_Operation << "( ";
         expression.m_Expression->Visit( *this );
         m_Stream << " )";
     }
@@ -132,32 +110,7 @@ namespace AST
     {
         m_Stream << "( ";
         expression.m_LeftExpression->Visit( *this );
-        m_Stream << " ) ";
-
-        switch( expression.m_Operation )
-        {
-            case BinaryOperationExpression::LogicalOr : m_Stream << "||"; break;
-            case BinaryOperationExpression::LogicalAnd : m_Stream << "&&"; break;
-            case BinaryOperationExpression::BitwiseOr : m_Stream << "|"; break;
-            case BinaryOperationExpression::BitwiseXor : m_Stream << "^"; break;
-            case BinaryOperationExpression::BitwiseAnd : m_Stream << "&"; break;
-            case BinaryOperationExpression::Equality : m_Stream << "=="; break;
-            case BinaryOperationExpression::Difference : m_Stream << "!="; break;
-            case BinaryOperationExpression::LessThan : m_Stream << "<"; break;
-            case BinaryOperationExpression::GreaterThan : m_Stream << ">"; break;
-            case BinaryOperationExpression::LessThanOrEqual : m_Stream << "<="; break;
-            case BinaryOperationExpression::GreaterThanOrEqual : m_Stream << ">="; break;
-            case BinaryOperationExpression::BitwiseLeftShift : m_Stream << "<<"; break;
-            case BinaryOperationExpression::BitwiseRightShift : m_Stream << ">>"; break;
-            case BinaryOperationExpression::Addition : m_Stream << "+"; break;
-            case BinaryOperationExpression::Subtraction : m_Stream << "-"; break;
-            case BinaryOperationExpression::Multiplication : m_Stream << "*"; break;
-            case BinaryOperationExpression::Division : m_Stream << "/"; break;
-            case BinaryOperationExpression::Modulo : m_Stream << "%"; break;
-            default : assert( !"Unsupported" );
-        }
-
-        m_Stream << " ( ";
+        m_Stream << " ) " << expression.m_Operation << " ( ";
         expression.m_RightExpression->Visit( *this );
         m_Stream << " )";
     }
@@ -253,40 +206,14 @@ namespace AST
 
     void HLSLPrinter::Visit( PreModifyExpression & expression )
     {
-        switch( expression.m_Operator )
-        {
-            case SelfModifyOperator_PlusPlus:
-                m_Stream << "++";
-                break;
-
-            case SelfModifyOperator_MinusMinus:
-                m_Stream << "--";
-                break;
-
-            default:
-                assert( !"Unsupported enum" );
-        }
-
+        m_Stream << expression.m_Operator;
         expression.m_Expression->Visit( *this );
     }
 
     void HLSLPrinter::Visit( PostModifyExpression & expression )
     {
         expression.m_Expression->Visit( *this );
-
-        switch( expression.m_Operator )
-        {
-            case SelfModifyOperator_PlusPlus:
-                m_Stream << "++";
-                break;
-
-            case SelfModifyOperator_MinusMinus:
-                m_Stream << "--";
-                break;
-
-            default:
-                assert( !"Unsupported enum" );
-        }
+        m_Stream << expression.m_Operator;
     }
 
     void HLSLPrinter::Visit( CastExpression & expression )
@@ -309,25 +236,7 @@ namespace AST
     void HLSLPrinter::Visit( AssignmentExpression & expression )
     {
         expression.m_LValueExpression->Visit( *this );
-        m_Stream << " ";
-
-        switch( expression.m_Operator )
-        {
-            case AssignmentOperator_Assign : m_Stream << "="; break;
-            case AssignmentOperator_Multiply : m_Stream << "*="; break;
-            case AssignmentOperator_Divide : m_Stream << "/="; break;
-            case AssignmentOperator_Add : m_Stream << "+="; break;
-            case AssignmentOperator_Subtract : m_Stream << "-="; break;
-            case AssignmentOperator_BitwiseAnd : m_Stream << "&="; break;
-            case AssignmentOperator_BitwiseOr : m_Stream << "|="; break;
-            case AssignmentOperator_BitwiseXor : m_Stream << "^="; break;
-            case AssignmentOperator_LeftShift : m_Stream << "<<="; break;
-            case AssignmentOperator_RightShift : m_Stream << ">>="; break;
-            default : assert( !"Unsupported" );
-        }
-
-        m_Stream << " ";
-
+        m_Stream << " " << expression.m_Operator << " ";
         expression.m_Expression->Visit( *this );
     }
 
