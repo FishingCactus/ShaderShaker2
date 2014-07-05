@@ -37,6 +37,9 @@ solution "ShaderShaker"
     configuration "vs*"
         defines     { "_CRT_SECURE_NO_WARNINGS" }
 
+    configuration "gmake"
+        buildoptions "-std=c++11"
+
 project "ShaderShaker"
 
     kind        "ConsoleApp"
