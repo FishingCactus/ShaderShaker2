@@ -5,7 +5,7 @@ newoption
 }
 
 solution "ShaderShaker"
-    configurations { "Release", "Debug", "gmake" }
+    configurations { "Release", "Debug" }
 
     targetname  "shader_shaker"
     language    "C++"
