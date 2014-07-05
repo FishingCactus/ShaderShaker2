@@ -4,6 +4,7 @@
     #include <vector>
     #include <string>
     #include <cassert>
+    #include <memory>
 
     #include "visitor.h"
 
