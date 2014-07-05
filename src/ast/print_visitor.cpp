@@ -180,82 +180,318 @@ namespace AST
     // Expressions
     void PrintVisitor::Visit( LiteralExpression & expression )
     {
-
+        std::cout
+            << "LiteralExpression" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Type{ " << expression.m_Type << " }" << endl_ind
+            << "Value{ " << expression.m_Value << " }" << endl_ind
+            << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( VariableExpression & expression )
     {
+        std::cout
+            << "VariableExpression" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Name{ " << expression.m_Name << " }" << endl_ind;
 
+        if( expression.m_SubscriptExpression )
+        {
+            expression.m_SubscriptExpression->Visit( *this );
+        }
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( UnaryOperationExpression & expression )
     {
+        std::cout
+            << "UnaryOperationExpression" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Operation{ " << expression.m_Operation << " }" << endl_ind;
 
+        if( expression.m_Expression )
+        {
+            expression.m_Expression->Visit( *this );
+        }
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( BinaryOperationExpression & expression )
     {
+        std::cout
+            << "BinaryOperationExpression" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Operation{ " << expression.m_Operation << " }" << endl_ind;
 
+        if( expression.m_LeftExpression )
+        {
+            expression.m_LeftExpression->Visit( *this );
+        }
+
+        if( expression.m_RightExpression )
+        {
+            expression.m_RightExpression->Visit( *this );
+        }
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( CallExpression & expression )
     {
+        std::cout
+            << "CallExpression" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Name{ " << expression.m_Name << " }" << endl_ind;
 
+        if( expression.m_ArgumentExpressionList )
+        {
+            expression.m_ArgumentExpressionList->Visit( *this );
+        }
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( ArgumentExpressionList & list )
     {
+        std::cout
+            << "ArgumentExpressionList" << endl_ind
+            << "{ " << inc_ind << endl_ind;
 
+        VisitTable( *this, list.m_ExpressionList );
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( Swizzle & swizzle )
     {
-
+        std::cout
+            << "Swizzle" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Swizzle{ " << swizzle.m_Swizzle << " }" << endl_ind
+            << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( PostfixSuffixCall & postfix_suffix )
     {
+        std::cout
+            << "PostfixSuffixCall" << endl_ind
+            << "{ " << inc_ind << endl_ind;
 
+        if( postfix_suffix.m_CallExpression )
+        {
+            postfix_suffix.m_CallExpression->Visit( *this );
+        }
+
+        if( postfix_suffix.m_Suffix )
+        {
+            postfix_suffix.m_Suffix->Visit( *this );
+        }
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( PostfixSuffixVariable & postfix_suffix )
     {
+        std::cout
+            << "PostfixSuffixVariable" << endl_ind
+            << "{ " << inc_ind << endl_ind;
 
+        if( postfix_suffix.m_VariableExpression )
+        {
+            postfix_suffix.m_VariableExpression->Visit( *this );
+        }
+
+        if( postfix_suffix.m_Suffix )
+        {
+            postfix_suffix.m_Suffix->Visit( *this );
+        }
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( ConstructorExpression & expression )
     {
+        std::cout
+            << "ConstructorExpression" << endl_ind
+            << "{ " << inc_ind << endl_ind;
 
+        if( expression.m_Type )
+        {
+            expression.m_Type->Visit( *this );
+        }
+
+        if( expression.m_ArgumentExpressionList )
+        {
+            expression.m_ArgumentExpressionList->Visit( *this );
+        }
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( ConditionalExpression & expression )
     {
+        std::cout
+            << "ConditionalExpression" << endl_ind
+            << "{ " << inc_ind << endl_ind;
 
+        if( expression.m_Condition )
+        {
+            expression.m_Condition->Visit( *this );
+        }
+
+        if( expression.m_IfTrue )
+        {
+            expression.m_IfTrue->Visit( *this );
+        }
+
+        if( expression.m_IfFalse )
+        {
+            expression.m_IfFalse->Visit( *this );
+        }
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( LValueExpression & expression )
     {
+        std::cout
+            << "LValueExpression" << endl_ind
+            << "{ " << inc_ind << endl_ind;
 
+        if( expression.m_VariableExpression )
+        {
+            expression.m_VariableExpression->Visit( *this );
+        }
+
+        if( expression.m_Suffix )
+        {
+            expression.m_Suffix->Visit( *this );
+        }
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( PreModifyExpression & expression )
     {
+        std::cout
+            << "PreModifyExpression" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Operator{ ";
 
+        switch( expression.m_Operator )
+        {
+            case SelfModifyOperator_PlusPlus:
+                std::cout << "++";
+                break;
+
+            case SelfModifyOperator_MinusMinus:
+                std::cout << "--";
+                break;
+
+            default:
+                assert( !"Unsupported enum" );
+        }
+
+        std::cout << " }" << endl_ind;
+
+        if( expression.m_Expression )
+        {
+            expression.m_Expression->Visit( *this );
+        }
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( PostModifyExpression & expression )
     {
+        std::cout
+            << "PostModifyExpression" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Operator{ ";
 
+        switch( expression.m_Operator )
+        {
+            case SelfModifyOperator_PlusPlus:
+                std::cout << "++";
+                break;
+
+            case SelfModifyOperator_MinusMinus:
+                std::cout << "--";
+                break;
+
+            default:
+                assert( !"Unsupported enum" );
+        }
+
+        std::cout << " }" << endl_ind;
+
+        if( expression.m_Expression )
+        {
+            expression.m_Expression->Visit( *this );
+        }
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( CastExpression & expression )
     {
+        std::cout
+            << "CastExpression" << endl_ind
+            << "{ " << inc_ind << endl_ind;
 
+        if( expression.m_Type )
+        {
+            expression.m_Type->Visit( *this );
+        }
+
+        std::cout << "ArraySize{ " << expression.m_ArraySize << " }" << endl_ind;
+
+        if( expression.m_Expression )
+        {
+            expression.m_Expression->Visit( *this );
+        }
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void PrintVisitor::Visit( AssignmentExpression & expression )
     {
+        std::cout
+            << "AssignmentExpression" << endl_ind
+            << "{ " << inc_ind << endl_ind;
 
+        if( expression.m_LValueExpression )
+        {
+            expression.m_LValueExpression->Visit( *this );
+        }
+
+        std::cout << "ArraySize{ ";
+
+        switch( expression.m_Operator )
+        {
+            case AssignmentOperator_Assign : std::cout << "="; break;
+            case AssignmentOperator_Multiply : std::cout << "*="; break;
+            case AssignmentOperator_Divide : std::cout << "/="; break;
+            case AssignmentOperator_Add : std::cout << "+="; break;
+            case AssignmentOperator_Subtract : std::cout << "-="; break;
+            case AssignmentOperator_BitwiseAnd : std::cout << "&="; break;
+            case AssignmentOperator_BitwiseOr : std::cout << "|="; break;
+            case AssignmentOperator_BitwiseXor : std::cout << "^="; break;
+            case AssignmentOperator_LeftShift : std::cout << "<<="; break;
+            case AssignmentOperator_RightShift : std::cout << ">>="; break;
+            default : assert( !"Unsupported" );
+        }
+
+        std::cout << " }" << endl_ind;
+
+        if( expression.m_Expression )
+        {
+            expression.m_Expression->Visit( *this );
+        }
+
+        std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
 
