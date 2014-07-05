@@ -5,8 +5,7 @@ newoption
 }
 
 solution "ShaderShaker"
-    configurations { "Release", "Debug" }
-        buildoptions "-std=c++11"
+    configurations { "Release", "Debug", "gmake" }
 
     targetname  "shader_shaker"
     language    "C++"
@@ -37,6 +36,9 @@ solution "ShaderShaker"
 
     configuration "vs*"
         defines     { "_CRT_SECURE_NO_WARNINGS" }
+
+    configuration "gmake"
+        buildoptions "-std=c++11"
 
 project "ShaderShaker"
 
