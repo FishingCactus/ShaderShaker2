@@ -76,9 +76,9 @@
         };
 
         std::ostream& operator<<(
-                std::ostream &out,
-                BinaryOperationExpression::Operation operation
-                );
+            std::ostream &out,
+            BinaryOperationExpression::Operation operation
+            );
 
         struct UnaryOperationExpression : Expression
         {
