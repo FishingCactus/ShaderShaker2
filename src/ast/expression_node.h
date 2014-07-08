@@ -1,6 +1,8 @@
 #ifndef EXPRESSION_NODE_H
     #define EXPRESSION_NODE_H
 
+    #include <ostream>
+
     namespace AST
     {
         enum SelfModifyOperator
@@ -9,6 +11,11 @@
             SelfModifyOperator_PlusPlus,
             SelfModifyOperator_MinusMinus
         };
+
+        std::ostream& operator<<(
+            std::ostream &out,
+            SelfModifyOperator self_modify_operator
+            );
 
         struct Expression : Node
         {
@@ -68,6 +75,11 @@
 
         };
 
+        std::ostream& operator<<(
+            std::ostream &out,
+            BinaryOperationExpression::Operation operation
+            );
+
         struct UnaryOperationExpression : Expression
         {
             AST_HandleVisitor()
@@ -93,6 +105,11 @@
                 m_Expression;
 
         };
+
+        std::ostream& operator<<(
+            std::ostream &out,
+            UnaryOperationExpression::Operation operation
+            );
 
         struct CastExpression: Expression
         {
@@ -285,6 +302,11 @@
             AssignmentOperator_RightShift,
             AssignmentOperator_None = -1
         };
+
+        std::ostream& operator<<(
+            std::ostream &out,
+            AssignmentOperator assignment_operator
+            );
 
         struct AssignmentExpression : Expression
         {
