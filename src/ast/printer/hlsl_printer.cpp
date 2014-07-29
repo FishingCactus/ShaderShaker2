@@ -81,6 +81,11 @@ namespace AST
 
     }
 
+    void HLSLPrinter::Visit( FunctionDeclaration & declaration )
+    {
+
+    }
+
     void HLSLPrinter::Visit( LiteralExpression & expression )
     {
 

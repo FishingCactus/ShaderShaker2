@@ -21,6 +21,7 @@
         struct SamplerDeclaration;
         struct SamplerBody;
         struct StructDefinition;
+        struct FunctionDeclaration;
 
         struct LiteralExpression;
         struct VariableExpression;
@@ -67,6 +68,7 @@
             virtual void Visit( SamplerDeclaration & declaration ) = 0;
             virtual void Visit( SamplerBody & body ) = 0;
             virtual void Visit( StructDefinition & definition ) = 0;
+            virtual void Visit( FunctionDeclaration & function_declaration ) = 0;
 
             // Expressions
             virtual void Visit( LiteralExpression & expression ) = 0;

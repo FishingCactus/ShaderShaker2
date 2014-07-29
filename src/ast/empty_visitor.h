@@ -23,6 +23,7 @@
             virtual void Visit( SamplerDeclaration & declaration ) override {}
             virtual void Visit( SamplerBody & body ) override {}
             virtual void Visit( StructDefinition & definition ) override {}
+            virtual void Visit( FunctionDeclaration & declaration ) override {}
 
             // Expressions
             virtual void Visit( LiteralExpression & expression ) override {}
