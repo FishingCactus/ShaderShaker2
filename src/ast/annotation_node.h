@@ -10,7 +10,7 @@
         {
 
             void AddEntry( AnnotationEntry * entry ) { m_AnnotationTable.emplace_back( entry ); }
-            std::vector< std::shared_ptr< AnnotationEntry> >
+            std::vector< Base::ObjectRef< AnnotationEntry> >
                 m_AnnotationTable;
         };
 

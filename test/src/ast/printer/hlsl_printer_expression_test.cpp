@@ -75,7 +75,7 @@ TEST_CASE( "Variables are printed", "[ast][hlsl][printer]" )
         AST::HLSLPrinter
             printer( output );
 
-        node.m_SubscriptExpression = std::shared_ptr<AST::Expression>( new AST::LiteralExpression( AST::LiteralExpression::Int, "1" ) );
+        node.m_SubscriptExpression = new AST::LiteralExpression( AST::LiteralExpression::Int, "1" );
 
         node.Visit( printer );
 
@@ -309,9 +309,9 @@ TEST_CASE( "Conditionnals expression are printed", "[ast][hlsl][printer]" )
     AST::HLSLPrinter
         printer( output );
 
-    node.m_Condition = std::shared_ptr<AST::Expression>( new AST::VariableExpression( "a" ) );
-    node.m_IfTrue = std::shared_ptr<AST::Expression>( new AST::VariableExpression( "b" ) );
-    node.m_IfFalse = std::shared_ptr<AST::Expression>( new AST::VariableExpression( "c" ) );
+    node.m_Condition = new AST::VariableExpression( "a" );
+    node.m_IfTrue = new AST::VariableExpression( "b" );
+    node.m_IfFalse = new AST::VariableExpression( "c" );
 
     node.Visit( printer );
 

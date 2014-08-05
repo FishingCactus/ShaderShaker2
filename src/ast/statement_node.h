@@ -17,7 +17,7 @@
             ReturnStatement(){}
             ReturnStatement( Expression * expression ) : m_Expression( expression ) {}
 
-            std::shared_ptr<Expression>
+            Base::ObjectRef<Expression>
                 m_Expression;
         };
 
@@ -47,7 +47,7 @@
 
             ExpressionStatement( Expression * expression ) : m_Expression( expression ) {}
 
-            std::shared_ptr<Expression>
+            Base::ObjectRef<Expression>
                 m_Expression;
         };
 
@@ -64,9 +64,9 @@
 
             }
 
-            std::shared_ptr<Expression>
+            Base::ObjectRef<Expression>
                 m_Condition;
-            std::shared_ptr<Statement>
+            Base::ObjectRef<Statement>
                 m_ThenStatement,
                 m_ElseStatement;
         };
@@ -77,9 +77,9 @@
 
             WhileStatement( Expression * condition, Statement * statement ) : m_Condition( condition ), m_Statement( statement ) {}
 
-            std::shared_ptr<Expression>
+            Base::ObjectRef<Expression>
                 m_Condition;
-            std::shared_ptr<Statement>
+            Base::ObjectRef<Statement>
                 m_Statement;
         };
 
@@ -89,9 +89,9 @@
 
             DoWhileStatement( Expression * condition, Statement * statement ) : m_Condition( condition ), m_Statement( statement ) {}
 
-            std::shared_ptr<Expression>
+            Base::ObjectRef<Expression>
                 m_Condition;
-            std::shared_ptr<Statement>
+            Base::ObjectRef<Statement>
                 m_Statement;
         };
 
@@ -101,10 +101,10 @@
                 m_InitStatement( init_statement ), m_Statement( statement ),
                 m_EqualityExpression( equality_expression ), m_ModifyExpression( modify_expression ){}
 
-            std::shared_ptr<Statement>
+            Base::ObjectRef<Statement>
                 m_InitStatement,
                 m_Statement;
-            std::shared_ptr<Expression>
+            Base::ObjectRef<Expression>
                 m_EqualityExpression,
                 m_ModifyExpression;
         };
@@ -115,7 +115,7 @@
 
             void AddStatement( Statement * statement ){ m_StatementTable.emplace_back( statement ); }
 
-            std::vector< std::shared_ptr<Statement> >
+            std::vector< Base::ObjectRef<Statement> >
                 m_StatementTable;
         };
 
@@ -123,15 +123,15 @@
         {
             AST_HandleVisitor()
 
-            void SetType( Type * type ){ assert( type ); m_Type.reset( type ); }
+            void SetType( Type * type ){ assert( type ); m_Type = type; }
             void AddStorageClass( StorageClass * storage_class ){ assert( storage_class ); m_StorageClass.emplace_back( storage_class ); }
             void AddTypeModifier( TypeModifier * type_modifier ){ assert( type_modifier ); m_TypeModifier.emplace_back( type_modifier ); }
             void AddBody( VariableDeclarationBody * body ){ assert( body ); m_BodyTable.emplace_back( body ); }
 
-            std::shared_ptr<Type> m_Type;
-            std::vector<std::shared_ptr<StorageClass> > m_StorageClass;
-            std::vector<std::shared_ptr<TypeModifier> > m_TypeModifier;
-            std::vector<std::shared_ptr<VariableDeclarationBody> > m_BodyTable;
+            Base::ObjectRef<Type> m_Type;
+            std::vector<Base::ObjectRef<StorageClass> > m_StorageClass;
+            std::vector<Base::ObjectRef<TypeModifier> > m_TypeModifier;
+            std::vector<Base::ObjectRef<VariableDeclarationBody> > m_BodyTable;
         };
 
         struct AssignmentStatement : Statement
@@ -142,7 +142,7 @@
 
             }
 
-            std::shared_ptr<AssignmentExpression>
+            Base::ObjectRef<AssignmentExpression>
                 m_Expression;
         };
 

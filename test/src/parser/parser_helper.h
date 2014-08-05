@@ -14,14 +14,14 @@
         {
         }
 
-    HLSLLexerTraits::InputStreamType
-        m_Input;
-    HLSLLexer
-        m_Lexer;
-    HLSLLexerTraits::TokenStreamType
-        m_TokenStream;
-    HLSLParser
-        m_Parser;
+        HLSLLexerTraits::InputStreamType
+            m_Input;
+        HLSLLexer
+            m_Lexer;
+        HLSLLexerTraits::TokenStreamType
+            m_TokenStream;
+        HLSLParser
+            m_Parser;
     };
 
 #endif

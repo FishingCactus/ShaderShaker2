@@ -7,6 +7,8 @@
     #include <memory>
 
     #include "visitor.h"
+    #include "base/object.h"
+    #include "base/object_ref.h"
 
     namespace AST
     {
@@ -29,11 +31,15 @@
         #define AST_HandleVisitor() \
             virtual void Visit( AST::Visitor & visitor ) override { visitor.Visit( *this ); }
 
-        struct Node
+        struct Node : public Base::Object
         {
             virtual void Visit( AST::Visitor & visitor ){ visitor.Visit( *this ); };
             virtual ~Node(){}
 
+        };
+
+        struct GlobalDeclaration : Node
+        {
         };
 
         struct TranslationUnit : Node
@@ -43,7 +49,7 @@
             void AddGlobalDeclaration( GlobalDeclaration * declaration )
             {
                 assert( declaration );
-                m_GlobalDeclarationTable.emplace_back( declaration );
+                m_GlobalDeclarationTable.push_back( declaration );
             }
 
             void AddTechnique( Technique * technique )
@@ -52,28 +58,24 @@
                 m_TechniqueTable.emplace_back( technique );
             }
 
-            std::vector< std::shared_ptr<GlobalDeclaration> >
+            std::vector< Base::ObjectRef<GlobalDeclaration> >
                 m_GlobalDeclarationTable;
-            std::vector< std::shared_ptr<Technique> >
+            std::vector< Base::ObjectRef<Technique> >
                 m_TechniqueTable;
-        };
-
-        struct GlobalDeclaration : Node
-        {
         };
 
         struct VariableDeclaration : GlobalDeclaration
         {
             AST_HandleVisitor()
-            void SetType( Type * type ){ assert( type ); m_Type.reset( type ); }
+            void SetType( Type * type ){ assert( type ); m_Type = type; }
             void AddStorageClass( StorageClass * storage_class ){ assert( storage_class ); m_StorageClass.emplace_back( storage_class ); }
             void AddTypeModifier( TypeModifier * type_modifier ){ assert( type_modifier ); m_TypeModifier.emplace_back( type_modifier ); }
             void AddBody( VariableDeclarationBody * body ){ assert( body ); m_BodyTable.emplace_back( body ); }
 
-            std::shared_ptr<Type> m_Type;
-            std::vector<std::shared_ptr<StorageClass> > m_StorageClass;
-            std::vector<std::shared_ptr<TypeModifier> > m_TypeModifier;
-            std::vector<std::shared_ptr<VariableDeclarationBody> > m_BodyTable;
+            Base::ObjectRef<Type> m_Type;
+            std::vector<Base::ObjectRef<StorageClass> > m_StorageClass;
+            std::vector<Base::ObjectRef<TypeModifier> > m_TypeModifier;
+            std::vector<Base::ObjectRef<VariableDeclarationBody> > m_BodyTable;
         };
 
         struct TextureDeclaration : GlobalDeclaration
@@ -97,7 +99,7 @@
                 m_Type,
                 m_Name,
                 m_Semantic;
-            std::shared_ptr<Annotations>
+            Base::ObjectRef<Annotations>
                 m_Annotations;
         };
 
@@ -122,7 +124,7 @@
             std::string
                 m_Type,
                 m_Name;
-            std::vector< std::shared_ptr<SamplerBody> >
+            std::vector< Base::ObjectRef<SamplerBody> >
                 m_BodyTable;
         };
 
@@ -165,7 +167,7 @@
 
                 }
 
-                std::shared_ptr<Type>
+                Base::ObjectRef<Type>
                     m_Type;
                 std::string
                     m_Name,
@@ -239,11 +241,11 @@
             std::string
                 m_Name,
                 m_Semantic;
-            std::shared_ptr<InitialValue>
+            Base::ObjectRef<InitialValue>
                 m_InitialValue;
             int
                 m_ArraySize;
-            std::shared_ptr<Annotations>
+            Base::ObjectRef<Annotations>
                 m_Annotations;
 
         };
@@ -256,7 +258,7 @@
 
             void AddExpression( Expression * expression ){ assert( expression ); m_ExpressionTable.emplace_back( expression ); }
 
-            std::vector<std::shared_ptr<Expression> >
+            std::vector<Base::ObjectRef<Expression> >
                 m_ExpressionTable;
             bool
                 m_Vector;

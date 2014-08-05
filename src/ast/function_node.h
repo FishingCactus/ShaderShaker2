@@ -14,16 +14,16 @@
             void AddStorageClass( StorageClass * storage ){ m_StorageClassTable.emplace_back( storage ); }
             void AddStatement( Statement * statement ){ m_StatementTable.emplace_back( statement ); }
 
-            std::shared_ptr<Type> 
+            Base::ObjectRef<Type>
                 m_Type;
-            std::string 
+            std::string
                 m_Name,
                 m_Semantic;
-            std::shared_ptr<ArgumentList> 
+            Base::ObjectRef<ArgumentList>
                 m_ArgumentList;
-            std::vector< std::shared_ptr<StorageClass> >
+            std::vector< Base::ObjectRef<StorageClass> >
                 m_StorageClassTable;
-            std::vector< std::shared_ptr<Statement> >
+            std::vector< Base::ObjectRef<Statement> >
                 m_StatementTable;
 
         };
@@ -35,7 +35,7 @@
 
             void AddArgument( Argument * argument ){ m_ArgumentTable.emplace_back( argument ); }
 
-            std::vector< std::shared_ptr<Argument> >
+            std::vector< Base::ObjectRef<Argument> >
                 m_ArgumentTable;
         };
 
@@ -43,16 +43,16 @@
         {
             AST_HandleVisitor()
 
-            std::shared_ptr<Type>
+            Base::ObjectRef<Type>
                 m_Type;
             std::string
                 m_Name,
                 m_InputModifier,
                 m_Semantic,
                 m_InterpolationModifier;
-            std::shared_ptr<TypeModifier>
+            Base::ObjectRef<TypeModifier>
                 m_TypeModifier;
-            std::shared_ptr<InitialValue>
+            Base::ObjectRef<InitialValue>
                 m_InitialValue;
         };
     }

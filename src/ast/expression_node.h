@@ -26,9 +26,9 @@
         {
             AST_HandleVisitor()
 
-            std::shared_ptr<Expression> m_Condition;
-            std::shared_ptr<Expression> m_IfTrue;
-            std::shared_ptr<Expression> m_IfFalse;
+            Base::ObjectRef<Expression> m_Condition;
+            Base::ObjectRef<Expression> m_IfTrue;
+            Base::ObjectRef<Expression> m_IfFalse;
 
         };
 
@@ -69,7 +69,7 @@
 
             Operation
                 m_Operation;
-            std::shared_ptr<Expression>
+            Base::ObjectRef<Expression>
                 m_LeftExpression,
                 m_RightExpression;
 
@@ -101,7 +101,7 @@
 
             Operation
                 m_Operation;
-            std::shared_ptr<Expression>
+            Base::ObjectRef<Expression>
                 m_Expression;
 
         };
@@ -126,11 +126,11 @@
 
             }
 
-            std::shared_ptr<Type>
+            Base::ObjectRef<Type>
                 m_Type;
             int
                 m_ArraySize;
-            std::shared_ptr<Expression>
+            Base::ObjectRef<Expression>
                 m_Expression;
 
         };
@@ -164,7 +164,7 @@
 
             std::string
                 m_Name;
-            std::shared_ptr<Expression>
+            Base::ObjectRef<Expression>
                 m_SubscriptExpression;
         };
 
@@ -173,9 +173,9 @@
             AST_HandleVisitor()
             PostfixExpression( Expression *expression, PostfixSuffix * suffix ) : m_Expression( expression ), m_Suffix( suffix ){}
 
-            std::shared_ptr<Expression>
+            Base::ObjectRef<Expression>
                 m_Expression;
-            std::shared_ptr<PostfixSuffix>
+            Base::ObjectRef<PostfixSuffix>
                 m_Suffix;
         };
 
@@ -185,7 +185,7 @@
 
             void AddExpression( Expression * expression ){ m_ExpressionList.emplace_back( expression ); }
 
-            std::vector<std::shared_ptr<Expression> >
+            std::vector<Base::ObjectRef<Expression> >
                 m_ExpressionList;
         };
 
@@ -197,7 +197,7 @@
 
             std::string
                 m_Name;
-            std::shared_ptr<ArgumentExpressionList>
+            Base::ObjectRef<ArgumentExpressionList>
                 m_ArgumentExpressionList;
 
         };
@@ -208,9 +208,9 @@
 
             ConstructorExpression( Type * type, ArgumentExpressionList * list ) : m_Type( type ), m_ArgumentExpressionList( list ) {}
 
-            std::shared_ptr<Type>
+            Base::ObjectRef<Type>
                 m_Type;
-            std::shared_ptr<ArgumentExpressionList>
+            Base::ObjectRef<ArgumentExpressionList>
                 m_ArgumentExpressionList;
         };
 
@@ -234,9 +234,9 @@
 
             PostfixSuffixCall( CallExpression * call, PostfixSuffix * suffix ) : m_CallExpression( call ), m_Suffix( suffix ) {}
 
-            std::shared_ptr<CallExpression>
+            Base::ObjectRef<CallExpression>
                 m_CallExpression;
-            std::shared_ptr<PostfixSuffix>
+            Base::ObjectRef<PostfixSuffix>
                 m_Suffix;
         };
 
@@ -246,9 +246,9 @@
 
             PostfixSuffixVariable( VariableExpression * variable, PostfixSuffix * suffix ) : m_VariableExpression( variable ), m_Suffix( suffix ) {}
 
-            std::shared_ptr<VariableExpression>
+            Base::ObjectRef<VariableExpression>
                 m_VariableExpression;
-            std::shared_ptr<PostfixSuffix>
+            Base::ObjectRef<PostfixSuffix>
                 m_Suffix;
         };
 
@@ -258,9 +258,9 @@
 
             LValueExpression( VariableExpression * variable, PostfixSuffix * suffix ) : m_VariableExpression( variable ), m_Suffix( suffix ) {}
 
-            std::shared_ptr<VariableExpression>
+            Base::ObjectRef<VariableExpression>
                 m_VariableExpression;
-            std::shared_ptr<PostfixSuffix>
+            Base::ObjectRef<PostfixSuffix>
                 m_Suffix;
         };
 
@@ -272,7 +272,7 @@
 
             SelfModifyOperator
                 m_Operator;
-            std::shared_ptr<LValueExpression>
+            Base::ObjectRef<LValueExpression>
                 m_Expression;
         };
 
@@ -284,7 +284,7 @@
 
             SelfModifyOperator
                 m_Operator;
-            std::shared_ptr<LValueExpression>
+            Base::ObjectRef<LValueExpression>
                 m_Expression;
         };
 
@@ -318,11 +318,11 @@
 
             }
 
-            std::shared_ptr<LValueExpression>
+            Base::ObjectRef<LValueExpression>
                 m_LValueExpression;
             AssignmentOperator
                 m_Operator;
-            std::shared_ptr<Expression>
+            Base::ObjectRef<Expression>
                 m_Expression;
         };
     }

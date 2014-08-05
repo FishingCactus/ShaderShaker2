@@ -325,7 +325,7 @@ namespace AST
         {
             m_Stream << "{" << inc_ind << endl_ind;
 
-            std::vector< std::shared_ptr<Statement> >::iterator
+            std::vector< Base::ObjectRef<Statement> >::iterator
                 it, end = statement.m_StatementTable.end();
 
             for ( it = statement.m_StatementTable.begin(); it != end; ++it )

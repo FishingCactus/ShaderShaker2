@@ -28,7 +28,7 @@ TEST_CASE( "Returns are printed", "[ast][hlsl][printer]" )
         AST::HLSLPrinter
             printer( output );
 
-        node.m_Expression = std::shared_ptr<AST::Expression>( new AST::VariableExpression( "a" ) );
+        node.m_Expression = new AST::VariableExpression( "a" );
 
         node.Visit( printer );
 

@@ -21,7 +21,7 @@
 
             std::string
                 m_Name;
-            std::vector< std::shared_ptr<Pass> >
+            std::vector< Base::ObjectRef<Pass> >
                 m_PassTable;
         };
 
@@ -37,7 +37,7 @@
 
             std::string
                 m_Name;
-            std::vector< std::shared_ptr<ShaderDefinition> >
+            std::vector< Base::ObjectRef<ShaderDefinition> >
                 m_ShaderDefinitionTable;
         };
 
@@ -56,7 +56,7 @@
                 m_Name;
             ShaderType
                 m_Type;
-            std::shared_ptr<ShaderArgumentList>
+            Base::ObjectRef<ShaderArgumentList>
                 m_List;
         };
 
@@ -72,7 +72,7 @@
                 m_ShaderArgumentTable.emplace_back( argument );
             }
 
-            std::vector< std::shared_ptr<Expression> >
+            std::vector< Base::ObjectRef<Expression> >
                 m_ShaderArgumentTable;
         };
     }
