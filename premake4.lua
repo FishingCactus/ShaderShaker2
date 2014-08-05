@@ -51,9 +51,11 @@ project "ShaderShaker"
         targetdir   "bin/release"
 
 project "ShaderShakerDll"
-    defines{ "SHADERSHAKER_IN_DLL" }
 
+    defines{ "SHADERSHAKER_IN_DLL" }
     kind "SharedLib"
+
+    excludes{ "src/main.cpp" }
 
     configuration "Debug"
         targetdir   "bin/debug_dll"
@@ -65,6 +67,8 @@ project "ShaderShakerLib"
 
     defines{ "SHADERSHAKER_IN_LIB" }
     kind "StaticLib"
+
+    excludes{ "src/main.cpp"}
 
     configuration "Debug"
         targetdir   "bin/debug_lib"
