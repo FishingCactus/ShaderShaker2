@@ -4,7 +4,7 @@
 #include "hlsl_parser/HLSLParser.hpp"
 #include "ast/node.h"
 
-AST::TranslationUnit * ParseHLSL( const char * filename )
+AST::TranslationUnit * HLSL::ParseHLSL( const char * filename )
 {
 
     HLSLLexerTraits::InputStreamType input( (ANTLR_UINT8*)filename, ANTLR_ENC_8BIT );

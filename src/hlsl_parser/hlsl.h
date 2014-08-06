@@ -3,6 +3,9 @@
 
     namespace AST{ struct TranslationUnit; }
 
-    AST::TranslationUnit * ParseHLSL( const char * filename );
+    namespace HLSL
+    {
+        AST::TranslationUnit * ParseHLSL( const char * filename );
+    }
 
 #endif
