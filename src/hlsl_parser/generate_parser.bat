@@ -1,1 +1,1 @@
-java -cp ../../contrib/antlr.jar org.antlr.Tool HLSL.g
+java -cp ../../contrib/antlr/antlr.jar org.antlr.Tool HLSL.g
