@@ -43,6 +43,7 @@ solution "ShaderShaker"
 project "ShaderShaker"
 
     kind        "ConsoleApp"
+    includedirs "contrib/tclap/include"
 
     configuration "Debug"
         targetdir   "bin/debug"

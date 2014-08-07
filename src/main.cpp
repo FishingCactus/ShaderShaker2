@@ -1,15 +1,25 @@
 #include "hlsl_parser/hlsl.h"
 #include "ast/print_visitor.h"
 #include "ast/node.h"
+#include <tclap/CmdLine.h>
 
 
 int main( int argument_count, const char* argument_table[] )
 {
-    AST::TranslationUnit * unit = ParseHLSL( argument_table[ 1 ] );
+	try
+    {
+        TCLAP::CmdLine cmd( "ShaderShaker" );
 
-    AST::PrintVisitor print_visitor;
+		TCLAP::MultiArg<std::string> semantic_argument("s","semantic","semantic to output",true,"string", cmd);
+		TCLAP::UnlabeledMultiArg<std::string> fragment_arguments( "fragment", "fragment file path", true, "filepath", cmd);
 
-    unit->Visit( print_visitor );
+        cmd.parse( argument_count, argument_table );
+
+	}
+	catch( TCLAP::ArgException &e )
+	{
+		std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+	}
 
     return 0;
 }
