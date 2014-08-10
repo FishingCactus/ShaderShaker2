@@ -20,6 +20,9 @@
 
 		public:
 
+            typedef Base::ObjectRef<FragmentDefinition>
+                Ref;
+
 			static void GenerateFragment(
 				Base::ObjectRef<FragmentDefinition> & definition,
 				AST::TranslationUnit & translation_unit

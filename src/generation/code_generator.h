@@ -10,9 +10,9 @@
     {
 
         Base::ObjectRef<AST::TranslationUnit> GenerateShader(
-            const std::vector<std::string> & fragment_name_table
+            const std::vector<std::string> & fragment_name_table,
+            const std::vector<std::string> & semantic_table
             );
-
     }
 
 

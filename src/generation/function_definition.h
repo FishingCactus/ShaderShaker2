@@ -6,6 +6,7 @@
 	#include <memory>
     #include "fragment_definition.h"
 	#include "base/object.h"
+	#include "base/object_ref.h"
     namespace AST{ struct FunctionDeclaration; }
 
 	namespace Generation
@@ -14,6 +15,9 @@
 		{
 
 		public:
+
+            typedef Base::ObjectRef<FunctionDefinition>
+                Ref;
 
             void FillFromFunctionDeclaration(
 				AST::FunctionDeclaration & declaration
