@@ -16,9 +16,27 @@ namespace Generation
         FunctionDefinition::Ref & function,
         std::set<FunctionDefinition::Ref> & used_function_set,
         const std::set<std::string> & semantic_set,
-        const std::vector<FragmentDefinition::Ref > & definition
+        const std::vector<FragmentDefinition::Ref > & definition_table
         )
     {
+        std::vector<FragmentDefinition::Ref >::const_reverse_iterator it, end;
+
+        it = definition_table.rbegin();
+        end = definition_table.rend();
+
+        for(; it!=end; ++it )
+        {
+            if( (*it)->FindFunctionDefinitionMatchingSemanticSet( function, semantic_set ) )
+            {
+                if( used_function_set.find( function ) != used_function_set.end() )
+                {
+                    continue;
+                }
+
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -47,6 +65,7 @@ namespace Generation
 
         while( !open_set.empty() )
         {
+            std::set<std::string> new_open_set;
             if( !FindMatchingFunction( function, used_function_set, open_set, fragment_table ) )
             {
                 std::ostream_iterator< std::string > output( std::cerr, ", " );
@@ -57,6 +76,19 @@ namespace Generation
             }
 
             GraphNode::Ref node = new GraphNode( *function );
+            used_function_set.insert( function );
+
+            std::set_difference(
+                open_set.begin(), open_set.end(),
+                function->GetOutSemanticSet().begin(), function->GetOutSemanticSet().end(),
+                std::inserter(new_open_set, new_open_set.begin() )
+                );
+
+            open_set = std::move( new_open_set );
+
+            closed_set.insert( function->GetOutSemanticSet().begin(), function->GetOutSemanticSet().end() );
+            open_set.insert( function->GetInSemanticSet().begin(), function->GetInSemanticSet().end() );
+            open_set.insert( function->GetInOutSemanticSet().begin(), function->GetInOutSemanticSet().end() );
 
             if( !graph->AddNode( *node ) )
             {

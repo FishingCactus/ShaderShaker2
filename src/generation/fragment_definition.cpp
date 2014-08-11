@@ -2,12 +2,36 @@
 #include "function_definition.h"
 #include "ast/empty_visitor.h"
 #include "ast/node.h"
+#include <algorithm>
 
 namespace Generation
 {
+    namespace
+    {
+        struct Counter : public std::iterator<std::output_iterator_tag, Base::ObjectRef<FunctionDefinition> >
+        {
+            size_t* m_Count;
 
-	class GetFunctionVisitor : public AST::EmptyVisitor
-	{
+            explicit Counter(size_t* count) : m_Count( count ) {}
+
+            template <typename T> void operator()( T& /*value*/ )
+            {
+                ++ *m_Count;
+            }
+
+            template <typename T> void operator=( T& /*value*/ )
+            {
+                ++ *m_Count;
+            }
+
+            Counter & operator*(){ return *this;}
+            Counter & operator++(){ return *this; }
+            Counter & operator++(int){ return *this; }
+        };
+    }
+
+    class GetFunctionVisitor : public AST::EmptyVisitor
+    {
     public:
 
         std::vector<Base::ObjectRef<AST::FunctionDeclaration> >::iterator begin()
@@ -40,17 +64,17 @@ namespace Generation
 
         std::vector<Base::ObjectRef<AST::FunctionDeclaration> >
             m_FunctionDeclarationTable;
-	};
+    };
 
-	void FragmentDefinition::GenerateFragment(
-		Base::ObjectRef<FragmentDefinition> & fragment_definition,
-		AST::TranslationUnit & translation_unit
-		)
-	{
-		GetFunctionVisitor
-			visitor;
+    void FragmentDefinition::GenerateFragment(
+        Base::ObjectRef<FragmentDefinition> & fragment_definition,
+        AST::TranslationUnit & translation_unit
+        )
+    {
+        GetFunctionVisitor
+            visitor;
 
-		translation_unit.Visit( visitor );
+        translation_unit.Visit( visitor );
 
         fragment_definition = new FragmentDefinition;
 
@@ -67,14 +91,14 @@ namespace Generation
             fragment_definition->m_FunctionDefinitionTable.push_back(function_definition);
         }
 
-	}
+    }
 
     bool FragmentDefinition::FindFunctionDefinition(
         Base::ObjectRef<FunctionDefinition> & definition,
         const std::string & name
-        )
+        ) const
     {
-        std::vector<Base::ObjectRef<FunctionDefinition> >::iterator it, end;
+        std::vector<Base::ObjectRef<FunctionDefinition> >::const_iterator it, end;
 
         for( it = m_FunctionDefinitionTable.begin(), end = m_FunctionDefinitionTable.end(); it != end; ++it )
         {
@@ -86,7 +110,41 @@ namespace Generation
         }
 
         return false;
+    }
 
+    bool FragmentDefinition::FindFunctionDefinitionMatchingSemanticSet(
+        Base::ObjectRef<FunctionDefinition> & definition,
+        const std::set<std::string> & semantic_set
+        ) const
+    {
+        std::vector<Base::ObjectRef<FunctionDefinition> >::const_iterator it, end;
+
+        for( it = m_FunctionDefinitionTable.begin(), end = m_FunctionDefinitionTable.end(); it != end; ++it )
+        {
+            size_t count;
+
+            count = 0;
+
+            std::set_intersection(
+                semantic_set.begin(), semantic_set.end(),
+                (*it)->GetOutSemanticSet().begin(), (*it)->GetOutSemanticSet().end(),
+                Counter( &count )
+                );
+
+            std::set_intersection(
+                semantic_set.begin(), semantic_set.end(),
+                (*it)->GetInOutSemanticSet().begin(), (*it)->GetInOutSemanticSet().end(),
+                Counter( &count )
+                );
+
+            if( count > 0 )
+            {
+                definition = *it;
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

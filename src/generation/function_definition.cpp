@@ -9,7 +9,7 @@ namespace  Generation
         AST::FunctionDeclaration & declaration
         )
     {
-    	m_Name = declaration.m_Name;
+        m_Name = declaration.m_Name;
 
         if( declaration.m_ArgumentList )
         {
@@ -40,9 +40,9 @@ namespace  Generation
             }
         }
 
-    	if( !declaration.m_Semantic.empty() )
-    	{
-    		m_OutSemanticSet.insert( declaration.m_Semantic );
-    	}
+        if( !declaration.m_Semantic.empty() )
+        {
+            m_OutSemanticSet.insert( declaration.m_Semantic );
+        }
     }
 }
