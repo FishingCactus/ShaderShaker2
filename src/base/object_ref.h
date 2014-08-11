@@ -44,7 +44,7 @@
 				return *m_Object;
 			}
 
-			operator bool() const { return m_Object; }
+			operator bool() const { return !!m_Object; }
 
 			ObjectType * operator->() { assert( m_Object ); return m_Object; }
 

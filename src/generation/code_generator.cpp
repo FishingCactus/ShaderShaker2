@@ -7,6 +7,7 @@
 #include "graph_node.h"
 #include <set>
 #include <iostream>
+#include <iterator>
 #include <algorithm>
 
 namespace Generation

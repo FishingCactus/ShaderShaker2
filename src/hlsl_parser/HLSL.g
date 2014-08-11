@@ -233,7 +233,7 @@ jump_statement returns [ AST::Statement * statement = 0 ]
     : BREAK SEMI { statement = new AST::BreakStatement; }
     | CONTINUE SEMI { statement = new AST::ContinueStatement; }
     | RETURN { statement = new AST::ReturnStatement; }
-        ( expression { static_cast<AST::ReturnStatement*>(statement)->m_Expression = std::shared_ptr<AST::Expression>( $expression.exp ); } )?
+        ( expression { static_cast<AST::ReturnStatement*>(statement)->m_Expression = $expression.exp; } )?
         SEMI
     | DISCARD SEMI { statement = new AST::DiscardStatement; }
     ;
@@ -245,7 +245,7 @@ lvalue_expression returns [ AST::LValueExpression * exp = 0 ] @init { AST::Postf
 
 variable_expression returns [ AST::VariableExpression * exp = 0 ]
     : ID { exp = new AST::VariableExpression( $ID.text ); }
-        ( LBRACKET expression RBRACKET { exp->m_SubscriptExpression = std::shared_ptr<AST::Expression>( $expression.exp ); } )?
+        ( LBRACKET expression RBRACKET { exp->m_SubscriptExpression = $expression.exp; } )?
     ;
 
 expression returns [ AST::Expression * exp = 0 ]
@@ -257,9 +257,9 @@ conditional_expression returns [ AST::Expression * exp = 0 ]
         ( QUESTION a=expression COLON b=conditional_expression
             {
                 AST::ConditionalExpression * ce = new AST::ConditionalExpression;
-                ce->m_Condition = std::shared_ptr<AST::Expression>( $logical_or_expression.exp );
-                ce->m_IfTrue = std::shared_ptr<AST::Expression>( $a.exp );
-                ce->m_IfFalse = std::shared_ptr<AST::Expression>( $b.exp );
+                ce->m_Condition = $logical_or_expression.exp;
+                ce->m_IfTrue = $a.exp;
+                ce->m_IfFalse = $b.exp;
                 exp = ce;
              }
             )?
@@ -371,8 +371,8 @@ argument_expression_list returns [ AST::ArgumentExpressionList * list = new AST:
 
 function_declaration returns [AST::FunctionDeclaration * declaration = 0 ]
     : { declaration = new AST::FunctionDeclaration; }( storage_class { declaration->AddStorageClass( $storage_class.storage ); } )* ( PRECISE )?
-        ( type  { declaration->m_Type = std::shared_ptr<AST::Type>( $type.type ); } | VOID_TOKEN ) Name=ID { declaration->m_Name = $Name.text; }
-        LPAREN ( argument_list { declaration->m_ArgumentList = std::shared_ptr<AST::ArgumentList>( $argument_list.list ); } )? RPAREN
+        ( type  { declaration->m_Type = $type.type; } | VOID_TOKEN ) Name=ID { declaration->m_Name = $Name.text; }
+        LPAREN ( argument_list { declaration->m_ArgumentList = $argument_list.list; } )? RPAREN
         ( COLON semantic {declaration->m_Semantic = $semantic.text; })?
         LCURLY
             ( statement { declaration->AddStatement( $statement.statement ); } )*
@@ -386,12 +386,12 @@ argument_list returns [ AST::ArgumentList * list = 0 ]
 argument returns [ AST::Argument * argument = 0 ]
     : { argument = new AST::Argument; }
         ( input_modifier { argument->m_InputModifier = $input_modifier.text; } )?
-        ( type_modifier { argument->m_TypeModifier = std::shared_ptr<AST::TypeModifier>( $type_modifier.modifier ); } )?
-        type { argument->m_Type = std::shared_ptr<AST::Type>( $type.type ); }
+        ( type_modifier { argument->m_TypeModifier = $type_modifier.modifier; } )?
+        type { argument->m_Type = $type.type; }
         Name=ID { argument->m_Name = $Name.text; }
         ( COLON semantic { argument->m_Semantic = $semantic.text; } )?
         ( INTERPOLATION_MODIFIER {argument->m_InterpolationModifier = $INTERPOLATION_MODIFIER.text; } )?
-        ( ASSIGN initial_value { argument->m_InitialValue = std::shared_ptr<AST::InitialValue>( $initial_value.value ); } )?
+        ( ASSIGN initial_value { argument->m_InitialValue = $initial_value.value; } )?
     ;
 
 input_modifier
@@ -457,8 +457,8 @@ variable_declaration_body returns [ AST::VariableDeclarationBody * body = 0 ]
         ( COLON semantic {body->m_Semantic = $semantic.text; } ) ?
         ( COLON packoffset )?
         ( COLON register_rule ) ?
-        ( annotations { body->m_Annotations = std::shared_ptr<AST::Annotations>( $annotations.annotations ); } ) ?
-        ( ASSIGN initial_value { body->m_InitialValue = std::shared_ptr<AST::InitialValue>( $initial_value.value ); } ) ?
+        ( annotations { body->m_Annotations = $annotations.annotations; } ) ?
+        ( ASSIGN initial_value { body->m_InitialValue = $initial_value.value; } ) ?
     ;
 
 storage_class returns [ AST::StorageClass * storage = 0 ]

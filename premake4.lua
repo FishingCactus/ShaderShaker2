@@ -36,6 +36,7 @@ solution "ShaderShaker"
 
     configuration "vs*"
         defines     { "_CRT_SECURE_NO_WARNINGS" }
+        buildoptions "/wd4481"
 
     configuration "gmake or xcode4"
         buildoptions "-std=c++11"
