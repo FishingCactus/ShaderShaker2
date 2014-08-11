@@ -35,7 +35,7 @@ solution "ShaderShaker"
         flags       { "OptimizeSize" }
 
     configuration "vs*"
-        defines     { "_CRT_SECURE_NO_WARNINGS" }
+        defines     { "_CRT_SECURE_NO_WARNINGS", "_SCL_SECURE_NO_WARNINGS" }
         buildoptions "/wd4481"
 
     configuration "gmake or xcode4"
