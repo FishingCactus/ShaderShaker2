@@ -38,6 +38,9 @@
                 return m_InOutSemanticSet;
             }
 
+            void GetAllOutSemanticSet( std::set<std::string> & set);
+            void GetAllInSemanticSet( std::set<std::string> & set);
+
             const std::string & GetName() const { return m_Name; }
 
         private:

@@ -45,4 +45,16 @@ namespace  Generation
             m_OutSemanticSet.insert( declaration.m_Semantic );
         }
     }
+
+    void FunctionDefinition::GetAllOutSemanticSet( std::set<std::string> & set)
+    {
+        set.insert( m_OutSemanticSet.begin(), m_OutSemanticSet.end() );
+        set.insert( m_InOutSemanticSet.begin(), m_InOutSemanticSet.end() );
+    }
+
+    void FunctionDefinition::GetAllInSemanticSet( std::set<std::string> & set)
+    {
+        set.insert( m_InSemanticSet.begin(), m_InSemanticSet.end() );
+        set.insert( m_InOutSemanticSet.begin(), m_InOutSemanticSet.end() );
+    }
 }

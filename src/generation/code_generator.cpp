@@ -59,9 +59,10 @@ namespace Generation
         std::set<FunctionDefinition::Ref>
             used_function_set;
 
-        graph = new Graph;
-
         open_set.insert( semantic_table.begin(), semantic_table.end() );
+
+        graph = new Graph;
+        graph->Initialize( open_set );
 
         while( !open_set.empty() )
         {
