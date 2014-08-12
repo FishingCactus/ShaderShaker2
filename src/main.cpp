@@ -18,7 +18,9 @@ int main( int argument_count, const char* argument_table[] )
 
         Base::ObjectRef<AST::TranslationUnit> generated_code;
 
-        generated_code = Generation::GenerateShader(
+        Generation::CodeGenerator code_generator;
+
+        generated_code = code_generator.GenerateShader(
             fragment_arguments.getValue(),
             semantic_argument.getValue()
             );

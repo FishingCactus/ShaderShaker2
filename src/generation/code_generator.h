@@ -5,14 +5,44 @@
     #include <vector>
     #include <ast/node.h>
     #include <base/object_ref.h>
+    #include "function_definition.h"
+    #include "graph.h"
+
+    namespace AST{struct FunctionDeclaration;}
+    namespace AST{struct FunctionDeclaration;}
 
     namespace Generation
     {
+        class CodeGenerator
+        {
 
-        Base::ObjectRef<AST::TranslationUnit> GenerateShader(
-            const std::vector<std::string> & fragment_name_table,
-            const std::vector<std::string> & semantic_table
-            );
+        public:
+
+            Base::ObjectRef<AST::TranslationUnit> GenerateShader(
+                const std::vector<std::string> & fragment_name_table,
+                const std::vector<std::string> & semantic_table
+                );
+
+        private:
+
+            bool FindMatchingFunction(
+                FunctionDefinition::Ref & function,
+                std::set<FunctionDefinition::Ref> & used_function_set,
+                const std::set<std::string> & semantic_set,
+                const std::vector<FragmentDefinition::Ref > & definition_table
+                );
+
+            void RemoveInputSemantics( std::set<std::string> & semantic_set );
+
+            Base::ObjectRef<AST::FunctionDeclaration> GenerateCodeFromGraph(
+                const Graph & graph
+                );
+
+            Graph::Ref GenerateGraph(
+                const std::vector<FragmentDefinition::Ref > & fragment_table,
+                const std::vector<std::string> & semantic_table
+                );
+        };
     }
 
 

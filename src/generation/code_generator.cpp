@@ -12,7 +12,7 @@
 
 namespace Generation
 {
-    bool FindMatchingFunction(
+    bool CodeGenerator::FindMatchingFunction(
         FunctionDefinition::Ref & function,
         std::set<FunctionDefinition::Ref> & used_function_set,
         const std::set<std::string> & semantic_set,
@@ -40,7 +40,7 @@ namespace Generation
         return false;
     }
 
-    void RemoveInputSemantics( std::set<std::string> & semantic_set )
+    void CodeGenerator::RemoveInputSemantics( std::set<std::string> & semantic_set )
     {
     }
 
@@ -131,7 +131,7 @@ namespace Generation
 
     };
 
-    Base::ObjectRef<AST::FunctionDeclaration> GenerateCodeFromGraph(
+    Base::ObjectRef<AST::FunctionDeclaration> CodeGenerator::GenerateCodeFromGraph(
         const Graph & graph
         )
     {
@@ -141,7 +141,7 @@ namespace Generation
         return 0;
     }
 
-    Graph::Ref GenerateGraph(
+    Graph::Ref CodeGenerator::GenerateGraph(
         const std::vector<FragmentDefinition::Ref > & fragment_table,
         const std::vector<std::string> & semantic_table
         )
@@ -199,7 +199,7 @@ namespace Generation
         return graph;
     }
 
-    Base::ObjectRef<AST::TranslationUnit> GenerateShader(
+    Base::ObjectRef<AST::TranslationUnit> CodeGenerator::GenerateShader(
         const std::vector<std::string> & fragment_name_table,
         const std::vector<std::string> & semantic_table
         )
