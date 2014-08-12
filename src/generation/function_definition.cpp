@@ -10,6 +10,7 @@ namespace  Generation
         )
     {
         m_Name = declaration.m_Name;
+        m_FunctionDeclaration = &declaration;
 
         if( declaration.m_ArgumentList )
         {

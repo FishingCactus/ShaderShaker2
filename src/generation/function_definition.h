@@ -38,6 +38,8 @@
                 return m_InOutSemanticSet;
             }
 
+            const AST::FunctionDeclaration & GetFunctionDeclaration() const {return *m_FunctionDeclaration;}
+
             void GetAllOutSemanticSet( std::set<std::string> & set);
             void GetAllInSemanticSet( std::set<std::string> & set);
 
@@ -51,6 +53,8 @@
                 m_InSemanticSet,
                 m_OutSemanticSet,
                 m_InOutSemanticSet;
+            Base::ObjectRef<AST::FunctionDeclaration>
+                m_FunctionDeclaration;
 
         };
 

@@ -22,6 +22,21 @@
 
             void AddParent( GraphNode & parent );
             FunctionDefinition & GetFunctionDefinition(){ return *m_FunctionDefinition; }
+            const FunctionDefinition & GetFunctionDefinition()const{ return *m_FunctionDefinition; }
+            bool HasFunctionDefinition() const{ return m_FunctionDefinition; }
+
+            template< typename Visitor >
+            void VisitDepthFirst( Visitor & visitor ) const
+            {
+                for( std::vector<GraphNode::Ref>::const_iterator it = m_Children.begin(), end = m_Children.end();
+                    it != end;
+                    ++it )
+                {
+                    (*it)->VisitDepthFirst( visitor );
+                }
+
+                visitor.Visit( *this );
+            }
 
         private:
 

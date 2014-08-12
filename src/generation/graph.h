@@ -19,6 +19,17 @@
             void Initialize( const std::set<std::string> & semantic_set );
             bool AddNode( GraphNode & node );
 
+            template< typename Visitor >
+            void VisitDepthFirst( Visitor & visitor ) const
+            {
+                for( std::vector<GraphNode::Ref>::const_iterator it = m_RootNodeTable.begin(), end = m_RootNodeTable.end();
+                    it != end;
+                    ++it )
+                {
+                    (*it)->VisitDepthFirst( visitor );
+                }
+            }
+
         private:
 
             std::vector<GraphNode::Ref>

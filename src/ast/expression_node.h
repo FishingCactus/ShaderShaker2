@@ -256,7 +256,7 @@
         {
             AST_HandleVisitor()
 
-            LValueExpression( VariableExpression * variable, PostfixSuffix * suffix ) : m_VariableExpression( variable ), m_Suffix( suffix ) {}
+            LValueExpression( VariableExpression * variable, PostfixSuffix * suffix = 0 ) : m_VariableExpression( variable ), m_Suffix( suffix ) {}
 
             Base::ObjectRef<VariableExpression>
                 m_VariableExpression;

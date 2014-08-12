@@ -237,6 +237,7 @@
             AST_HandleVisitor()
 
             VariableDeclarationBody() : m_ArraySize( 0 ) {}
+            VariableDeclarationBody( const std::string & name ) : m_Name( name ){}
 
             std::string
                 m_Name,

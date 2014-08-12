@@ -44,6 +44,103 @@ namespace Generation
     {
     }
 
+    Base::ObjectRef<AST::Statement> GetFunctionCallFromFunctionDefinition(
+        const FunctionDefinition & definition
+        )
+    {
+        const AST::FunctionDeclaration & function_declaration = definition.GetFunctionDeclaration();
+        Base::ObjectRef<AST::ArgumentExpressionList> argument_expression_list = new AST::ArgumentExpressionList;
+
+        if( function_declaration.m_ArgumentList )
+        {
+            const AST::ArgumentList & argument_list = *function_declaration.m_ArgumentList;
+            std::vector< Base::ObjectRef<AST::Argument> >::const_iterator it, end;
+            it = argument_list.m_ArgumentTable.begin();
+            end = argument_list.m_ArgumentTable.end();
+
+            for(;it != end; ++it )
+            {
+                argument_expression_list->m_ExpressionList.push_back( new AST::VariableExpression( (*it)->m_Semantic ) );
+            }
+        }
+
+        Base::ObjectRef<AST::CallExpression> call_expression = new AST::CallExpression( function_declaration.m_Name, &*argument_expression_list );
+
+        if( function_declaration.m_Semantic.empty() )
+        {
+            return new AST::ExpressionStatement( &*call_expression );
+        }
+        else
+        {
+            return new AST::AssignmentStatement(
+                new AST::LValueExpression( new AST::VariableExpression( function_declaration.m_Semantic ) ),
+                AST::AssignmentOperator_Assign,
+                &*call_expression
+                );
+        }
+    }
+
+    struct CodeGeneratorHelper
+    {
+        void Visit( const GraphNode & node )
+        {
+            if( m_VisitedNodeSet.find( &node ) != m_VisitedNodeSet.end() )
+            {
+                return;
+            }
+
+            if( !node.HasFunctionDefinition() )
+            {
+                return;
+            }
+
+            m_VisitedNodeSet.insert( &node );
+
+            std::set<std::string>::iterator it, end;
+            it = node.GetFunctionDefinition().GetOutSemanticSet().begin();
+            end = node.GetFunctionDefinition().GetOutSemanticSet().end();
+
+            for(; it != end; ++it )
+            {
+                if( m_DeclaredVariableTable.find( *it ) == m_DeclaredVariableTable.end() )
+                {
+                    m_DeclaredVariableTable.insert( *it );
+
+                    //:TODO: get semantic type
+
+                    Base::ObjectRef<AST::VariableDeclarationStatement> variable = new AST::VariableDeclarationStatement;
+
+                    variable->SetType( new AST::Type( "float4" ) );
+                    variable->AddBody( new AST::VariableDeclarationBody( *it ) );
+
+                    m_StatementTable.push_back( &*variable );
+
+                }
+            }
+
+            m_StatementTable.push_back( GetFunctionCallFromFunctionDefinition( node.GetFunctionDefinition() ) );
+
+        }
+
+        std::set<std::string>
+            m_DeclaredVariableTable;
+        std::set<const GraphNode *>
+            m_VisitedNodeSet;
+        std::vector<Base::ObjectRef<AST::Statement> >
+            m_StatementTable;
+
+    };
+
+    Base::ObjectRef<AST::FunctionDeclaration> GenerateCodeFromGraph(
+        const Graph & graph
+        )
+    {
+        CodeGeneratorHelper helper;
+        graph.VisitDepthFirst( helper );
+
+        return 0;
+    }
+
     Graph::Ref GenerateGraph(
         const std::vector<FragmentDefinition::Ref > & fragment_table,
         const std::vector<std::string> & semantic_table
@@ -128,7 +225,9 @@ namespace Generation
             definition_table.push_back( definition );
         }
 
-        GenerateGraph( definition_table, semantic_table );
+        Graph::Ref graph = GenerateGraph( definition_table, semantic_table );
+
+        Base::ObjectRef<AST::FunctionDeclaration> function = GenerateCodeFromGraph( *graph );
 
         return 0;
     }

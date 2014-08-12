@@ -15,10 +15,10 @@ namespace Generation
 
     }
 
-        void GraphNode::AddParent( GraphNode & parent )
-        {
-            m_Parents.push_back( &parent );
-            parent.m_Children.push_back( this );
-        }
+    void GraphNode::AddParent( GraphNode & parent )
+    {
+        m_Parents.push_back( &parent );
+        parent.m_Children.push_back( this );
+    }
 
 }
