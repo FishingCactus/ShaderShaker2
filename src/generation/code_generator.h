@@ -20,7 +20,8 @@
 
             Base::ObjectRef<AST::TranslationUnit> GenerateShader(
                 const std::vector<std::string> & fragment_name_table,
-                const std::vector<std::string> & semantic_table
+                const std::vector<std::string> & semantic_table,
+                const std::vector<std::string> & input_semantic_set
                 );
 
         private:
@@ -42,6 +43,9 @@
                 const std::vector<FragmentDefinition::Ref > & fragment_table,
                 const std::vector<std::string> & semantic_table
                 );
+
+            std::set<std::string>
+                m_InputSemanticSet;
         };
     }
 

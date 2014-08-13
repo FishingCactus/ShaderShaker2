@@ -12,6 +12,7 @@ int main( int argument_count, const char* argument_table[] )
         TCLAP::CmdLine cmd( "ShaderShaker" );
 
         TCLAP::MultiArg<std::string> semantic_argument("s","semantic","semantic to output",true,"string", cmd);
+        TCLAP::MultiArg<std::string> input_semantic_argument("i","input_semantic","semantic available for input",true,"string", cmd);
         TCLAP::UnlabeledMultiArg<std::string> fragment_arguments( "fragment", "fragment file path", true, "filepath", cmd);
 
         cmd.parse( argument_count, argument_table );
@@ -22,7 +23,8 @@ int main( int argument_count, const char* argument_table[] )
 
         generated_code = code_generator.GenerateShader(
             fragment_arguments.getValue(),
-            semantic_argument.getValue()
+            semantic_argument.getValue(),
+            input_semantic_argument.getValue()
             );
 
     }

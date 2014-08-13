@@ -42,6 +42,15 @@ namespace Generation
 
     void CodeGenerator::RemoveInputSemantics( std::set<std::string> & semantic_set )
     {
+        std::set<std::string> new_semantic_set;
+
+        std::set_difference(
+            semantic_set.begin(), semantic_set.end(),
+            m_InputSemanticSet.begin(), m_InputSemanticSet.end(),
+            std::inserter( new_semantic_set, new_semantic_set.begin() )
+            );
+
+        semantic_set = std::move( new_semantic_set );
     }
 
     Base::ObjectRef<AST::Statement> GetFunctionCallFromFunctionDefinition(
@@ -201,11 +210,14 @@ namespace Generation
 
     Base::ObjectRef<AST::TranslationUnit> CodeGenerator::GenerateShader(
         const std::vector<std::string> & fragment_name_table,
-        const std::vector<std::string> & semantic_table
+        const std::vector<std::string> & semantic_table,
+        const std::vector<std::string> & semantic_input_table
         )
     {
         std::vector<Base::ObjectRef<FragmentDefinition> >
             definition_table;
+
+        m_InputSemanticSet.insert( semantic_input_table.begin(), semantic_input_table.end() );
 
         std::vector<std::string>::const_iterator it, end;
         it = fragment_name_table.begin();
