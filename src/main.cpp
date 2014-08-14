@@ -1,9 +1,9 @@
-#include "hlsl_parser/hlsl.h"
-#include "ast/print_visitor.h"
-#include "ast/node.h"
-#include "generation/code_generator.h"
+#include <hlsl_parser/hlsl.h>
+#include <ast/print_visitor.h>
+#include <ast/node.h>
+#include <generation/code_generator.h>
 #include <tclap/CmdLine.h>
-
+#include <ast/printer/hlsl_printer.h>
 
 int main( int argument_count, const char* argument_table[] )
 {
@@ -27,6 +27,9 @@ int main( int argument_count, const char* argument_table[] )
             input_semantic_argument.getValue()
             );
 
+        AST::HLSLPrinter printer ( std::cout );
+
+        generated_code->Visit( printer );
     }
     catch( TCLAP::ArgException &e )
     {
