@@ -5,6 +5,7 @@
 #include "function_definition.h"
 #include "graph.h"
 #include "graph_node.h"
+#include <ast/function_node.h>
 #include <set>
 #include <iostream>
 #include <iterator>
@@ -154,10 +155,45 @@ namespace Generation
 
         helper.m_DeclaredVariableTable.insert( m_UsedSemanticSet.begin(), m_UsedSemanticSet.end() );
         helper.m_DeclaredVariableTable.insert( m_OutputSemanticSet.begin(), m_OutputSemanticSet.end());
-
         graph.VisitDepthFirst( helper );
 
-        return 0;
+        Base::ObjectRef<AST::ArgumentList> argument_list = new AST::ArgumentList;
+
+        std::set<std::string>::const_iterator it,end;
+
+        it = m_OutputSemanticSet.begin();
+        end = m_OutputSemanticSet.end();
+        for(;it!=end;++it )
+        {
+            Base::ObjectRef<AST::Argument> argument = new AST::Argument;
+            argument->m_Type = new AST::Type( "float4" ); //:TODO: get real type;
+            argument->m_Name = (*it);
+            argument->m_Semantic = (*it);
+            argument->m_InputModifier = "out";
+
+            argument_list->m_ArgumentTable.push_back( argument );
+        }
+
+        it = m_InputSemanticSet.begin();
+        end = m_InputSemanticSet.end();
+        for(;it!=end;++it )
+        {
+            Base::ObjectRef<AST::Argument> argument = new AST::Argument;
+            argument->m_Type = new AST::Type( "float4" ); //:TODO: get real type;
+            argument->m_Name = (*it);
+            argument->m_Semantic = (*it);
+            argument->m_InputModifier = "in";
+
+            argument_list->m_ArgumentTable.push_back( argument );
+        }
+
+        Base::ObjectRef<AST::FunctionDeclaration> function_declaration = new AST::FunctionDeclaration;
+
+        function_declaration->m_Name = "main";
+        function_declaration->m_StatementTable = std::move( helper.m_StatementTable );
+        function_declaration->m_ArgumentList = argument_list;
+
+        return function_declaration;
     }
 
     Graph::Ref CodeGenerator::GenerateGraph(
