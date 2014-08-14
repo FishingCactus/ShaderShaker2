@@ -23,6 +23,7 @@
         struct StructDefinition;
         struct FunctionDeclaration;
         struct ArgumentList;
+        struct Argument;
 
         struct LiteralExpression;
         struct VariableExpression;
@@ -74,6 +75,7 @@
             virtual void Visit( StructDefinition & definition ) = 0;
             virtual void Visit( FunctionDeclaration & function_declaration ) = 0;
             virtual void Visit( ArgumentList & argument_list ) = 0;
+            virtual void Visit( Argument & argument ) = 0;
 
             // Expressions
             virtual void Visit( LiteralExpression & expression ) = 0;

@@ -172,6 +172,52 @@ namespace AST
 
     void HLSLPrinter::Visit( ArgumentList & list )
     {
+        bool first = true;
+
+        {
+            std::vector< Base::ObjectRef<Argument> >::iterator it, end;
+            it = list.m_ArgumentTable.begin();
+            end = list.m_ArgumentTable.end();
+
+            for(; it!=end; ++it )
+            {
+                if( !first ) m_Stream << ", ";
+                first = false;
+                (*it)->Visit( *this );
+            }
+        }
+    }
+
+    void HLSLPrinter::Visit( Argument & argument )
+    {
+        if( !argument.m_InputModifier.empty() )
+        {
+            m_Stream << argument.m_InputModifier << " ";
+        }
+
+        if( argument.m_TypeModifier )
+        {
+            argument.m_TypeModifier->Visit( *this );
+        }
+
+        m_Stream << argument.m_Type->m_Name << " " << argument.m_Name;
+
+        if( !argument.m_Semantic.empty() )
+        {
+            m_Stream << " : " << argument.m_Semantic;
+        }
+
+        if( !argument.m_InterpolationModifier.empty() )
+        {
+            m_Stream << " " << argument.m_InterpolationModifier;
+        }
+
+        if( argument.m_InitialValue )
+        {
+            m_Stream << " = ";
+
+            argument.m_InitialValue->Visit( *this );
+        }
     }
 
     void HLSLPrinter::Visit( LiteralExpression & expression )

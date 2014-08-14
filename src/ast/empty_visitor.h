@@ -25,6 +25,7 @@
             virtual void Visit( StructDefinition & /*definition*/ ) override {}
             virtual void Visit( FunctionDeclaration & /*declaration*/ ) override {}
             virtual void Visit( ArgumentList & /*list*/ ) override {}
+            virtual void Visit( Argument & /*argument*/ ) override {}
 
             // Expressions
             virtual void Visit( LiteralExpression & /*expression*/ ) override {}
