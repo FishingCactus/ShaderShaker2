@@ -22,6 +22,7 @@
         struct SamplerBody;
         struct StructDefinition;
         struct FunctionDeclaration;
+        struct ArgumentList;
 
         struct LiteralExpression;
         struct VariableExpression;
@@ -51,6 +52,8 @@
         struct WhileStatement;
         struct DoWhileStatement;
         struct BlockStatement;
+        struct AssignmentStatement;
+        struct VariableDeclarationStatement;
 
         class Visitor
         {
@@ -70,6 +73,7 @@
             virtual void Visit( SamplerBody & body ) = 0;
             virtual void Visit( StructDefinition & definition ) = 0;
             virtual void Visit( FunctionDeclaration & function_declaration ) = 0;
+            virtual void Visit( ArgumentList & argument_list ) = 0;
 
             // Expressions
             virtual void Visit( LiteralExpression & expression ) = 0;
@@ -102,6 +106,8 @@
             virtual void Visit( WhileStatement & statement ) = 0;
             virtual void Visit( DoWhileStatement & statement ) = 0;
             virtual void Visit( BlockStatement & statement ) = 0;
+            virtual void Visit( AssignmentStatement & statement ) = 0;
+            virtual void Visit( VariableDeclarationStatement & statement ) = 0;
         };
     }
 

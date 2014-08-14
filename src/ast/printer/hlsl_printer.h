@@ -27,6 +27,7 @@
             virtual void Visit( SamplerBody & body ) override;
             virtual void Visit( StructDefinition & definition ) override;
             virtual void Visit( FunctionDeclaration & declaration ) override;
+            virtual void Visit( ArgumentList & list ) override;
 
             virtual void Visit( LiteralExpression & expression ) override;
             virtual void Visit( VariableExpression & expression ) override;
@@ -56,6 +57,8 @@
             virtual void Visit( WhileStatement & statement ) override;
             virtual void Visit( DoWhileStatement & statement ) override;
             virtual void Visit( BlockStatement & statement ) override;
+            virtual void Visit( AssignmentStatement & statement ) override;
+            virtual void Visit( VariableDeclarationStatement & statement ) override;
 
         private:
 
