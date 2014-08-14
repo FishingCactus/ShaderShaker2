@@ -40,12 +40,13 @@
                 );
 
             Graph::Ref GenerateGraph(
-                const std::vector<FragmentDefinition::Ref > & fragment_table,
-                const std::vector<std::string> & semantic_table
+                const std::vector<FragmentDefinition::Ref > & fragment_table
                 );
 
             std::set<std::string>
-                m_InputSemanticSet;
+                m_OutputSemanticSet,
+                m_InputSemanticSet,
+                m_UsedSemanticSet;
         };
     }
 

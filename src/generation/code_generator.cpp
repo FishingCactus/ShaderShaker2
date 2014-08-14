@@ -44,6 +44,12 @@ namespace Generation
     {
         std::set<std::string> new_semantic_set;
 
+        std::set_intersection(
+            semantic_set.begin(), semantic_set.end(),
+            m_InputSemanticSet.begin(), m_InputSemanticSet.end(),
+            std::inserter( m_UsedSemanticSet, m_UsedSemanticSet.begin() )
+            );
+
         std::set_difference(
             semantic_set.begin(), semantic_set.end(),
             m_InputSemanticSet.begin(), m_InputSemanticSet.end(),
@@ -145,14 +151,17 @@ namespace Generation
         )
     {
         CodeGeneratorHelper helper;
+
+        helper.m_DeclaredVariableTable.insert( m_UsedSemanticSet.begin(), m_UsedSemanticSet.end() );
+        helper.m_DeclaredVariableTable.insert( m_OutputSemanticSet.begin(), m_OutputSemanticSet.end());
+
         graph.VisitDepthFirst( helper );
 
         return 0;
     }
 
     Graph::Ref CodeGenerator::GenerateGraph(
-        const std::vector<FragmentDefinition::Ref > & fragment_table,
-        const std::vector<std::string> & semantic_table
+        const std::vector<FragmentDefinition::Ref > & fragment_table
         )
     {
         std::set<std::string>
@@ -165,7 +174,7 @@ namespace Generation
         std::set<FunctionDefinition::Ref>
             used_function_set;
 
-        open_set.insert( semantic_table.begin(), semantic_table.end() );
+        open_set.insert( m_OutputSemanticSet.begin(), m_OutputSemanticSet.end() );
 
         graph = new Graph;
         graph->Initialize( open_set );
@@ -217,7 +226,10 @@ namespace Generation
         std::vector<Base::ObjectRef<FragmentDefinition> >
             definition_table;
 
+        m_OutputSemanticSet.clear();
+        m_InputSemanticSet.clear();
         m_InputSemanticSet.insert( semantic_input_table.begin(), semantic_input_table.end() );
+        m_OutputSemanticSet.insert( semantic_table.begin(), semantic_table.end() );
 
         std::vector<std::string>::const_iterator it, end;
         it = fragment_name_table.begin();
@@ -237,7 +249,7 @@ namespace Generation
             definition_table.push_back( definition );
         }
 
-        Graph::Ref graph = GenerateGraph( definition_table, semantic_table );
+        Graph::Ref graph = GenerateGraph( definition_table );
 
         Base::ObjectRef<AST::FunctionDeclaration> function = GenerateCodeFromGraph( *graph );
 
