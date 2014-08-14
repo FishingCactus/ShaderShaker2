@@ -78,7 +78,7 @@ namespace Generation
 
         fragment_definition = new FragmentDefinition;
 
-        fragment_definition->m_AbstractSyntaxTree = &translation_unit;
+        fragment_definition->m_TranslationUnit = &translation_unit;
 
         std::vector<Base::ObjectRef<AST::FunctionDeclaration> >::iterator it, end;
 

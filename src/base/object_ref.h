@@ -33,6 +33,7 @@
             operator bool() const { return !!m_Object; }
 
             bool operator <( const ObjectRef & other ) const { return m_Object < other.m_Object; }
+            bool operator == ( const ObjectType * object ) const { return m_Object == object; }
 
             ObjectType * operator->() { assert( m_Object ); return m_Object; }
             ObjectType & operator*() { assert( m_Object ); return *m_Object; }

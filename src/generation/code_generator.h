@@ -43,10 +43,18 @@
                 const std::vector<FragmentDefinition::Ref > & fragment_table
                 );
 
+            void MergeTranslationUnit(
+                AST::TranslationUnit & destination_translation_unit,
+                const std::vector<Base::ObjectRef<AST::TranslationUnit> > & translation_unit_table
+                );
+
             std::set<std::string>
                 m_OutputSemanticSet,
                 m_InputSemanticSet,
                 m_UsedSemanticSet;
+            std::vector<Base::ObjectRef<AST::TranslationUnit> >
+                m_UsedTranslationUnitSet;
+
         };
     }
 

@@ -39,10 +39,12 @@
                 const std::set<std::string> & semantic_set
                 ) const;
 
+            const AST::TranslationUnit & GetTranslationUnit() const { return *m_TranslationUnit; }
+
 		private:
 
 			Base::ObjectRef<AST::TranslationUnit>
-				m_AbstractSyntaxTree;
+				m_TranslationUnit;
 			std::vector<Base::ObjectRef<FunctionDefinition> >
 				m_FunctionDefinitionTable;
 

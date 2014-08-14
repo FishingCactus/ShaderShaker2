@@ -34,6 +34,14 @@ namespace Generation
                     continue;
                 }
 
+                //:TRICKY: This is a set, but order should be deterministic
+                if ( std::find( m_UsedTranslationUnitSet.begin(), m_UsedTranslationUnitSet.end(), &(*it)->GetTranslationUnit() )
+                        == m_UsedTranslationUnitSet.end()
+                    )
+                {
+                    m_UsedTranslationUnitSet.push_back( const_cast<AST::TranslationUnit*>( &(*it)->GetTranslationUnit() ) );
+                }
+
                 return true;
             }
         }
@@ -289,7 +297,33 @@ namespace Generation
 
         Base::ObjectRef<AST::FunctionDeclaration> function = GenerateCodeFromGraph( *graph );
 
-        return 0;
+        Base::ObjectRef<AST::TranslationUnit> translation_unit = new AST::TranslationUnit;
+
+        MergeTranslationUnit( *translation_unit, m_UsedTranslationUnitSet );
+
+        translation_unit->m_GlobalDeclarationTable.push_back( &*function );
+
+        return translation_unit;
     }
+
+    void CodeGenerator::MergeTranslationUnit(
+        AST::TranslationUnit & destination_translation_unit,
+        const std::vector<Base::ObjectRef<AST::TranslationUnit> > & translation_unit_table
+        )
+    {
+        std::vector<Base::ObjectRef<AST::TranslationUnit> >::const_iterator it, end;
+
+        it = translation_unit_table.begin();
+        end = translation_unit_table.end();
+        for( ;it!=end; ++it)
+        {
+            std::copy(
+                (*it)->m_GlobalDeclarationTable.begin(), (*it)->m_GlobalDeclarationTable.end(),
+                std::back_inserter( destination_translation_unit.m_GlobalDeclarationTable )
+                );
+        }
+
+    }
+
 
 }
