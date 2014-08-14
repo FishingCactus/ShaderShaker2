@@ -245,6 +245,16 @@ namespace AST
         expression.m_Expression->Visit( *this );
     }
 
+    void HLSLPrinter::Visit( PostfixExpression & expression )
+    {
+        expression.m_Expression->Visit( *this );
+
+        if( expression.m_Suffix )
+        {
+            expression.m_Suffix->Visit( *this );
+        }
+    }
+
     void HLSLPrinter::Visit( ReturnStatement & statement )
     {
         m_Stream << "return";

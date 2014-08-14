@@ -44,6 +44,7 @@
             virtual void Visit( PostModifyExpression & expression ) override;
             virtual void Visit( CastExpression & expression ) override;
             virtual void Visit( AssignmentExpression & expression ) override;
+            virtual void Visit( PostfixExpression & expression ) override;
 
             virtual void Visit( ReturnStatement & statement ) override;
             virtual void Visit( BreakStatement & statement ) override;

@@ -578,3 +578,41 @@ TEST_CASE( "Assignment expression are printed", "[ast][hlsl][printer]" )
     CHECK( PrintAssignmentExpression( AST::AssignmentOperator_LeftShift ) == "X <<= Y" );
     CHECK( PrintAssignmentExpression( AST::AssignmentOperator_RightShift ) == "X >>= Y" );
 }
+
+TEST_CASE( "Postfix expression are printed", "[ast][hlsl][printer]")
+{
+    SECTION( "Empty postfix" )
+    {
+        AST::PostfixExpression
+            node(
+                new AST::VariableExpression( "X" ),
+                0
+                );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "X" );
+    }
+
+    SECTION( "Non-empty postfix" )
+    {
+        AST::PostfixExpression
+            node(
+                new AST::VariableExpression( "X" ),
+                new AST::Swizzle( "xyz" )
+                );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        node.Visit( printer );
+
+        CHECK( output.str() == "X.xyz" );
+    }
+
+}

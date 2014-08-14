@@ -136,6 +136,8 @@
 
         struct AssignmentStatement : Statement
         {
+            AST_HandleVisitor()
+
             AssignmentStatement( LValueExpression * lvexp, AssignmentOperator op, Expression * exp ) :
                 m_Expression( new AssignmentExpression( lvexp, op, exp ) )
             {
