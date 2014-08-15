@@ -1,8 +1,8 @@
 #include "hlsl_printer.h"
 
 #include <cassert>
-#include "utils/indentation.h"
-#include "ast/node.h"
+#include <utils/indentation.h>
+#include <ast/node.h>
 
 namespace AST
 {
@@ -100,14 +100,12 @@ namespace AST
 
     void HLSLPrinter::Visit( TypeModifier & modifier )
     {
-
-
+        m_Stream << modifier.m_Value;
     }
 
     void HLSLPrinter::Visit( StorageClass & storage_class )
     {
-
-
+        m_Stream << storage_class.m_Value;
     }
 
     void HLSLPrinter::Visit( VariableDeclarationBody & body )
@@ -139,25 +137,86 @@ namespace AST
 
     void HLSLPrinter::Visit( TextureDeclaration & declaration )
     {
+        m_Stream << declaration.m_Type << " " << declaration.m_Name;
 
+        if( !declaration.m_Semantic.empty() )
+        {
+            m_Stream << " : " << declaration.m_Semantic;
+        }
 
+        if( declaration.m_Annotations )
+        {
+            declaration.m_Annotations->Visit( *this );
+        }
+
+        m_Stream << ";" << endl_ind;
     }
 
     void HLSLPrinter::Visit( SamplerDeclaration & declaration )
     {
+        m_Stream << declaration.m_Type << " "
+            << declaration.m_Name << endl_ind
+            << "{" << inc_ind << endl_ind;
 
+        {
+            std::vector< Base::ObjectRef<SamplerBody> >::iterator it, end;
+            it = declaration.m_BodyTable.begin();
+            end = declaration.m_BodyTable.end();
+            for(; it!=end; ++it )
+            {
+                (*it)->Visit( *this );
+            }
 
+        }
+
+        m_Stream << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void HLSLPrinter::Visit( SamplerBody & body )
     {
+        if( body.m_Name == "texture" )
+        {
+            m_Stream << "texture=<" << body.m_Value << ">";
+        }
+        else
+        {
+            m_Stream << body.m_Name << " = " << body.m_Value;
+        }
 
+        m_Stream << ";" << endl_ind;
 
     }
 
     void HLSLPrinter::Visit( StructDefinition & definition )
     {
+        m_Stream << " struct " << definition.m_Name << endl_ind;
+        m_Stream << "{" << inc_ind << endl_ind;
 
+        {
+            std::vector< StructDefinition::Member >::iterator it, end;
+            it = definition.m_MemberTable.begin();
+            end = definition.m_MemberTable.end();
+
+            for(; it!=end; ++it )
+            {
+                StructDefinition::Member
+                    & member = (*it);
+
+                if( !member.m_InterpolationModifier.empty() )
+                {
+                    m_Stream << member.m_InterpolationModifier << " ";
+                }
+
+                member.m_Type->Visit( *this );
+
+                m_Stream << " " << member.m_Name;
+
+                if( !member.m_Semantic.empty() )
+                {
+                    m_Stream << " : " <<member.m_Semantic;
+                }
+            }
+        }
 
     }
 
