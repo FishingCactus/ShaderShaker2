@@ -39,8 +39,48 @@ namespace AST
 
     void HLSLPrinter::Visit( VariableDeclaration & variable_declaration )
     {
+        {
+            std::vector< Base::ObjectRef<StorageClass> >::iterator it, end;
+            it = variable_declaration.m_StorageClass.begin();
+            end = variable_declaration.m_StorageClass.end();
+            bool first = true;
+            for( ;it != end; ++it )
+            {
+                if(!first) m_Stream << "," << endl_ind;
+                first = false;
+                (*it)->Visit( *this );
+            }
+        }
 
+        {
+            std::vector< Base::ObjectRef<TypeModifier> >::iterator it, end;
+            it = variable_declaration.m_TypeModifier.begin();
+            end = variable_declaration.m_TypeModifier.end();
 
+            for( ;it != end; ++it )
+            {
+                (*it)->Visit( *this );
+            }
+        }
+
+        m_Stream << variable_declaration.m_Type->m_Name;
+
+        {
+            std::vector< Base::ObjectRef<VariableDeclarationBody> >::iterator it, end;
+            it = variable_declaration.m_BodyTable.begin();
+            end = variable_declaration.m_BodyTable.end();
+
+            m_Stream << inc_ind << endl_ind;
+
+            for( ;it != end; ++it )
+            {
+                (*it)->Visit( *this );
+            }
+
+            m_Stream << dec_ind;
+        }
+
+        m_Stream << ";" << endl_ind;
     }
 
     void HLSLPrinter::Visit( IntrinsicType & type )
