@@ -2,6 +2,7 @@
     #define FUNCTION_DEFINITION_H
 
     #include <set>
+    #include <map>
     #include <string>
     #include <memory>
     #include "fragment_definition.h"
@@ -45,7 +46,14 @@
 
             const std::string & GetName() const { return m_Name; }
 
+            std::string GetSemanticType( const std::string & semantic ) const;
+
         private:
+
+            void SetTypeForSemantic(
+                const std::string & type,
+                const std::string & semantic
+                );
 
             std::string
                 m_Name;
@@ -53,6 +61,9 @@
                 m_InSemanticSet,
                 m_OutSemanticSet,
                 m_InOutSemanticSet;
+            std::map<std::string, std::string>
+                m_SemanticToTypeMap;
+
             Base::ObjectRef<AST::FunctionDeclaration>
                 m_FunctionDeclaration;
 

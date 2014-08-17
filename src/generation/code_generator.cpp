@@ -130,11 +130,9 @@ namespace Generation
                 {
                     m_DeclaredVariableTable.insert( *it );
 
-                    //:TODO: get semantic type
-
                     Base::ObjectRef<AST::VariableDeclarationStatement> variable = new AST::VariableDeclarationStatement;
 
-                    variable->SetType( new AST::Type( "float4" ) );
+                    variable->SetType( new AST::Type( node.GetFunctionDefinition().GetSemanticType( *it ) ) );
                     variable->AddBody( new AST::VariableDeclarationBody( *it ) );
 
                     m_StatementTable.push_back( &*variable );
