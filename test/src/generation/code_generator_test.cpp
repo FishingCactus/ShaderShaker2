@@ -100,3 +100,35 @@ TEST_CASE( "Special cases are handled", "[generation][fragment]" )
         CHECK( error_handler->m_Message == "" );
     }
 }
+
+TEST_CASE( "Cycle are detected", "[generation][fragment]" )
+{
+    SECTION( "Direct cycles are detected" )
+    {
+        std::vector<Base::ObjectRef<AST::TranslationUnit> >
+            translation_unit_table;
+        std::vector<std::string>
+            code_table =
+            {
+                "float A( float c :C ) : A { return c; }",
+                "float B( float a :A ) : B { return a; }",
+                "float C( float b :B ) : C { return b; }"
+            };
+        std::vector<Base::ObjectRef<Generation::FragmentDefinition> >
+            definition_table;
+
+        definition_table = GetFragmentTable( code_table );
+
+        Generation::CodeGenerator code_generator;
+        Base::ObjectRef<SimpleErrorHandler> error_handler = new SimpleErrorHandler;
+
+        code_generator.GenerateShader(
+            definition_table,
+            { "A" },
+            {},
+            * error_handler
+            );
+
+        CHECK( error_handler->m_Message == "Cycle detected involving A" );
+    }
+}

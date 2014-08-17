@@ -74,7 +74,7 @@ namespace Generation
         return m_NodeToLastOutputSemanticMap.find( semantic ) != m_NodeToLastOutputSemanticMap.end();
     }
 
-    void Graph::UseGeneratedSemantic(
+    bool Graph::UseGeneratedSemantic(
         GraphNode & node,
         const std::string & semantic
         )
@@ -86,6 +86,6 @@ namespace Generation
 
         assert( generating_node != m_NodeToLastOutputSemanticMap.end() );
 
-        (*generating_node).second->AddParent( node );
+        return (*generating_node).second->AddParent( node );
     }
 }

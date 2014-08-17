@@ -25,7 +25,7 @@
                 return m_Children;
             }
 
-            void AddParent( GraphNode & parent );
+            bool AddParent( GraphNode & parent );
             FunctionDefinition & GetFunctionDefinition(){ return *m_FunctionDefinition; }
             const FunctionDefinition & GetFunctionDefinition()const{ return *m_FunctionDefinition; }
             bool HasFunctionDefinition() const{ return m_FunctionDefinition; }
@@ -44,6 +44,10 @@
             }
 
         private:
+
+            bool NodeExistsInParents(
+                const GraphNode & node
+                ) const;
 
             FunctionDefinition::Ref
                 m_FunctionDefinition;

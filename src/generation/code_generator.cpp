@@ -286,7 +286,11 @@ namespace Generation
             {
                 if( graph->HasGeneratedSemantic( *it ) )
                 {
-                    graph->UseGeneratedSemantic( *node, *it );
+                    if( !graph->UseGeneratedSemantic( *node, *it ) )
+                    {
+                        m_ErrorHandler->ReportError( "Cycle detected involving " + *it, "" );
+                        return 0;
+                    }
                 }
                 else
                 {

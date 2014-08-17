@@ -20,7 +20,7 @@
             bool AddNode( GraphNode & node );
 
             bool HasGeneratedSemantic( const std::string & semantic ) const;
-            void UseGeneratedSemantic(
+            bool UseGeneratedSemantic(
                 GraphNode & node,
                 const std::string & semantic
                 );
