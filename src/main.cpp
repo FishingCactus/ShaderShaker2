@@ -17,12 +17,31 @@ int main( int argument_count, const char* argument_table[] )
 
         cmd.parse( argument_count, argument_table );
 
+        std::vector<Base::ObjectRef<Generation::FragmentDefinition> > definition_table;
+        std::vector<std::string>::const_iterator it, end;
+        it = fragment_arguments.getValue().begin();
+        end = fragment_arguments.getValue().end();
+
+        for(; it!=end; ++it )
+        {
+            Base::ObjectRef<AST::TranslationUnit>
+                translation_unit;
+            Base::ObjectRef<Generation::FragmentDefinition>
+                definition;
+
+            translation_unit = HLSL::ParseHLSL( (*it).c_str() );
+
+            Generation::FragmentDefinition::GenerateFragment( definition, *translation_unit );
+
+            definition_table.push_back( definition );
+        }
+
         Base::ObjectRef<AST::TranslationUnit> generated_code;
 
         Generation::CodeGenerator code_generator;
 
         generated_code = code_generator.GenerateShader(
-            fragment_arguments.getValue(),
+            definition_table,
             semantic_argument.getValue(),
             input_semantic_argument.getValue()
             );

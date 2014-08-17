@@ -1,5 +1,4 @@
 #include "code_generator.h"
-#include <hlsl_parser/hlsl.h>
 #include <base/object_ref.h>
 #include "fragment_definition.h"
 #include "function_definition.h"
@@ -290,36 +289,15 @@ namespace Generation
     }
 
     Base::ObjectRef<AST::TranslationUnit> CodeGenerator::GenerateShader(
-        const std::vector<std::string> & fragment_name_table,
+        const std::vector<Base::ObjectRef<FragmentDefinition> > & definition_table,
         const std::vector<std::string> & semantic_table,
         const std::vector<std::string> & semantic_input_table
         )
     {
-        std::vector<Base::ObjectRef<FragmentDefinition> >
-            definition_table;
-
         m_OutputSemanticSet.clear();
         m_InputSemanticSet.clear();
         m_InputSemanticSet.insert( semantic_input_table.begin(), semantic_input_table.end() );
         m_OutputSemanticSet.insert( semantic_table.begin(), semantic_table.end() );
-
-        std::vector<std::string>::const_iterator it, end;
-        it = fragment_name_table.begin();
-        end = fragment_name_table.end();
-
-        for(; it!=end; ++it )
-        {
-            Base::ObjectRef<AST::TranslationUnit>
-                translation_unit;
-            Base::ObjectRef<Generation::FragmentDefinition>
-                definition;
-
-            translation_unit = HLSL::ParseHLSL( (*it).c_str() );
-
-            FragmentDefinition::GenerateFragment( definition, *translation_unit );
-
-            definition_table.push_back( definition );
-        }
 
         Graph::Ref graph = GenerateGraph( definition_table );
 
