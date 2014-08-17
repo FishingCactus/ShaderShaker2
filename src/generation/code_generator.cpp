@@ -270,6 +270,30 @@ namespace Generation
             GraphNode::Ref node = new GraphNode( *function );
             used_function_set.insert( function );
 
+            if( !graph->AddNode( *node ) )
+            {
+                return 0;
+            }
+
+            // Bind to already existing semantic
+            std::set<std::string>::iterator it, end;
+            std::set<std::string> unresolved_semantic;
+
+            it = function->GetInSemanticSet().begin();
+            end = function->GetInSemanticSet().end();
+
+            for( ; it != end; ++it )
+            {
+                if( graph->HasGeneratedSemantic( *it ) )
+                {
+                    graph->UseGeneratedSemantic( *node, *it );
+                }
+                else
+                {
+                    unresolved_semantic.insert( *it );
+                }
+            }
+
             std::set_difference(
                 open_set.begin(), open_set.end(),
                 function->GetOutSemanticSet().begin(), function->GetOutSemanticSet().end(),
@@ -279,13 +303,8 @@ namespace Generation
             open_set = std::move( new_open_set );
 
             closed_set.insert( function->GetOutSemanticSet().begin(), function->GetOutSemanticSet().end() );
-            open_set.insert( function->GetInSemanticSet().begin(), function->GetInSemanticSet().end() );
+            open_set.insert( unresolved_semantic.begin(), unresolved_semantic.end() );
             open_set.insert( function->GetInOutSemanticSet().begin(), function->GetInOutSemanticSet().end() );
-
-            if( !graph->AddNode( *node ) )
-            {
-                return 0;
-            }
 
             RemoveInputSemantics( open_set );
         }

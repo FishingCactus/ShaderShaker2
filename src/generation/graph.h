@@ -19,6 +19,12 @@
             void Initialize( const std::set<std::string> & semantic_set );
             bool AddNode( GraphNode & node );
 
+            bool HasGeneratedSemantic( const std::string & semantic ) const;
+            void UseGeneratedSemantic(
+                GraphNode & node,
+                const std::string & semantic
+                );
+
             template< typename Visitor >
             void VisitDepthFirst( Visitor & visitor ) const
             {

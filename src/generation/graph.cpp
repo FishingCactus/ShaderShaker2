@@ -66,4 +66,26 @@ namespace Generation
 
         return true;
     }
+
+    bool Graph::HasGeneratedSemantic(
+        const std::string & semantic
+        ) const
+    {
+        return m_NodeToLastOutputSemanticMap.find( semantic ) != m_NodeToLastOutputSemanticMap.end();
+    }
+
+    void Graph::UseGeneratedSemantic(
+        GraphNode & node,
+        const std::string & semantic
+        )
+    {
+        std::map<std::string, GraphNode::Ref >::iterator
+            generating_node;
+
+        generating_node = m_NodeToLastOutputSemanticMap.find( semantic );
+
+        assert( generating_node != m_NodeToLastOutputSemanticMap.end() );
+
+        (*generating_node).second->AddParent( node );
+    }
 }
