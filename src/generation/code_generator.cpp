@@ -308,7 +308,17 @@ namespace Generation
 
         Graph::Ref graph = GenerateGraph( definition_table );
 
+        if( !graph )
+        {
+            return 0;
+        }
+
         Base::ObjectRef<AST::FunctionDeclaration> function = GenerateCodeFromGraph( *graph );
+
+        if( !function )
+        {
+            return 0;
+        }
 
         Base::ObjectRef<AST::TranslationUnit> translation_unit = new AST::TranslationUnit;
 
