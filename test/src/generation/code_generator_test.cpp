@@ -132,3 +132,34 @@ TEST_CASE( "Cycle are detected", "[generation][fragment]" )
         CHECK( error_handler->m_Message == "Cycle detected involving A" );
     }
 }
+
+TEST_CASE( "Type mismatch are detected", "[generation][fragment]" )
+{
+    std::vector<Base::ObjectRef<AST::TranslationUnit> >
+        translation_unit_table;
+    std::vector<std::string>
+        code_table =
+        {
+            "float A( float c :C ) : A { return c; }",
+            "float B( float2 a :A ) : B { return a; }"
+        };
+    std::vector<Base::ObjectRef<Generation::FragmentDefinition> >
+        definition_table;
+
+    definition_table = GetFragmentTable( code_table );
+
+    Generation::CodeGenerator code_generator;
+    Base::ObjectRef<SimpleErrorHandler> error_handler = new SimpleErrorHandler;
+
+    code_generator.GenerateShader(
+        definition_table,
+        { "B" },
+        { "C" },
+        * error_handler
+        );
+
+    CHECK( error_handler->m_Message ==
+        "Incompatible type for semantic A in function B: "
+        "previously seen type was float but defined here as float2"
+        );
+}

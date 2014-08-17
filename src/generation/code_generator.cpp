@@ -4,6 +4,7 @@
 #include "function_definition.h"
 #include "graph.h"
 #include "graph_node.h"
+#include "graph_validator.h"
 #include <ast/function_node.h>
 #include <set>
 #include <iostream>
@@ -336,6 +337,11 @@ namespace Generation
             return 0;
         }
 
+        if( !ValidatesGraph( *graph ) )
+        {
+            return 0;
+        }
+
         Base::ObjectRef<AST::FunctionDeclaration> function = GenerateCodeFromGraph( *graph );
 
         if( !function )
@@ -369,6 +375,18 @@ namespace Generation
                 );
         }
 
+    }
+
+    bool CodeGenerator::ValidatesGraph(
+        const Graph & graph
+        ) const
+    {
+        GraphValidator
+            validator( *m_ErrorHandler );
+
+        graph.VisitDepthFirst( validator );
+
+        return !validator.HasErrors();
     }
 
 

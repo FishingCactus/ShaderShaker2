@@ -50,13 +50,17 @@
                 const std::vector<Base::ObjectRef<AST::TranslationUnit> > & translation_unit_table
                 );
 
+            bool ValidatesGraph(
+                const Graph & graph
+                ) const;
+
             std::set<std::string>
                 m_OutputSemanticSet,
                 m_InputSemanticSet,
                 m_UsedSemanticSet;
             std::vector<Base::ObjectRef<AST::TranslationUnit> >
                 m_UsedTranslationUnitSet;
-            Base::ErrorHandlerInterface::Ref
+            mutable Base::ErrorHandlerInterface::Ref
                 m_ErrorHandler;
 
         };
