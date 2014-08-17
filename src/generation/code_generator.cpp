@@ -8,6 +8,7 @@
 #include <set>
 #include <iostream>
 #include <iterator>
+#include <sstream>
 #include <algorithm>
 
 namespace Generation
@@ -255,10 +256,14 @@ namespace Generation
             std::set<std::string> new_open_set;
             if( !FindMatchingFunction( function, used_function_set, open_set, fragment_table ) )
             {
-                std::ostream_iterator< std::string > output( std::cerr, ", " );
+                std::ostringstream message;
 
-                std::cerr << "Unable to find function that generates ";
+                std::ostream_iterator< std::string > output( message, ", " );
+                message << "Unable to find function that generates ";
                 std::copy( open_set.begin(), open_set.end(), output );
+
+                m_ErrorHandler->ReportError( message.str(), "" );
+
                 return 0;
             }
 
@@ -291,9 +296,11 @@ namespace Generation
     Base::ObjectRef<AST::TranslationUnit> CodeGenerator::GenerateShader(
         const std::vector<Base::ObjectRef<FragmentDefinition> > & definition_table,
         const std::vector<std::string> & semantic_table,
-        const std::vector<std::string> & semantic_input_table
+        const std::vector<std::string> & semantic_input_table,
+        Base::ErrorHandlerInterface & error_handler
         )
     {
+        m_ErrorHandler = & error_handler;
         m_OutputSemanticSet.clear();
         m_InputSemanticSet.clear();
         m_InputSemanticSet.insert( semantic_input_table.begin(), semantic_input_table.end() );

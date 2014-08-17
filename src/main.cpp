@@ -4,6 +4,7 @@
 #include <generation/code_generator.h>
 #include <tclap/CmdLine.h>
 #include <ast/printer/hlsl_printer.h>
+#include <base/console_error_handler.h>
 
 int main( int argument_count, const char* argument_table[] )
 {
@@ -39,11 +40,13 @@ int main( int argument_count, const char* argument_table[] )
         Base::ObjectRef<AST::TranslationUnit> generated_code;
 
         Generation::CodeGenerator code_generator;
+        Base::ErrorHandlerInterface::Ref error_handler = new Base::ConsoleErrorHandler;
 
         generated_code = code_generator.GenerateShader(
             definition_table,
             semantic_argument.getValue(),
-            input_semantic_argument.getValue()
+            input_semantic_argument.getValue(),
+            *error_handler
             );
 
         AST::HLSLPrinter printer ( std::cout );

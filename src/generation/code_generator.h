@@ -5,6 +5,7 @@
     #include <vector>
     #include <ast/node.h>
     #include <base/object_ref.h>
+    #include <base/error_handler_interface.h>
     #include "function_definition.h"
     #include "graph.h"
 
@@ -21,7 +22,8 @@
             Base::ObjectRef<AST::TranslationUnit> GenerateShader(
                 const std::vector<Base::ObjectRef<FragmentDefinition> > & definition_table,
                 const std::vector<std::string> & semantic_table,
-                const std::vector<std::string> & input_semantic_set
+                const std::vector<std::string> & input_semantic_set,
+                Base::ErrorHandlerInterface & error_handler
                 );
 
         private:
@@ -54,6 +56,8 @@
                 m_UsedSemanticSet;
             std::vector<Base::ObjectRef<AST::TranslationUnit> >
                 m_UsedTranslationUnitSet;
+            Base::ErrorHandlerInterface::Ref
+                m_ErrorHandler;
 
         };
     }
