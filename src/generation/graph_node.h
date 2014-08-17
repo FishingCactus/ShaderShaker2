@@ -20,6 +20,11 @@
             GraphNode();
             GraphNode( FunctionDefinition & definition );
 
+            const std::vector<GraphNode::Ref> & GetChildren() const
+            {
+                return m_Children;
+            }
+
             void AddParent( GraphNode & parent );
             FunctionDefinition & GetFunctionDefinition(){ return *m_FunctionDefinition; }
             const FunctionDefinition & GetFunctionDefinition()const{ return *m_FunctionDefinition; }
