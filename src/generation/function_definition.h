@@ -48,6 +48,11 @@
 
             std::string GetSemanticType( const std::string & semantic ) const;
 
+            const std::map<std::string, std::string> & GetSemanticTypeTable() const
+            {
+                return m_SemanticToTypeMap;
+            }
+
         private:
 
             void SetTypeForSemantic(

@@ -142,6 +142,35 @@ namespace Generation
 
             m_StatementTable.push_back( GetFunctionCallFromFunctionDefinition( node.GetFunctionDefinition() ) );
 
+            InsertSemanticTypes( node.GetFunctionDefinition().GetSemanticTypeTable() );
+        }
+
+        void InsertSemanticTypes( const std::map<std::string, std::string> & semantic_to_type_table )
+        {
+            std::map<std::string, std::string>::const_iterator it, end;
+
+            it = semantic_to_type_table.begin();
+            end = semantic_to_type_table.end();
+
+            for( ; it!=end; ++it )
+            {
+                std::map<std::string, std::string>::iterator value;
+                value = m_SemanticToTypeTable.find( (*it).first );
+
+                if( value != m_SemanticToTypeTable.end() )
+                {
+                    if( (*value).second != (*it).second )
+                    {
+                        std::cerr << "Different types can be found for semantic " << (*value).first
+                            << ": " << (*it).second << " and " << (*value).second;
+                    }
+                }
+                else
+                {
+                    m_SemanticToTypeTable.insert( (*it) );
+                }
+
+            }
         }
 
         std::set<std::string>
@@ -150,7 +179,8 @@ namespace Generation
             m_VisitedNodeSet;
         std::vector<Base::ObjectRef<AST::Statement> >
             m_StatementTable;
-
+        std::map<std::string, std::string>
+            m_SemanticToTypeTable;
     };
 
     Base::ObjectRef<AST::FunctionDeclaration> CodeGenerator::GenerateCodeFromGraph(
@@ -172,7 +202,7 @@ namespace Generation
         for(;it!=end;++it )
         {
             Base::ObjectRef<AST::Argument> argument = new AST::Argument;
-            argument->m_Type = new AST::Type( "float4" ); //:TODO: get real type;
+            argument->m_Type = new AST::Type( helper.m_SemanticToTypeTable.find( (*it) )->second );
             argument->m_Name = (*it);
             argument->m_Semantic = (*it);
             argument->m_InputModifier = "out";
@@ -185,7 +215,7 @@ namespace Generation
         for(;it!=end;++it )
         {
             Base::ObjectRef<AST::Argument> argument = new AST::Argument;
-            argument->m_Type = new AST::Type( "float4" ); //:TODO: get real type;
+            argument->m_Type = new AST::Type( helper.m_SemanticToTypeTable.find( (*it) )->second ); //:TODO: get real type;
             argument->m_Name = (*it);
             argument->m_Semantic = (*it);
             argument->m_InputModifier = "in";
