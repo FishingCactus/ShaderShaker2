@@ -11,6 +11,7 @@
 
         struct Technique : Node
         {
+            Technique() {}
             Technique( const std::string & name ) : m_Name( name ) {}
 
             void AddPass( Pass * pass )
@@ -18,6 +19,8 @@
                 assert( pass );
                 m_PassTable.emplace_back( pass );
             }
+
+            virtual Technique * Clone() const override;
 
             std::string
                 m_Name;
@@ -27,6 +30,7 @@
 
         struct Pass : Node
         {
+            Pass() {}
             Pass( const std::string & name ) : m_Name( name ) {}
 
             void AddShaderDefinition( ShaderDefinition * definition )
@@ -34,6 +38,8 @@
                 assert( definition );
                 m_ShaderDefinitionTable.emplace_back( definition );
             }
+
+            virtual Pass * Clone() const override;
 
             std::string
                 m_Name;
@@ -49,8 +55,11 @@
 
         struct ShaderDefinition : Node
         {
+            ShaderDefinition() {}
             ShaderDefinition( ShaderType type, const std::string & name, ShaderArgumentList * list ) :
                 m_Name( name ), m_Type( type ), m_List( list ) {}
+
+            virtual ShaderDefinition * Clone() const override;
 
             std::string
                 m_Name;
@@ -62,6 +71,7 @@
 
         struct ShaderArgumentList : Node
         {
+            ShaderArgumentList() {}
             ShaderArgumentList( Expression * argument )
             {
                 m_ShaderArgumentTable.emplace_back( argument );
@@ -71,6 +81,9 @@
             {
                 m_ShaderArgumentTable.emplace_back( argument );
             }
+
+            virtual ShaderArgumentList * Clone() const override;
+
 
             std::vector< Base::ObjectRef<Expression> >
                 m_ShaderArgumentTable;

@@ -36,10 +36,12 @@
             virtual void Visit( AST::Visitor & visitor ){ visitor.Visit( *this ); };
             virtual ~Node(){}
 
+            virtual Node * Clone() const = 0;
         };
 
         struct GlobalDeclaration : Node
         {
+            virtual GlobalDeclaration * Clone() const override { return 0; }
         };
 
         struct TranslationUnit : Node
@@ -58,6 +60,8 @@
                 m_TechniqueTable.emplace_back( technique );
             }
 
+            virtual TranslationUnit * Clone() const override;
+
             std::vector< Base::ObjectRef<GlobalDeclaration> >
                 m_GlobalDeclarationTable;
             std::vector< Base::ObjectRef<Technique> >
@@ -72,6 +76,8 @@
             void AddTypeModifier( TypeModifier * type_modifier ){ assert( type_modifier ); m_TypeModifier.emplace_back( type_modifier ); }
             void AddBody( VariableDeclarationBody * body ){ assert( body ); m_BodyTable.emplace_back( body ); }
 
+            virtual VariableDeclaration * Clone() const override;
+
             Base::ObjectRef<Type> m_Type;
             std::vector<Base::ObjectRef<StorageClass> > m_StorageClass;
             std::vector<Base::ObjectRef<TypeModifier> > m_TypeModifier;
@@ -81,6 +87,8 @@
         struct TextureDeclaration : GlobalDeclaration
         {
             AST_HandleVisitor()
+
+            TextureDeclaration() {}
             TextureDeclaration(
                 const std::string & type,
                 const std::string & name,
@@ -95,6 +103,8 @@
 
             }
 
+            virtual TextureDeclaration * Clone() const override;
+
             std::string
                 m_Type,
                 m_Name,
@@ -106,6 +116,8 @@
         struct SamplerDeclaration : GlobalDeclaration
         {
             AST_HandleVisitor()
+
+            SamplerDeclaration() {}
             SamplerDeclaration(
                 const std::string & type,
                 const std::string & name
@@ -121,6 +133,9 @@
                 m_BodyTable.emplace_back( body );
             }
 
+            virtual SamplerDeclaration * Clone() const override;
+
+
             std::string
                 m_Type,
                 m_Name;
@@ -131,6 +146,7 @@
         struct SamplerBody : Node
         {
             AST_HandleVisitor()
+            SamplerBody(){}
             SamplerBody(
                 const std::string & name,
                 const std::string & value
@@ -141,6 +157,8 @@
 
             }
 
+            virtual SamplerBody * Clone() const override;
+
             std::string
                 m_Name,
                 m_Value;
@@ -149,6 +167,7 @@
         struct StructDefinition: GlobalDeclaration
         {
             AST_HandleVisitor()
+            StructDefinition() {}
             StructDefinition( const std::string & name ) : m_Name( name ) {}
 
             struct Member
@@ -186,6 +205,8 @@
                 m_MemberTable.emplace_back( Member( type, name, semantic, interpolation_modifier ) );
             }
 
+            virtual StructDefinition * Clone() const override;
+
             std::string
                 m_Name;
             std::vector<Member>
@@ -195,7 +216,10 @@
 
         struct Type : Node
         {
+            Type() {}
             Type( const std::string & name ) : m_Name( name ) {}
+
+            virtual Type * Clone() const override { return 0; }
 
             std::string
                 m_Name;
@@ -204,31 +228,48 @@
         struct IntrinsicType : Type
         {
             AST_HandleVisitor()
+
+            IntrinsicType(){}
             IntrinsicType( const std::string & name ) : Type( name ) {}
+
+            virtual IntrinsicType * Clone() const override;
         };
 
         struct UserDefinedType : Type
         {
             AST_HandleVisitor()
+
+            UserDefinedType() {}
             UserDefinedType( const std::string & name ) : Type( name ) {}
+
+            virtual UserDefinedType * Clone() const override;
         };
 
         struct SamplerType : Type
         {
+            SamplerType() {}
             SamplerType( const std::string & name ) : Type( name ) {}
+
+            virtual SamplerType * Clone() const override;
         };
 
         struct TypeModifier : Node
         {
             AST_HandleVisitor()
+
+            TypeModifier() {}
             TypeModifier( const std::string & modifier ) : m_Value( modifier ){}
+
+            virtual TypeModifier * Clone() const override;
             std::string m_Value;
         };
 
         struct StorageClass : Node
         {
             AST_HandleVisitor()
+            StorageClass(){}
             StorageClass( const std::string & storage_class ) : m_Value( storage_class ){}
+            virtual StorageClass * Clone() const override;
             std::string m_Value;
         };
 
@@ -238,6 +279,8 @@
 
             VariableDeclarationBody() : m_ArraySize( 0 ) {}
             VariableDeclarationBody( const std::string & name ) : m_Name( name ){}
+
+            virtual VariableDeclarationBody * Clone() const override;
 
             std::string
                 m_Name,
@@ -258,6 +301,8 @@
             InitialValue() : m_Vector( false ){}
 
             void AddExpression( Expression * expression ){ assert( expression ); m_ExpressionTable.emplace_back( expression ); }
+
+            virtual InitialValue * Clone() const override;
 
             std::vector<Base::ObjectRef<Expression> >
                 m_ExpressionTable;

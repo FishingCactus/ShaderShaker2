@@ -14,6 +14,8 @@
             void AddStorageClass( StorageClass * storage ){ m_StorageClassTable.emplace_back( storage ); }
             void AddStatement( Statement * statement ){ m_StatementTable.emplace_back( statement ); }
 
+            virtual FunctionDeclaration * Clone() const override;
+
             Base::ObjectRef<Type>
                 m_Type;
             std::string
@@ -32,8 +34,9 @@
         {
             AST_HandleVisitor()
 
-
             void AddArgument( Argument * argument ){ m_ArgumentTable.emplace_back( argument ); }
+
+            virtual ArgumentList * Clone() const override;
 
             std::vector< Base::ObjectRef<Argument> >
                 m_ArgumentTable;
@@ -42,6 +45,8 @@
         struct Argument : Node
         {
             AST_HandleVisitor()
+
+            virtual Argument * Clone() const override;
 
             Base::ObjectRef<Type>
                 m_Type;
