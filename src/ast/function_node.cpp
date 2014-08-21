@@ -18,7 +18,10 @@ namespace AST
     {
         FunctionDeclaration * clone = new FunctionDeclaration;
 
-        clone->m_Type = m_Type->Clone();
+        if( m_Type )
+        {
+            clone->m_Type = m_Type->Clone();
+        }
         clone->m_Name = m_Name;
         clone->m_Semantic = m_Semantic;
         clone->m_ArgumentList = m_ArgumentList->Clone();
@@ -46,8 +49,16 @@ namespace AST
         clone->m_InputModifier = m_InputModifier;
         clone->m_Semantic = m_Semantic;
         clone->m_InterpolationModifier = m_InterpolationModifier;
-        clone->m_TypeModifier = m_TypeModifier->Clone();
-        clone->m_InitialValue = m_InitialValue->Clone();
+
+        if( m_TypeModifier )
+        {
+            clone->m_TypeModifier = m_TypeModifier->Clone();
+        }
+
+        if( m_InitialValue )
+        {
+            clone->m_InitialValue = m_InitialValue->Clone();
+        }
 
         return clone;
     }
