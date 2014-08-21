@@ -285,7 +285,8 @@ namespace Generation
 
             for( ; it != end; ++it )
             {
-                if( graph->HasGeneratedSemantic( *it ) )
+                if( open_set.find( *it ) == open_set.end()
+                    && graph->HasGeneratedSemantic( *it ) )
                 {
                     if( !graph->UseGeneratedSemantic( *node, *it ) )
                     {
