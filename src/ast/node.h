@@ -7,6 +7,7 @@
     #include <memory>
 
     #include "visitor.h"
+    #include "const_visitor.h"
     #include "base/object.h"
     #include "base/object_ref.h"
 
@@ -29,11 +30,14 @@
         struct SamplerBody;
 
         #define AST_HandleVisitor() \
-            virtual void Visit( AST::Visitor & visitor ) override { visitor.Visit( *this ); }
+            virtual void Visit( AST::Visitor & visitor ) override { visitor.Visit( *this ); } \
+            virtual void Visit( AST::ConstVisitor & visitor ) const override { visitor.Visit( *this ); }
 
         struct Node : public Base::Object
         {
             virtual void Visit( AST::Visitor & visitor ){ visitor.Visit( *this ); };
+            virtual void Visit( AST::ConstVisitor & visitor ) const { visitor.Visit( *this ); };
+
             virtual ~Node(){}
 
             virtual Node * Clone() const = 0;
