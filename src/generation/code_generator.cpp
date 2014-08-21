@@ -6,6 +6,7 @@
 #include "graph_node.h"
 #include "graph_validator.h"
 #include <ast/function_node.h>
+#include "semantic_remover.h"
 #include <set>
 #include <iostream>
 #include <iterator>
@@ -365,13 +366,18 @@ namespace Generation
         )
     {
         std::vector<Base::ObjectRef<AST::TranslationUnit> >::const_iterator it, end;
+        SemanticRemover semantic_remover;
 
         it = translation_unit_table.begin();
         end = translation_unit_table.end();
         for( ;it!=end; ++it)
         {
+            Base::ObjectRef<AST::TranslationUnit> clone = (*it)->Clone();
+
+            clone->Visit( semantic_remover );
+
             std::copy(
-                (*it)->m_GlobalDeclarationTable.begin(), (*it)->m_GlobalDeclarationTable.end(),
+                clone->m_GlobalDeclarationTable.begin(), clone->m_GlobalDeclarationTable.end(),
                 std::back_inserter( destination_translation_unit.m_GlobalDeclarationTable )
                 );
         }
