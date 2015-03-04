@@ -63,6 +63,9 @@
 
         private:
 
+            template< class _Table_ >
+            void VisitTable( ConstVisitor & visitor, _Table_ & table, const char * separator_cstr, bool add_endl );
+
             std::ostream
                 & m_Stream;
 

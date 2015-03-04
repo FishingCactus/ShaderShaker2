@@ -14,71 +14,20 @@ namespace AST
 
     void HLSLPrinter::Visit( const TranslationUnit & translation_unit )
     {
-        {
-            std::vector< Base::ObjectRef<GlobalDeclaration> >::const_iterator it, end;
-            it = translation_unit.m_GlobalDeclarationTable.cbegin();
-            end = translation_unit.m_GlobalDeclarationTable.cend();
-
-            for( ;it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-        }
-
-        {
-            std::vector< Base::ObjectRef<Technique> >::const_iterator it, end;
-            it = translation_unit.m_TechniqueTable.cbegin();
-            end = translation_unit.m_TechniqueTable.cend();
-
-            for( ;it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-        }
+        AST::VisitTable( *this, translation_unit.m_GlobalDeclarationTable );
+        AST::VisitTable( *this, translation_unit.m_TechniqueTable );
     }
 
     void HLSLPrinter::Visit( const VariableDeclaration & variable_declaration )
     {
-        {
-            std::vector< Base::ObjectRef<StorageClass> >::const_iterator it, end;
-            it = variable_declaration.m_StorageClass.cbegin();
-            end = variable_declaration.m_StorageClass.cend();
-            bool first = true;
-            for( ;it != end; ++it )
-            {
-                if(!first) m_Stream << "," << endl_ind;
-                first = false;
-                (*it)->Visit( *this );
-            }
-        }
-
-        {
-            std::vector< Base::ObjectRef<TypeModifier> >::const_iterator it, end;
-            it = variable_declaration.m_TypeModifier.cbegin();
-            end = variable_declaration.m_TypeModifier.cend();
-
-            for( ;it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-        }
+        VisitTable( *this, variable_declaration.m_StorageClass, ",", true );
+        AST::VisitTable( *this, variable_declaration.m_TypeModifier );
 
         m_Stream << variable_declaration.m_Type->m_Name;
 
-        {
-            std::vector< Base::ObjectRef<VariableDeclarationBody> >::const_iterator it, end;
-            it = variable_declaration.m_BodyTable.cbegin();
-            end = variable_declaration.m_BodyTable.cend();
-
-            m_Stream << inc_ind << endl_ind;
-
-            for( ;it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-
-            m_Stream << dec_ind;
-        }
+        m_Stream << inc_ind << endl_ind;
+        AST::VisitTable( *this, variable_declaration.m_BodyTable );
+        m_Stream << dec_ind;
 
         m_Stream << ";" << endl_ind;
     }
@@ -158,16 +107,7 @@ namespace AST
             << declaration.m_Name << endl_ind
             << "{" << inc_ind << endl_ind;
 
-        {
-            std::vector< Base::ObjectRef<SamplerBody> >::const_iterator it, end;
-            it = declaration.m_BodyTable.cbegin();
-            end = declaration.m_BodyTable.cend();
-            for(; it!=end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-
-        }
+        AST::VisitTable( *this, declaration.m_BodyTable );
 
         m_Stream << dec_ind << endl_ind << "}" << endl_ind;
     }
@@ -222,16 +162,7 @@ namespace AST
 
     void HLSLPrinter::Visit( const FunctionDeclaration & declaration )
     {
-        {
-            std::vector< Base::ObjectRef<StorageClass> >::const_iterator it, end;
-            it = declaration.m_StorageClassTable.cbegin();
-            end = declaration.m_StorageClassTable.cend();
-
-            for(; it!=end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-        }
+        AST::VisitTable( *this, declaration.m_StorageClassTable );
 
         if( declaration.m_Type )
         {
@@ -241,11 +172,14 @@ namespace AST
         {
             m_Stream << "void";
         }
+
         m_Stream << " " << declaration.m_Name << "(";
+
         if( declaration.m_ArgumentList )
         {
             declaration.m_ArgumentList->Visit( * this );
         }
+
         m_Stream << ")";
 
         if( !declaration.m_Semantic.empty() )
@@ -255,36 +189,14 @@ namespace AST
 
         m_Stream << endl_ind << "{" << inc_ind << endl_ind;
 
-        {
-            std::vector< Base::ObjectRef<Statement> >::const_iterator it, end;
-            it = declaration.m_StatementTable.cbegin();
-            end = declaration.m_StatementTable.cend();
-
-            for(; it!=end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-        }
+        AST::VisitTable( *this, declaration.m_StatementTable );
 
         m_Stream << dec_ind << endl_ind << "}" << endl_ind;
     }
 
     void HLSLPrinter::Visit( const ArgumentList & list )
     {
-        bool first = true;
-
-        {
-            std::vector< Base::ObjectRef<Argument> >::const_iterator it, end;
-            it = list.m_ArgumentTable.cbegin();
-            end = list.m_ArgumentTable.cend();
-
-            for(; it!=end; ++it )
-            {
-                if( !first ) m_Stream << ", ";
-                first = false;
-                (*it)->Visit( *this );
-            }
-        }
+        VisitTable( *this, list.m_ArgumentTable, ", ", false );
     }
 
     void HLSLPrinter::Visit( const Argument & argument )
@@ -366,17 +278,7 @@ namespace AST
 
     void HLSLPrinter::Visit( const ArgumentExpressionList & list )
     {
-        size_t
-            index,
-            count;
-
-        count = list.m_ExpressionList.size();
-
-        for( index = 0; index < count; ++index )
-        {
-            if( index != 0 ) m_Stream << ", ";
-            list.m_ExpressionList[ index ]->Visit( *this );
-        }
+        VisitTable( *this, list.m_ExpressionList, ", ", false );
     }
 
     void HLSLPrinter::Visit( const Swizzle & swizzle )
@@ -567,13 +469,7 @@ namespace AST
         {
             m_Stream << "{" << inc_ind << endl_ind;
 
-            std::vector< Base::ObjectRef<Statement> >::const_iterator
-                it, end = statement.m_StatementTable.cend();
-
-            for ( it = statement.m_StatementTable.cbegin(); it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
+            AST::VisitTable( *this, statement.m_StatementTable );
 
             m_Stream << dec_ind << endl_ind << "}" << endl_ind;
         }
@@ -587,48 +483,40 @@ namespace AST
 
     void HLSLPrinter::Visit( const VariableDeclarationStatement & statement )
     {
-        {
-            std::vector< Base::ObjectRef<StorageClass> >::const_iterator it, end;
-            it = statement.m_StorageClass.cbegin();
-            end = statement.m_StorageClass.cend();
-            bool first = true;
-            for( ;it != end; ++it )
-            {
-                if(!first) m_Stream << "," << endl_ind;
-                first = false;
-                (*it)->Visit( *this );
-            }
-        }
-
-        {
-            std::vector< Base::ObjectRef<TypeModifier> >::const_iterator it, end;
-            it = statement.m_TypeModifier.cbegin();
-            end = statement.m_TypeModifier.cend();
-
-            for( ;it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-        }
+        VisitTable( *this, statement.m_StorageClass, ",", true );
+        AST::VisitTable( *this, statement.m_TypeModifier );
 
         m_Stream << statement.m_Type->m_Name;
 
-        {
-            std::vector< Base::ObjectRef<VariableDeclarationBody> >::const_iterator it, end;
-            it = statement.m_BodyTable.cbegin();
-            end = statement.m_BodyTable.cend();
-
-            m_Stream << inc_ind << endl_ind;
-
-            for( ;it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-
-            m_Stream << dec_ind;
-        }
-
+        m_Stream << inc_ind << endl_ind;
+        AST::VisitTable( *this, statement.m_BodyTable );
+        m_Stream << dec_ind;
         m_Stream << ";" << endl_ind;
     }
 
+    template< class _Table_ >
+    void HLSLPrinter::VisitTable( ConstVisitor & visitor, _Table_ & table, const char * separator_cstr, bool add_endl )
+    {
+        typename _Table_::const_iterator
+            it = table.cbegin(),
+            end = table.cend();
+        bool
+            first = true;
+
+        for( ;it != end; ++it )
+        {
+            if( !first )
+            {
+                m_Stream << separator_cstr;
+
+                if ( add_endl )
+                {
+                    m_Stream << endl_ind;
+                }
+            }
+
+            first = false;
+            (*it)->Visit( visitor );
+        }
+    }
 }
