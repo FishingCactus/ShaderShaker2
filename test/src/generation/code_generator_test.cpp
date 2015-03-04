@@ -89,7 +89,10 @@ TEST_CASE( "Special cases are handled", "[generation][fragment]" )
 
         Base::ObjectRef<AST::TranslationUnit> translation_unit;
 
-        translation_unit = code_generator.GenerateShader(
+        std::vector<std::string> used_semantic_table;
+        code_generator.GenerateShader(
+            translation_unit,
+            used_semantic_table,
             definition_table,
             { "A" },
             { "X" },
@@ -122,7 +125,12 @@ TEST_CASE( "Cycle are detected", "[generation][fragment]" )
         Generation::CodeGenerator code_generator;
         Base::ObjectRef<SimpleErrorHandler> error_handler = new SimpleErrorHandler;
 
+        Base::ObjectRef<AST::TranslationUnit> translation_unit;
+        std::vector<std::string> used_semantic_table;
+
         code_generator.GenerateShader(
+            translation_unit,
+            used_semantic_table,
             definition_table,
             { "A" },
             {},
@@ -151,7 +159,13 @@ TEST_CASE( "Type mismatch are detected", "[generation][fragment]" )
     Generation::CodeGenerator code_generator;
     Base::ObjectRef<SimpleErrorHandler> error_handler = new SimpleErrorHandler;
 
+
+    Base::ObjectRef<AST::TranslationUnit> translation_unit;
+    std::vector<std::string> used_semantic_table;
+
     code_generator.GenerateShader(
+        translation_unit,
+        used_semantic_table,
         definition_table,
         { "B" },
         { "C" },
