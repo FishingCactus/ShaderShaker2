@@ -35,12 +35,40 @@
 
         struct Node : public Base::Object
         {
+            Node();
             virtual void Visit( AST::Visitor & visitor ){ visitor.Visit( *this ); };
             virtual void Visit( AST::ConstVisitor & visitor ) const { visitor.Visit( *this ); };
 
             virtual ~Node(){}
 
             virtual Node * Clone() const = 0;
+
+            static void SetDebugInfo(
+                const std::string & filename,
+                const int line
+                );
+
+            static const std::string & GetCurrentFileName()
+            {
+                return s_CurrentFileName;
+            }
+
+            static int GetCurrentLine()
+            {
+                return s_CurrentLine;
+            }
+
+            const std::string
+                m_FileName;
+            const int
+                m_Line;
+
+        private:
+
+            static std::string
+                s_CurrentFileName;
+            static int
+                s_CurrentLine;
         };
 
         struct GlobalDeclaration : Node

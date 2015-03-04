@@ -59,7 +59,7 @@ namespace Generation
                         << " in function " << definition.GetName() << ": previously seen type was "
                         << (*value).second << " but defined here as " << (*it).second;
 
-                    m_ErrorHandler->ReportError( message.str(), "" );
+                    m_ErrorHandler->ReportError( message.str(), definition.GetSourceFilename() );
 
                     m_GraphHasErrors = true;
                 }

@@ -53,6 +53,9 @@
                 return m_SemanticToTypeMap;
             }
 
+            const std::string & GetSourceFilename() const;
+            int GetSourceFileLine() const;
+
         private:
 
             void SetTypeForSemantic(

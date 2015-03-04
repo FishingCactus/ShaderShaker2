@@ -7,7 +7,7 @@
     struct Parser
     {
         Parser( const char * code, const int size ) :
-            m_Input( (ANTLR_UINT8* )code, ANTLR_ENC_8BIT, size, (ANTLR_UINT8*) "" ),
+            m_Input( (ANTLR_UINT8* )code, ANTLR_ENC_8BIT, size, (ANTLR_UINT8*) "literal_code" ),
             m_Lexer( &m_Input ),
             m_TokenStream( ANTLR_SIZE_HINT, m_Lexer.get_tokSource() ),
             m_Parser( &m_TokenStream )
