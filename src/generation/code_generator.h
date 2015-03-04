@@ -14,6 +14,8 @@
 
     namespace Generation
     {
+        struct CodeGeneratorHelper;
+
         class CodeGenerator
         {
 
@@ -38,6 +40,13 @@
                 );
 
             void RemoveInputSemantics( std::set<std::string> & semantic_set );
+
+            void AddArgumentTable(
+                AST::ArgumentList & argument_list,
+                const CodeGeneratorHelper & helper,
+                const std::set<std::string> & semantic_set,
+                const std::string & input_modifier
+                );
 
             Base::ObjectRef<AST::FunctionDeclaration> GenerateCodeFromGraph(
                 const Graph & graph
