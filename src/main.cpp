@@ -2,6 +2,7 @@
 #include <ast/print_visitor.h>
 #include <ast/node.h>
 #include <generation/code_generator.h>
+#include <generation/technique_generator.h>
 #include <tclap/CmdLine.h>
 #include <ast/printer/hlsl_printer.h>
 #include <base/console_error_handler.h>
@@ -41,6 +42,9 @@ int main( int argument_count, const char* argument_table[] )
             definition_table.push_back( definition );
         }
 
+        Base::ErrorHandlerInterface::Ref
+            error_handler = new Base::ConsoleErrorHandler;
+
         if( !interpolator_semantic_argument.isSet() )
         {
             Base::ObjectRef<AST::TranslationUnit>
@@ -49,8 +53,6 @@ int main( int argument_count, const char* argument_table[] )
                 used_semantic_set;
             Generation::CodeGenerator
                 code_generator;
-            Base::ErrorHandlerInterface::Ref
-                error_handler = new Base::ConsoleErrorHandler;
 
             code_generator.GenerateShader(
                 generated_code,
@@ -68,67 +70,37 @@ int main( int argument_count, const char* argument_table[] )
         }
         else
         {
+            Generation::TechniqueGenerator
+                generator;
             Base::ObjectRef<AST::TranslationUnit>
-                generated_pixel_code,
-                generated_vertex_code;
+                pixel_code,
+                vertex_code;
             std::vector<std::string>
-                pixel_used_semantic_set,
-                vertex_used_semantic_set;
-            Generation::CodeGenerator
-                code_generator;
-            Base::ErrorHandlerInterface::Ref
-                error_handler = new Base::ConsoleErrorHandler;
-            std::vector<std::string>
-                interpolator_semantic_list;
+                used_input_semantic_table;
 
-            std::copy(
-                input_semantic_argument.getValue().begin(),
-                input_semantic_argument.getValue().end(),
-                std::back_inserter( interpolator_semantic_list )
-                );
+            generator.SetOutputSemanticTable( semantic_argument.getValue() );
+            generator.SetInputSemanticTable( input_semantic_argument.getValue() );
+            generator.SetInterpolatorSemanticTable( interpolator_semantic_argument.getValue() );
 
-            std::copy(
-                interpolator_semantic_argument.getValue().begin(),
-                interpolator_semantic_argument.getValue().end(),
-                std::back_inserter( interpolator_semantic_list )
-                );
-
-            code_generator.GenerateShader(
-                generated_pixel_code,
-                pixel_used_semantic_set,
-                definition_table,
-                semantic_argument.getValue(),
-                interpolator_semantic_list,
-                *error_handler
-                );
-
-            if( !generated_pixel_code )
+            if( !generator.Generate(
+                    vertex_code,
+                    pixel_code,
+                    used_input_semantic_table,
+                    definition_table,
+                    *error_handler
+                    )
+                )
             {
-                std::cerr << "No pixel code generated, exiting" << std::endl;
-                return 1;
-            }
-
-            code_generator.GenerateShader(
-                generated_vertex_code,
-                vertex_used_semantic_set,
-                definition_table,
-                pixel_used_semantic_set,
-                input_semantic_argument.getValue(),
-                *error_handler
-                );
-
-            if( !generated_vertex_code )
-            {
-                std::cerr << "No vertex code generated, exiting" << std::endl;
+                std::cerr << "No code generated, exiting" << std::endl;
                 return 1;
             }
 
             AST::HLSLPrinter printer ( std::cout );
 
             std::cout << "Vertex Shader : " << std::endl;
-            generated_vertex_code->Visit( printer );
+            vertex_code->Visit( printer );
             std::cout << "Pixel Shader : " << std::endl;
-            generated_pixel_code->Visit( printer );
+            pixel_code->Visit( printer );
         }
     }
     catch( TCLAP::ArgException &e )
