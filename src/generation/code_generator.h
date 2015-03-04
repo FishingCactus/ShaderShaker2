@@ -10,7 +10,6 @@
     #include "graph.h"
 
     namespace AST{struct FunctionDeclaration;}
-    namespace AST{struct FunctionDeclaration;}
 
     namespace Generation
     {
