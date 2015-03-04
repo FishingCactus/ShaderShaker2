@@ -111,6 +111,19 @@
             virtual void Visit( AssignmentStatement & statement ) = 0;
             virtual void Visit( VariableDeclarationStatement & statement ) = 0;
         };
+
+        template< class _Table_ >
+        void VisitTable( Visitor & visitor, _Table_ & table )
+        {
+            typename _Table_::iterator
+                it = table.begin(),
+                end = table.end();
+
+            for( ; it != end; ++it )
+            {
+                (*it)->Visit( visitor );
+            }
+        }
     }
 
 #endif

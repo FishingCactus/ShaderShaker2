@@ -7,27 +7,13 @@
 
 namespace AST
 {
-
-    template< class _Table_ >
-    void VisitTable( Visitor & visitor, _Table_ & table )
-    {
-        typename _Table_::iterator
-            it = table.begin(),
-            end = table.end();
-
-        for( ; it != end; ++it )
-        {
-            (*it)->Visit( visitor );
-        }
-    }
-
-    void PrintVisitor::Visit( Node & node )
+    void PrintVisitor::Visit( const Node & node )
     {
         assert(! "Some node type might not be supported in the visitor" );
 
     }
 
-    void PrintVisitor::Visit( TranslationUnit & translation_unit )
+    void PrintVisitor::Visit( const TranslationUnit & translation_unit )
     {
         std::cout
             << "TranslationUnit" << endl_ind
@@ -39,7 +25,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( VariableDeclaration & variable_declaration )
+    void PrintVisitor::Visit( const VariableDeclaration & variable_declaration )
     {
         std::cout
             << "VariableDeclaration" << endl_ind
@@ -55,35 +41,35 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( IntrinsicType & type )
+    void PrintVisitor::Visit( const IntrinsicType & type )
     {
         std::cout << "IntrinsicType{ " << type.m_Name << " }" << endl_ind;
 
     }
 
-    void PrintVisitor::Visit( UserDefinedType & type )
+    void PrintVisitor::Visit( const UserDefinedType & type )
     {
         std::cout << "UserDefinedType{ " << type.m_Name << " }" << endl_ind;
 
     }
 
-    void PrintVisitor::Visit( SamplerType & type )
+    void PrintVisitor::Visit( const SamplerType & type )
     {
         std::cout << "SamplerType{ " << type.m_Name << " }" << endl_ind;
     }
 
-    void PrintVisitor::Visit( TypeModifier & modifier )
+    void PrintVisitor::Visit( const TypeModifier & modifier )
     {
         std::cout << "TypeModifier{ " << modifier.m_Value << " }" << endl_ind;
 
     }
 
-    void PrintVisitor::Visit( StorageClass & storage_class )
+    void PrintVisitor::Visit( const StorageClass & storage_class )
     {
         std::cout << "StorageClass{ " << storage_class.m_Value << " }" << endl_ind;
     }
 
-    void PrintVisitor::Visit( VariableDeclarationBody & body )
+    void PrintVisitor::Visit( const VariableDeclarationBody & body )
     {
 
         std::cout
@@ -110,7 +96,7 @@ namespace AST
 
     }
 
-    void PrintVisitor::Visit( TextureDeclaration & declaration )
+    void PrintVisitor::Visit( const TextureDeclaration & declaration )
     {
         std::cout
             << "TextureDeclaration" << endl_ind
@@ -127,7 +113,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( SamplerDeclaration & declaration )
+    void PrintVisitor::Visit( const SamplerDeclaration & declaration )
     {
         std::cout
             << "SamplerDeclaration" << endl_ind
@@ -140,7 +126,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( SamplerBody & body )
+    void PrintVisitor::Visit( const SamplerBody & body )
     {
         std::cout
             << "SamplerBody" << endl_ind
@@ -150,16 +136,16 @@ namespace AST
             << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( StructDefinition & definition )
+    void PrintVisitor::Visit( const StructDefinition & definition )
     {
         std::cout
             << "StructDefinition" << endl_ind
             << "{ " << inc_ind << endl_ind
             << "Name{ " << definition.m_Name << " }" << endl_ind;
 
-        std::vector<StructDefinition::Member>::iterator it, end = definition.m_MemberTable.end();
+        std::vector<StructDefinition::Member>::const_iterator it, end = definition.m_MemberTable.cend();
 
-        for( it = definition.m_MemberTable.begin(); it != end; ++it )
+        for( it = definition.m_MemberTable.cbegin(); it != end; ++it )
         {
             std::cout
                 << "Member" << endl_ind
@@ -178,7 +164,7 @@ namespace AST
     }
 
     // Expressions
-    void PrintVisitor::Visit( LiteralExpression & expression )
+    void PrintVisitor::Visit( const LiteralExpression & expression )
     {
         std::cout
             << "LiteralExpression" << endl_ind
@@ -188,7 +174,7 @@ namespace AST
             << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( VariableExpression & expression )
+    void PrintVisitor::Visit( const VariableExpression & expression )
     {
         std::cout
             << "VariableExpression" << endl_ind
@@ -203,7 +189,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( UnaryOperationExpression & expression )
+    void PrintVisitor::Visit( const UnaryOperationExpression & expression )
     {
         std::cout
             << "UnaryOperationExpression" << endl_ind
@@ -218,7 +204,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( BinaryOperationExpression & expression )
+    void PrintVisitor::Visit( const BinaryOperationExpression & expression )
     {
         std::cout
             << "BinaryOperationExpression" << endl_ind
@@ -238,7 +224,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( CallExpression & expression )
+    void PrintVisitor::Visit( const CallExpression & expression )
     {
         std::cout
             << "CallExpression" << endl_ind
@@ -253,7 +239,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( ArgumentExpressionList & list )
+    void PrintVisitor::Visit( const ArgumentExpressionList & list )
     {
         std::cout
             << "ArgumentExpressionList" << endl_ind
@@ -264,7 +250,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( Swizzle & swizzle )
+    void PrintVisitor::Visit( const Swizzle & swizzle )
     {
         std::cout
             << "Swizzle" << endl_ind
@@ -273,7 +259,7 @@ namespace AST
             << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( PostfixSuffixCall & postfix_suffix )
+    void PrintVisitor::Visit( const PostfixSuffixCall & postfix_suffix )
     {
         std::cout
             << "PostfixSuffixCall" << endl_ind
@@ -292,7 +278,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( PostfixSuffixVariable & postfix_suffix )
+    void PrintVisitor::Visit( const PostfixSuffixVariable & postfix_suffix )
     {
         std::cout
             << "PostfixSuffixVariable" << endl_ind
@@ -311,7 +297,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( ConstructorExpression & expression )
+    void PrintVisitor::Visit( const ConstructorExpression & expression )
     {
         std::cout
             << "ConstructorExpression" << endl_ind
@@ -330,7 +316,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( ConditionalExpression & expression )
+    void PrintVisitor::Visit( const ConditionalExpression & expression )
     {
         std::cout
             << "ConditionalExpression" << endl_ind
@@ -354,7 +340,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( LValueExpression & expression )
+    void PrintVisitor::Visit( const LValueExpression & expression )
     {
         std::cout
             << "LValueExpression" << endl_ind
@@ -373,7 +359,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( PreModifyExpression & expression )
+    void PrintVisitor::Visit( const PreModifyExpression & expression )
     {
         std::cout
             << "PreModifyExpression" << endl_ind
@@ -390,7 +376,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( PostModifyExpression & expression )
+    void PrintVisitor::Visit( const PostModifyExpression & expression )
     {
         std::cout
             << "PostModifyExpression" << endl_ind
@@ -405,7 +391,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( CastExpression & expression )
+    void PrintVisitor::Visit( const CastExpression & expression )
     {
         std::cout
             << "CastExpression" << endl_ind
@@ -426,7 +412,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( AssignmentExpression & expression )
+    void PrintVisitor::Visit( const AssignmentExpression & expression )
     {
         std::cout
             << "AssignmentExpression" << endl_ind
@@ -450,7 +436,7 @@ namespace AST
 
     // Statements
 
-    void PrintVisitor::Visit( ReturnStatement & statement )
+    void PrintVisitor::Visit( const ReturnStatement & statement )
     {
         std::cout
             << "ReturnStatement" << endl_ind
@@ -464,27 +450,27 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( BreakStatement & statement )
+    void PrintVisitor::Visit( const BreakStatement & statement )
     {
         std::cout << "BreakStatement{}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( ContinueStatement & statement )
+    void PrintVisitor::Visit( const ContinueStatement & statement )
     {
         std::cout << "ContinueStatement{}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( DiscardStatement & statement )
+    void PrintVisitor::Visit( const DiscardStatement & statement )
     {
         std::cout << "DiscardStatement{}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( EmptyStatement & statement )
+    void PrintVisitor::Visit( const EmptyStatement & statement )
     {
         std::cout << "EmptyStatement{}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( ExpressionStatement & statement )
+    void PrintVisitor::Visit( const ExpressionStatement & statement )
     {
         std::cout
             << "ExpressionStatement" << endl_ind
@@ -498,7 +484,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( IfStatement & statement )
+    void PrintVisitor::Visit( const IfStatement & statement )
     {
         std::cout
             << "IfStatement" << endl_ind
@@ -522,7 +508,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( WhileStatement & statement )
+    void PrintVisitor::Visit( const WhileStatement & statement )
     {
         std::cout
             << "WhileStatement" << endl_ind
@@ -541,7 +527,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( DoWhileStatement & statement )
+    void PrintVisitor::Visit( const DoWhileStatement & statement )
     {
         std::cout
             << "DoWhileStatement" << endl_ind
@@ -560,7 +546,7 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( BlockStatement & statement )
+    void PrintVisitor::Visit( const BlockStatement & statement )
     {
         std::cout
             << "BlockStatement" << endl_ind
