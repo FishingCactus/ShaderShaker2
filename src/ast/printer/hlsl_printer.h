@@ -22,6 +22,9 @@
             virtual void Visit( const TypeModifier & modifier ) override;
             virtual void Visit( const StorageClass & storage_class ) override;
             virtual void Visit( const VariableDeclarationBody & body ) override;
+            virtual void Visit( const InitialValue & initial_value ) override;
+            virtual void Visit( const Annotations & annotations ) override;
+            virtual void Visit( const AnnotationEntry & annotation_entry ) override;
             virtual void Visit( const TextureDeclaration & declaration ) override;
             virtual void Visit( const SamplerDeclaration & declaration ) override;
             virtual void Visit( const SamplerBody & body ) override;

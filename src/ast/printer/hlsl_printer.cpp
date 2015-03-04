@@ -20,13 +20,20 @@ namespace AST
 
     void HLSLPrinter::Visit( const VariableDeclaration & variable_declaration )
     {
-        VisitTable( *this, variable_declaration.m_StorageClass, ",", true );
-        AST::VisitTable( *this, variable_declaration.m_TypeModifier );
+        VisitTable( *this, variable_declaration.m_StorageClass, " ", false );
+
+        if ( !variable_declaration.m_StorageClass.empty() )
+            m_Stream << " ";
+
+        VisitTable( *this, variable_declaration.m_TypeModifier, " ", false );
+
+        if ( !variable_declaration.m_TypeModifier.empty() )
+            m_Stream << " ";
 
         m_Stream << variable_declaration.m_Type->m_Name;
 
         m_Stream << inc_ind << endl_ind;
-        AST::VisitTable( *this, variable_declaration.m_BodyTable );
+        VisitTable( *this, variable_declaration.m_BodyTable, ",", true );
         m_Stream << dec_ind;
 
         m_Stream << ";" << endl_ind;
@@ -82,6 +89,34 @@ namespace AST
 
             body.m_InitialValue->Visit( *this );
         }
+    }
+
+    void HLSLPrinter::Visit( const InitialValue & initial_value )
+    {
+        if ( initial_value.m_Vector )
+        {
+            m_Stream << "{ ";
+            VisitTable( *this, initial_value.m_ExpressionTable, ", ", false );
+            m_Stream << " }";
+        }
+        else
+        {
+            assert( initial_value.m_ExpressionTable.size() == 1 );
+            initial_value.m_ExpressionTable[ 0 ]->Visit( *this );
+        }
+    }
+
+    void HLSLPrinter::Visit( const Annotations & annotations )
+    {
+        m_Stream << " < ";
+        AST::VisitTable( *this, annotations.m_AnnotationTable );
+        m_Stream << ">";
+    }
+
+    void HLSLPrinter::Visit( const AnnotationEntry & annotation_entry )
+    {
+        m_Stream << annotation_entry.m_Type << " " << annotation_entry.m_Name
+            << " = " << annotation_entry.m_Value << "; ";
     }
 
     void HLSLPrinter::Visit( const TextureDeclaration & declaration )
@@ -483,13 +518,20 @@ namespace AST
 
     void HLSLPrinter::Visit( const VariableDeclarationStatement & statement )
     {
-        VisitTable( *this, statement.m_StorageClass, ",", true );
-        AST::VisitTable( *this, statement.m_TypeModifier );
+        VisitTable( *this, statement.m_StorageClass, " ", false );
+        
+        if ( !statement.m_StorageClass.empty() )
+            m_Stream << " ";
+
+        VisitTable( *this, statement.m_TypeModifier, " ", false );
+
+        if ( !statement.m_TypeModifier.empty() )
+            m_Stream << " ";
 
         m_Stream << statement.m_Type->m_Name;
 
         m_Stream << inc_ind << endl_ind;
-        AST::VisitTable( *this, statement.m_BodyTable );
+        VisitTable( *this, statement.m_BodyTable, ",", true );
         m_Stream << dec_ind;
         m_Stream << ";" << endl_ind;
     }

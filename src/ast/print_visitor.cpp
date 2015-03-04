@@ -82,9 +82,14 @@ namespace AST
             std::cout << "Semantic{ " << body.m_Semantic << " }" << endl_ind;
         }
 
+        if( body.m_Annotations )
+        {
+            body.m_Annotations->Visit( *this );
+        }
+
         if( body.m_InitialValue )
         {
-            std::cout << "InitialValue{ " << body.m_InitialValue << " }" << endl_ind;
+            body.m_InitialValue->Visit( *this );
         }
 
         if( body.m_ArraySize != 0 )
@@ -94,6 +99,33 @@ namespace AST
 
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
 
+    }
+
+    void PrintVisitor::Visit( const InitialValue & initial_value )
+    {
+        std::cout << "InitialValue{ ";
+        VisitTable( *this, initial_value.m_ExpressionTable );
+        std::cout << " }" << endl_ind;
+    }
+
+    void PrintVisitor::Visit( const Annotations & annotations )
+    {
+        std::cout << "Annotations" << endl_ind
+            << "{ " << inc_ind << endl_ind;
+
+        VisitTable( *this, annotations.m_AnnotationTable );
+
+        std::cout << dec_ind  << endl_ind << " }" << endl_ind;
+    }
+
+    void PrintVisitor::Visit( const AnnotationEntry & annotation_entry )
+    {
+        std::cout << "AnnotationEntry" << endl_ind
+            << "{ " << inc_ind << endl_ind
+            << "Type{ " << annotation_entry.m_Type << " }" << endl_ind
+            << "Name{ " << annotation_entry.m_Name << " }" << endl_ind
+            << "Value{ " << annotation_entry.m_Value << " }" << endl_ind
+            << dec_ind << " }" << endl_ind;
     }
 
     void PrintVisitor::Visit( const TextureDeclaration & declaration )

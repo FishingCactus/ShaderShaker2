@@ -17,6 +17,9 @@
         struct TypeModifier;
         struct StorageClass;
         struct VariableDeclarationBody;
+        struct InitialValue;
+        struct Annotations;
+        struct AnnotationEntry;
         struct TextureDeclaration;
         struct SamplerDeclaration;
         struct SamplerBody;
@@ -69,6 +72,9 @@
             virtual void Visit( const TypeModifier & modifier ) = 0;
             virtual void Visit( const StorageClass & storage_class ) = 0;
             virtual void Visit( const VariableDeclarationBody & body ) = 0;
+            virtual void Visit( const InitialValue & initial_value ) = 0;
+            virtual void Visit( const Annotations & annotations ) = 0;
+            virtual void Visit( const AnnotationEntry & annotation_entry ) = 0;
             virtual void Visit( const TextureDeclaration & declaration ) = 0;
             virtual void Visit( const SamplerDeclaration & declaration ) = 0;
             virtual void Visit( const SamplerBody & body ) = 0;

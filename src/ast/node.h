@@ -271,6 +271,7 @@
         struct StorageClass : Node
         {
             AST_HandleVisitor()
+
             StorageClass(){}
             StorageClass( const std::string & storage_class ) : m_Value( storage_class ){}
             virtual StorageClass * Clone() const override;
@@ -295,7 +296,6 @@
                 m_ArraySize;
             Base::ObjectRef<Annotations>
                 m_Annotations;
-
         };
 
         struct InitialValue : Node
