@@ -319,7 +319,9 @@ namespace Generation
         return graph;
     }
 
-    Base::ObjectRef<AST::TranslationUnit> CodeGenerator::GenerateShader(
+    void CodeGenerator::GenerateShader(
+        Base::ObjectRef<AST::TranslationUnit> & generated_shader,
+        std::vector<std::string> & used_semantic_set,
         const std::vector<Base::ObjectRef<FragmentDefinition> > & definition_table,
         const std::vector<std::string> & semantic_table,
         const std::vector<std::string> & semantic_input_table,
@@ -327,6 +329,8 @@ namespace Generation
         )
     {
         m_ErrorHandler = & error_handler;
+        m_UsedTranslationUnitSet.clear();
+        m_UsedSemanticSet.clear();
         m_OutputSemanticSet.clear();
         m_InputSemanticSet.clear();
         m_InputSemanticSet.insert( semantic_input_table.begin(), semantic_input_table.end() );
@@ -336,19 +340,19 @@ namespace Generation
 
         if( !graph )
         {
-            return 0;
+            return;
         }
 
         if( !ValidatesGraph( *graph ) )
         {
-            return 0;
+            return;
         }
 
         Base::ObjectRef<AST::FunctionDeclaration> function = GenerateCodeFromGraph( *graph );
 
         if( !function )
         {
-            return 0;
+            return;
         }
 
         Base::ObjectRef<AST::TranslationUnit> translation_unit = new AST::TranslationUnit;
@@ -357,7 +361,8 @@ namespace Generation
 
         translation_unit->m_GlobalDeclarationTable.push_back( &*function );
 
-        return translation_unit;
+        generated_shader = translation_unit;
+        std::copy( m_UsedSemanticSet.begin(), m_UsedSemanticSet.end(), std::back_inserter( used_semantic_set ) );
     }
 
     void CodeGenerator::MergeTranslationUnit(

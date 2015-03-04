@@ -38,11 +38,14 @@ int main( int argument_count, const char* argument_table[] )
         }
 
         Base::ObjectRef<AST::TranslationUnit> generated_code;
+        std::vector<std::string> used_semantic_set;
 
         Generation::CodeGenerator code_generator;
         Base::ErrorHandlerInterface::Ref error_handler = new Base::ConsoleErrorHandler;
 
-        generated_code = code_generator.GenerateShader(
+        code_generator.GenerateShader(
+            generated_code,
+            used_semantic_set,
             definition_table,
             semantic_argument.getValue(),
             input_semantic_argument.getValue(),
