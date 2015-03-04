@@ -104,4 +104,14 @@ namespace  Generation
             }
         }
     }
+
+    const std::string & FunctionDefinition::GetSourceFilename() const
+    {
+        return m_FunctionDeclaration->m_FileName;
+    }
+
+    int FunctionDefinition::GetSourceFileLine() const
+    {
+        return m_FunctionDeclaration->m_Line;
+    }
 }
