@@ -15,6 +15,27 @@ namespace AST
             } \
         }
 
+    Node::Node():
+        m_FileName( s_CurrentFileName ),
+        m_Line( s_CurrentLine )
+    {
+
+    }
+
+    void Node::SetDebugInfo(
+        const std::string & filename,
+        const int line
+        )
+    {
+        s_CurrentFileName = filename;
+        s_CurrentLine = line;
+    }
+
+    std::string
+        Node::s_CurrentFileName;
+    int
+        Node::s_CurrentLine = -1;
+
 
     TranslationUnit * TranslationUnit::Clone() const
     {

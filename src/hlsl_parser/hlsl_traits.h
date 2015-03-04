@@ -2,16 +2,15 @@
     #define HLSL_TRAITS_H
 
     #include <antlr3.hpp>
+    #include "node.h"
 
     class HLSLLexer; class HLSLParser;
 
     template<class ImplTraits>
     class HLSLUserTraits : public antlr3::CustomTraitsBase<ImplTraits> {};
 
-    class HLSLLexerTraits : public antlr3::Traits< HLSLLexer, HLSLParser, HLSLUserTraits >
+    struct HLSLLexerTraits : public antlr3::Traits< HLSLLexer, HLSLParser, HLSLUserTraits >
     {
-        public:
-
         static int ConvertToInt32( const std::string & type )
         {
             int
@@ -23,7 +22,60 @@
         }
     };
 
-    typedef HLSLLexerTraits HLSLParserTraits;
+    struct HLSLParserTraits : public HLSLLexerTraits
+    {
+        class RuleReturnValueType : public antlr3::RuleReturnValue<HLSLParserTraits>
+        {
+            const CommonTokenType*  m_StartToken;
+            int m_PreviousLine;
+            StringType m_PreviousFile;
+
+        public:
+
+            RuleReturnValueType()
+                : RuleReturnValue(),
+                m_StartToken( 0 ),
+                m_PreviousLine( -1 ),
+                m_PreviousFile()
+            {
+            }
+
+            RuleReturnValueType( BaseParserType* parser )
+                : RuleReturnValue( parser ),
+                m_StartToken( parser->LT( 1 ) ),
+                m_PreviousLine( AST::Node::GetCurrentLine() ),
+                m_PreviousFile( AST::Node::GetCurrentFileName() )
+            {
+                AST::Node::SetDebugInfo(
+                    m_StartToken->get_input()->get_fileName(),
+                    m_StartToken->get_line()
+                    );
+            }
+
+            RuleReturnValueType( const RuleReturnValueType& other )
+                : RuleReturnValue( other ),
+                m_StartToken( other.m_StartToken ),
+                m_PreviousLine( other.m_PreviousLine ),
+                m_PreviousFile( other.m_PreviousFile )
+            {
+            }
+
+            RuleReturnValueType& operator=( const RuleReturnValueType& other )
+            {
+                RuleReturnValue::operator=( other );
+                m_StartToken = other.m_StartToken;
+                m_PreviousLine = other.m_PreviousLine;
+                m_PreviousFile = other.m_PreviousFile;
+
+                return *this;
+            }
+
+            ~RuleReturnValueType()
+            {
+                AST::Node::SetDebugInfo( m_PreviousFile, m_PreviousLine );
+            }
+        };
+    };
 
     ANTLR_BEGIN_NAMESPACE()
 
