@@ -2,7 +2,7 @@
     #define HLSL_TRAITS_H
 
     #include <antlr3.hpp>
-    #include "node.h"
+    #include "../ast/node.h"
 
     class HLSLLexer; class HLSLParser;
 
