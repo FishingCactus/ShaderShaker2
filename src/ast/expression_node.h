@@ -124,7 +124,7 @@
         struct CastExpression: Expression
         {
             AST_HandleVisitor()
-            CastExpression() {}
+            CastExpression() : m_ArraySize( -1 ) {}
             CastExpression(
                 Type * type,
                 int array_size,

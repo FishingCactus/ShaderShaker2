@@ -92,7 +92,7 @@ namespace AST
             body.m_InitialValue->Visit( *this );
         }
 
-        if( body.m_ArraySize != 0 )
+        if( body.m_ArraySize != -1 )
         {
             std::cout << "ArraySize{ " << body.m_ArraySize << " }" << endl_ind;
         }

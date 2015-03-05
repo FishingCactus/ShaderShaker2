@@ -10,7 +10,7 @@ namespace AST
     {
         m_Stream << body.m_Name;
 
-        if( body.m_ArraySize )
+        if ( body.m_ArraySize != -1 )
         {
             m_Stream << "[" << body.m_ArraySize << "]";
         }

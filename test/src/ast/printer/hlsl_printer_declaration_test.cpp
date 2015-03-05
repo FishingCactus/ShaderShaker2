@@ -98,7 +98,6 @@ TEST_CASE( "Variable declarations are printed", "[ast][hlsl][printer]" )
 
         node.SetType( new AST::Type( "float4" ) );
         node.AddBody( new AST::VariableDeclarationBody( "view_space_light_direction" ) );
-        node.m_BodyTable.back()->m_ArraySize = 0;
         node.Visit( printer );
 
         CHECK( output.str() == "float4\n\tview_space_light_direction;\n" );
@@ -117,7 +116,7 @@ TEST_CASE( "Variable declarations are printed", "[ast][hlsl][printer]" )
 
         CHECK( output.str() == "view_space_light_direction" );
     }
-    
+
     SECTION( "Variable declaration semantics are printed" )
     {
         AST::VariableDeclarationBody
@@ -242,7 +241,6 @@ TEST_CASE( "Variable declarations are printed", "[ast][hlsl][printer]" )
 
         node.AddBody( new AST::VariableDeclarationBody( "fresnel" ) );
         node.m_BodyTable.back()->m_Semantic = "FRESNEL";
-        node.m_BodyTable.back()->m_ArraySize = 0;
 
         node.Visit( printer );
 
