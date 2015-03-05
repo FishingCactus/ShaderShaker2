@@ -21,6 +21,7 @@
             AST_EmptyVisitOverride( TypeModifier )
             AST_EmptyVisitOverride( StorageClass )
             AST_EmptyVisitOverride( VariableDeclarationBody )
+            AST_EmptyVisitOverride( InitialValue )
             AST_EmptyVisitOverride( TextureDeclaration )
             AST_EmptyVisitOverride( SamplerDeclaration )
             AST_EmptyVisitOverride( SamplerBody )

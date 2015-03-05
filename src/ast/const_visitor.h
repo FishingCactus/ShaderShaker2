@@ -19,6 +19,7 @@
             virtual void Visit( const struct TypeModifier & modifier ) = 0;
             virtual void Visit( const struct StorageClass & storage_class ) = 0;
             virtual void Visit( const struct VariableDeclarationBody & body ) = 0;
+            virtual void Visit( const struct InitialValue & initial_value ) = 0;
             virtual void Visit( const struct TextureDeclaration & declaration ) = 0;
             virtual void Visit( const struct SamplerDeclaration & declaration ) = 0;
             virtual void Visit( const struct SamplerBody & body ) = 0;
