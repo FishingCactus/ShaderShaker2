@@ -19,6 +19,10 @@
                 & m_OutputStream;
             std::set< const GraphNode * >
                 m_VisitedNodeSet;
+
+        private:
+
+            GraphPrinter & operator =( const GraphPrinter & );
         };
 
     }

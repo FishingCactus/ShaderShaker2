@@ -10,16 +10,19 @@
     #include "graph.h"
 
     namespace AST{struct FunctionDeclaration;}
-    namespace AST{struct FunctionDeclaration;}
 
     namespace Generation
     {
+        struct CodeGeneratorHelper;
+
         class CodeGenerator
         {
 
         public:
 
-            Base::ObjectRef<AST::TranslationUnit> GenerateShader(
+            void GenerateShader(
+                Base::ObjectRef<AST::TranslationUnit> & generated_shader,
+                std::vector<std::string> & used_semantic_set,
                 const std::vector<Base::ObjectRef<FragmentDefinition> > & definition_table,
                 const std::vector<std::string> & semantic_table,
                 const std::vector<std::string> & input_semantic_set,
@@ -36,6 +39,13 @@
                 );
 
             void RemoveInputSemantics( std::set<std::string> & semantic_set );
+
+            void AddArgumentTable(
+                AST::ArgumentList & argument_list,
+                const CodeGeneratorHelper & helper,
+                const std::set<std::string> & semantic_set,
+                const std::string & input_modifier
+                );
 
             Base::ObjectRef<AST::FunctionDeclaration> GenerateCodeFromGraph(
                 const Graph & graph

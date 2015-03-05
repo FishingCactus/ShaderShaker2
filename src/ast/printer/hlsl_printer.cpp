@@ -7,7 +7,7 @@
 namespace AST
 {
 
-    void HLSLPrinter::Visit( Node & node )
+    void HLSLPrinter::Visit( Node & /*node*/ )
     {
         assert( !"Unsupported node type, implement in base class" );
     }
@@ -501,22 +501,22 @@ namespace AST
         m_Stream << ";" << endl_ind;
     }
 
-    void HLSLPrinter::Visit( BreakStatement & statement )
+    void HLSLPrinter::Visit( BreakStatement & /*statement*/ )
     {
         m_Stream << "break;" << endl_ind;
     }
 
-    void HLSLPrinter::Visit( ContinueStatement & statement )
+    void HLSLPrinter::Visit( ContinueStatement & /*statement*/ )
     {
         m_Stream << "continue;" << endl_ind;
     }
 
-    void HLSLPrinter::Visit( DiscardStatement & statement )
+    void HLSLPrinter::Visit( DiscardStatement & /*statement*/ )
     {
         m_Stream << "discard;" << endl_ind;
     }
 
-    void HLSLPrinter::Visit( EmptyStatement & statement )
+    void HLSLPrinter::Visit( EmptyStatement & /*statement*/ )
     {
         m_Stream << ";" << endl_ind;
     }

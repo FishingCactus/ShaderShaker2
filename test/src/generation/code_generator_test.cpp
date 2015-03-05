@@ -63,7 +63,6 @@ namespace
 
         return definition_table;
     }
-
 }
 
 TEST_CASE( "Special cases are handled", "[generation][fragment]" )
@@ -72,13 +71,15 @@ TEST_CASE( "Special cases are handled", "[generation][fragment]" )
     {
         std::vector<Base::ObjectRef<AST::TranslationUnit> >
             translation_unit_table;
-        std::vector<std::string>
-            code_table =
+        std::string
+            code_c_table[] =
             {
                 "float C( float b :B ) : C { return b; }",
                 "float B( float x :X ) : B { return x; }",
                 "float A( float c : C, float b :B ) : A { return b + c; }"
             };
+        std::vector<std::string>
+            code_table( std::begin( code_c_table ), std::end( code_c_table ) );
         std::vector<Base::ObjectRef<Generation::FragmentDefinition> >
             definition_table;
 
@@ -89,10 +90,13 @@ TEST_CASE( "Special cases are handled", "[generation][fragment]" )
 
         Base::ObjectRef<AST::TranslationUnit> translation_unit;
 
-        translation_unit = code_generator.GenerateShader(
+        std::vector<std::string> used_semantic_table;
+        code_generator.GenerateShader(
+            translation_unit,
+            used_semantic_table,
             definition_table,
-            { "A" },
-            { "X" },
+            std::vector<std::string>( 1, "A" ),
+            std::vector<std::string>( 1, "X" ),
             * error_handler
             );
 
@@ -107,13 +111,15 @@ TEST_CASE( "Cycle are detected", "[generation][fragment]" )
     {
         std::vector<Base::ObjectRef<AST::TranslationUnit> >
             translation_unit_table;
-        std::vector<std::string>
-            code_table =
+        std::string
+            code_c_table[] =
             {
                 "float A( float c :C ) : A { return c; }",
                 "float B( float a :A ) : B { return a; }",
                 "float C( float b :B ) : C { return b; }"
             };
+        std::vector<std::string>
+            code_table( std::begin( code_c_table ), std::end( code_c_table ) );
         std::vector<Base::ObjectRef<Generation::FragmentDefinition> >
             definition_table;
 
@@ -122,10 +128,15 @@ TEST_CASE( "Cycle are detected", "[generation][fragment]" )
         Generation::CodeGenerator code_generator;
         Base::ObjectRef<SimpleErrorHandler> error_handler = new SimpleErrorHandler;
 
+        Base::ObjectRef<AST::TranslationUnit> translation_unit;
+        std::vector<std::string> used_semantic_table;
+
         code_generator.GenerateShader(
+            translation_unit,
+            used_semantic_table,
             definition_table,
-            { "A" },
-            {},
+            std::vector<std::string>( 1, "A" ),
+            std::vector<std::string>(),
             * error_handler
             );
 
@@ -137,12 +148,14 @@ TEST_CASE( "Type mismatch are detected", "[generation][fragment]" )
 {
     std::vector<Base::ObjectRef<AST::TranslationUnit> >
         translation_unit_table;
-    std::vector<std::string>
-        code_table =
+        std::string
+            code_c_table[] =
         {
             "float A( float c :C ) : A { return c; }",
             "float B( float2 a :A ) : B { return a; }"
         };
+    std::vector<std::string>
+        code_table( std::begin( code_c_table ), std::end( code_c_table ) );
     std::vector<Base::ObjectRef<Generation::FragmentDefinition> >
         definition_table;
 
@@ -151,10 +164,16 @@ TEST_CASE( "Type mismatch are detected", "[generation][fragment]" )
     Generation::CodeGenerator code_generator;
     Base::ObjectRef<SimpleErrorHandler> error_handler = new SimpleErrorHandler;
 
+
+    Base::ObjectRef<AST::TranslationUnit> translation_unit;
+    std::vector<std::string> used_semantic_table;
+
     code_generator.GenerateShader(
+        translation_unit,
+        used_semantic_table,
         definition_table,
-        { "B" },
-        { "C" },
+        std::vector<std::string>( 1, "B" ),
+        std::vector<std::string>( 1, "C" ),
         * error_handler
         );
 
