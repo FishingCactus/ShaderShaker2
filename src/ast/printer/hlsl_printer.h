@@ -63,6 +63,8 @@
 
         private:
 
+            HLSLPrinter & operator =( const HLSLPrinter & );
+
             std::ostream
                 & m_Stream;
 

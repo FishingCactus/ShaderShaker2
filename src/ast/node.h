@@ -65,6 +65,8 @@
 
         private:
 
+            Node & operator =( const Node & );
+
             static std::string
                 s_CurrentFileName;
             static int
