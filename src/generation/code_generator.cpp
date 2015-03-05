@@ -185,6 +185,35 @@ namespace Generation
             m_SemanticToTypeTable;
     };
 
+    void CodeGenerator::AddArgumentTable(
+        AST::ArgumentList & argument_list,
+        const CodeGeneratorHelper & helper,
+        const std::set<std::string> & semantic_set,
+        const std::string & input_modifier
+        )
+    {
+        std::set<std::string>::const_iterator it,end;
+
+        it = semantic_set.begin();
+        end = semantic_set.end();
+
+        for(;it!=end;++it )
+        {
+            std::map<std::string, std::string>::const_iterator type_it = helper.m_SemanticToTypeTable.find( (*it) );
+
+            assert( type_it != helper.m_SemanticToTypeTable.end() );
+
+            Base::ObjectRef<AST::Argument> argument = new AST::Argument;
+            argument->m_Type = new AST::Type( type_it->second );
+            argument->m_Name = (*it);
+            argument->m_Semantic = (*it);
+            argument->m_InputModifier = input_modifier;
+
+            argument_list.m_ArgumentTable.push_back( argument );
+        }
+
+    }
+
     Base::ObjectRef<AST::FunctionDeclaration> CodeGenerator::GenerateCodeFromGraph(
         const Graph & graph
         )
@@ -197,33 +226,39 @@ namespace Generation
 
         Base::ObjectRef<AST::ArgumentList> argument_list = new AST::ArgumentList;
 
-        std::set<std::string>::const_iterator it,end;
+        std::set<std::string>
+            used_input_semantic_set,
+            input_semantic_set,
+            output_semantic_set,
+            input_output_semantic_set;
 
-        it = m_OutputSemanticSet.begin();
-        end = m_OutputSemanticSet.end();
-        for(;it!=end;++it )
-        {
-            Base::ObjectRef<AST::Argument> argument = new AST::Argument;
-            argument->m_Type = new AST::Type( helper.m_SemanticToTypeTable.find( (*it) )->second );
-            argument->m_Name = (*it);
-            argument->m_Semantic = (*it);
-            argument->m_InputModifier = "out";
+        std::set_intersection(
+            m_InputSemanticSet.begin(), m_InputSemanticSet.end(),
+            m_UsedSemanticSet.begin(), m_UsedSemanticSet.end(),
+            std::inserter(used_input_semantic_set, used_input_semantic_set.begin() )
+            );
 
-            argument_list->m_ArgumentTable.push_back( argument );
-        }
+        std::set_intersection(
+            used_input_semantic_set.begin(), used_input_semantic_set.end(),
+            m_OutputSemanticSet.begin(), m_OutputSemanticSet.end(),
+            std::inserter( input_output_semantic_set, input_output_semantic_set.begin())
+            );
 
-        it = m_InputSemanticSet.begin();
-        end = m_InputSemanticSet.end();
-        for(;it!=end;++it )
-        {
-            Base::ObjectRef<AST::Argument> argument = new AST::Argument;
-            argument->m_Type = new AST::Type( helper.m_SemanticToTypeTable.find( (*it) )->second ); //:TODO: get real type;
-            argument->m_Name = (*it);
-            argument->m_Semantic = (*it);
-            argument->m_InputModifier = "in";
+        std::set_difference(
+            used_input_semantic_set.begin(), used_input_semantic_set.end(),
+            m_OutputSemanticSet.begin(), m_OutputSemanticSet.end(),
+            std::inserter( input_semantic_set, input_semantic_set.begin())
+            );
 
-            argument_list->m_ArgumentTable.push_back( argument );
-        }
+        std::set_difference(
+            m_OutputSemanticSet.begin(), m_OutputSemanticSet.end(),
+            used_input_semantic_set.begin(), used_input_semantic_set.end(),
+            std::inserter( output_semantic_set, output_semantic_set.begin())
+            );
+
+        AddArgumentTable( *argument_list, helper, output_semantic_set, "out" );
+        AddArgumentTable( *argument_list, helper, input_output_semantic_set, "inout" );
+        AddArgumentTable( *argument_list, helper, input_semantic_set, "in" );
 
         Base::ObjectRef<AST::FunctionDeclaration> function_declaration = new AST::FunctionDeclaration;
 
@@ -319,7 +354,9 @@ namespace Generation
         return graph;
     }
 
-    Base::ObjectRef<AST::TranslationUnit> CodeGenerator::GenerateShader(
+    void CodeGenerator::GenerateShader(
+        Base::ObjectRef<AST::TranslationUnit> & generated_shader,
+        std::vector<std::string> & used_semantic_set,
         const std::vector<Base::ObjectRef<FragmentDefinition> > & definition_table,
         const std::vector<std::string> & semantic_table,
         const std::vector<std::string> & semantic_input_table,
@@ -327,6 +364,8 @@ namespace Generation
         )
     {
         m_ErrorHandler = & error_handler;
+        m_UsedTranslationUnitSet.clear();
+        m_UsedSemanticSet.clear();
         m_OutputSemanticSet.clear();
         m_InputSemanticSet.clear();
         m_InputSemanticSet.insert( semantic_input_table.begin(), semantic_input_table.end() );
@@ -336,19 +375,19 @@ namespace Generation
 
         if( !graph )
         {
-            return 0;
+            return;
         }
 
         if( !ValidatesGraph( *graph ) )
         {
-            return 0;
+            return;
         }
 
         Base::ObjectRef<AST::FunctionDeclaration> function = GenerateCodeFromGraph( *graph );
 
         if( !function )
         {
-            return 0;
+            return;
         }
 
         Base::ObjectRef<AST::TranslationUnit> translation_unit = new AST::TranslationUnit;
@@ -357,7 +396,8 @@ namespace Generation
 
         translation_unit->m_GlobalDeclarationTable.push_back( &*function );
 
-        return translation_unit;
+        generated_shader = translation_unit;
+        std::copy( m_UsedSemanticSet.begin(), m_UsedSemanticSet.end(), std::back_inserter( used_semantic_set ) );
     }
 
     void CodeGenerator::MergeTranslationUnit(

@@ -203,7 +203,7 @@ namespace AST
         }
     }
 
-    void HLSLPrinter::Visit( const DiscardStatement & statement )
+    void HLSLPrinter::Visit( const DiscardStatement & /*statement*/ )
     {
         m_Stream << "discard;" << endl_ind;
     }

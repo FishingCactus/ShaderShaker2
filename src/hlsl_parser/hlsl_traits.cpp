@@ -1,3 +1,4 @@
+#include "HLSLLexer.hpp"
 #include "hlsl_traits.h"
 
 ANTLR_BEGIN_NAMESPACE()
