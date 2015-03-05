@@ -21,7 +21,7 @@
         struct AnnotationEntry : Node
         {
             AST_HandleVisitor()
-                
+
             AnnotationEntry() {}
             AnnotationEntry( const std::string & type, const std::string & name, const std::string & value ) :
                 m_Type( type ), m_Name( name ), m_Value( value ) {}

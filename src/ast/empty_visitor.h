@@ -19,6 +19,9 @@
             virtual void Visit( TypeModifier & /*modifier*/ ) override {}
             virtual void Visit( StorageClass & /*storage_class*/ ) override {}
             virtual void Visit( VariableDeclarationBody & /*body*/ ) override {}
+            virtual void Visit( InitialValue & /*initial_value*/ ) override {}
+            virtual void Visit( Annotations & /*annotations*/ ) override {}
+            virtual void Visit( AnnotationEntry & /*annotation_entry*/ ) override {}
             virtual void Visit( TextureDeclaration & /*declaration*/ ) override {}
             virtual void Visit( SamplerDeclaration & /*declaration*/ ) override {}
             virtual void Visit( SamplerBody & /*body*/ ) override {}

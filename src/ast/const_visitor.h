@@ -62,6 +62,19 @@
             virtual void Visit( const struct AssignmentStatement & statement ) = 0;
             virtual void Visit( const struct VariableDeclarationStatement & statement ) = 0;
         };
+
+        template< class _Table_ >
+        void VisitTable( ConstVisitor & visitor, _Table_ & table )
+        {
+            typename _Table_::const_iterator
+                it = table.cbegin(),
+                end = table.cend();
+
+            for( ; it != end; ++it )
+            {
+                (*it)->Visit( visitor );
+            }
+        }
     }
 
 #endif

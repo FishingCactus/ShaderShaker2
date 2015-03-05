@@ -6,109 +6,7 @@
 
 namespace AST
 {
-
-    void HLSLPrinter::Visit( Node & /*node*/ )
-    {
-        assert( !"Unsupported node type, implement in base class" );
-    }
-
-    void HLSLPrinter::Visit( TranslationUnit & translation_unit )
-    {
-        {
-            std::vector< Base::ObjectRef<GlobalDeclaration> >::iterator it, end;
-            it = translation_unit.m_GlobalDeclarationTable.begin();
-            end = translation_unit.m_GlobalDeclarationTable.end();
-
-            for( ;it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-        }
-
-        {
-            std::vector< Base::ObjectRef<Technique> >::iterator it, end;
-            it = translation_unit.m_TechniqueTable.begin();
-            end = translation_unit.m_TechniqueTable.end();
-
-            for( ;it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-        }
-    }
-
-    void HLSLPrinter::Visit( VariableDeclaration & variable_declaration )
-    {
-        {
-            std::vector< Base::ObjectRef<StorageClass> >::iterator it, end;
-            it = variable_declaration.m_StorageClass.begin();
-            end = variable_declaration.m_StorageClass.end();
-            bool first = true;
-            for( ;it != end; ++it )
-            {
-                if(!first) m_Stream << "," << endl_ind;
-                first = false;
-                (*it)->Visit( *this );
-            }
-        }
-
-        {
-            std::vector< Base::ObjectRef<TypeModifier> >::iterator it, end;
-            it = variable_declaration.m_TypeModifier.begin();
-            end = variable_declaration.m_TypeModifier.end();
-
-            for( ;it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-        }
-
-        m_Stream << variable_declaration.m_Type->m_Name;
-
-        {
-            std::vector< Base::ObjectRef<VariableDeclarationBody> >::iterator it, end;
-            it = variable_declaration.m_BodyTable.begin();
-            end = variable_declaration.m_BodyTable.end();
-
-            m_Stream << inc_ind << endl_ind;
-
-            for( ;it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-
-            m_Stream << dec_ind;
-        }
-
-        m_Stream << ";" << endl_ind;
-    }
-
-    void HLSLPrinter::Visit( IntrinsicType & type )
-    {
-        m_Stream << type.m_Name;
-    }
-
-    void HLSLPrinter::Visit( UserDefinedType & type )
-    {
-        m_Stream << type.m_Name;
-    }
-
-    void HLSLPrinter::Visit( SamplerType & type )
-    {
-        m_Stream << type.m_Name;
-    }
-
-    void HLSLPrinter::Visit( TypeModifier & modifier )
-    {
-        m_Stream << modifier.m_Value;
-    }
-
-    void HLSLPrinter::Visit( StorageClass & storage_class )
-    {
-        m_Stream << storage_class.m_Value;
-    }
-
-    void HLSLPrinter::Visit( VariableDeclarationBody & body )
+    void HLSLPrinter::Visit( const VariableDeclarationBody & body )
     {
         m_Stream << body.m_Name;
 
@@ -135,7 +33,35 @@ namespace AST
         }
     }
 
-    void HLSLPrinter::Visit( TextureDeclaration & declaration )
+    void HLSLPrinter::Visit( const InitialValue & initial_value )
+    {
+        if ( initial_value.m_Vector )
+        {
+            m_Stream << "{ ";
+            VisitTable( *this, initial_value.m_ExpressionTable, ", ", false );
+            m_Stream << " }";
+        }
+        else
+        {
+            assert( initial_value.m_ExpressionTable.size() == 1 );
+            initial_value.m_ExpressionTable[ 0 ]->Visit( *this );
+        }
+    }
+
+    void HLSLPrinter::Visit( const Annotations & annotations )
+    {
+        m_Stream << " < ";
+        AST::VisitTable( *this, annotations.m_AnnotationTable );
+        m_Stream << ">";
+    }
+
+    void HLSLPrinter::Visit( const AnnotationEntry & annotation_entry )
+    {
+        m_Stream << annotation_entry.m_Type << " " << annotation_entry.m_Name
+            << " = " << annotation_entry.m_Value << "; ";
+    }
+
+    void HLSLPrinter::Visit( const TextureDeclaration & declaration )
     {
         m_Stream << declaration.m_Type << " " << declaration.m_Name;
 
@@ -152,27 +78,18 @@ namespace AST
         m_Stream << ";" << endl_ind;
     }
 
-    void HLSLPrinter::Visit( SamplerDeclaration & declaration )
+    void HLSLPrinter::Visit( const SamplerDeclaration & declaration )
     {
         m_Stream << declaration.m_Type << " "
             << declaration.m_Name << endl_ind
             << "{" << inc_ind << endl_ind;
 
-        {
-            std::vector< Base::ObjectRef<SamplerBody> >::iterator it, end;
-            it = declaration.m_BodyTable.begin();
-            end = declaration.m_BodyTable.end();
-            for(; it!=end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-
-        }
+        AST::VisitTable( *this, declaration.m_BodyTable );
 
         m_Stream << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void HLSLPrinter::Visit( SamplerBody & body )
+    void HLSLPrinter::Visit( const SamplerBody & body )
     {
         if( body.m_Name == "texture" )
         {
@@ -187,19 +104,19 @@ namespace AST
 
     }
 
-    void HLSLPrinter::Visit( StructDefinition & definition )
+    void HLSLPrinter::Visit( const StructDefinition & definition )
     {
         m_Stream << " struct " << definition.m_Name << endl_ind;
         m_Stream << "{" << inc_ind << endl_ind;
 
         {
-            std::vector< StructDefinition::Member >::iterator it, end;
-            it = definition.m_MemberTable.begin();
-            end = definition.m_MemberTable.end();
+            std::vector< StructDefinition::Member >::const_iterator it, end;
+            it = definition.m_MemberTable.cbegin();
+            end = definition.m_MemberTable.cend();
 
             for(; it!=end; ++it )
             {
-                StructDefinition::Member
+                const StructDefinition::Member
                     & member = (*it);
 
                 if( !member.m_InterpolationModifier.empty() )
@@ -220,18 +137,9 @@ namespace AST
 
     }
 
-    void HLSLPrinter::Visit( FunctionDeclaration & declaration )
+    void HLSLPrinter::Visit( const FunctionDeclaration & declaration )
     {
-        {
-            std::vector< Base::ObjectRef<StorageClass> >::iterator it, end;
-            it = declaration.m_StorageClassTable.begin();
-            end = declaration.m_StorageClassTable.end();
-
-            for(; it!=end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-        }
+        AST::VisitTable( *this, declaration.m_StorageClassTable );
 
         if( declaration.m_Type )
         {
@@ -241,11 +149,14 @@ namespace AST
         {
             m_Stream << "void";
         }
+
         m_Stream << " " << declaration.m_Name << "(";
+
         if( declaration.m_ArgumentList )
         {
             declaration.m_ArgumentList->Visit( * this );
         }
+
         m_Stream << ")";
 
         if( !declaration.m_Semantic.empty() )
@@ -255,39 +166,12 @@ namespace AST
 
         m_Stream << endl_ind << "{" << inc_ind << endl_ind;
 
-        {
-            std::vector< Base::ObjectRef<Statement> >::iterator it, end;
-            it = declaration.m_StatementTable.begin();
-            end = declaration.m_StatementTable.end();
-
-            for(; it!=end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-        }
+        AST::VisitTable( *this, declaration.m_StatementTable );
 
         m_Stream << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void HLSLPrinter::Visit( ArgumentList & list )
-    {
-        bool first = true;
-
-        {
-            std::vector< Base::ObjectRef<Argument> >::iterator it, end;
-            it = list.m_ArgumentTable.begin();
-            end = list.m_ArgumentTable.end();
-
-            for(; it!=end; ++it )
-            {
-                if( !first ) m_Stream << ", ";
-                first = false;
-                (*it)->Visit( *this );
-            }
-        }
-    }
-
-    void HLSLPrinter::Visit( Argument & argument )
+    void HLSLPrinter::Visit( const Argument & argument )
     {
         if( !argument.m_InputModifier.empty() )
         {
@@ -319,317 +203,8 @@ namespace AST
         }
     }
 
-    void HLSLPrinter::Visit( LiteralExpression & expression )
-    {
-
-        m_Stream << expression.m_Value;
-    }
-
-    void HLSLPrinter::Visit( VariableExpression & expression )
-    {
-        m_Stream << expression.m_Name;
-
-        if( expression.m_SubscriptExpression )
-        {
-            m_Stream << '[';
-            expression.m_SubscriptExpression->Visit( *this );
-            m_Stream << ']';
-        }
-    }
-
-    void HLSLPrinter::Visit( UnaryOperationExpression & expression )
-    {
-        m_Stream << expression.m_Operation << "( ";
-        expression.m_Expression->Visit( *this );
-        m_Stream << " )";
-    }
-
-    void HLSLPrinter::Visit( BinaryOperationExpression & expression )
-    {
-        m_Stream << "( ";
-        expression.m_LeftExpression->Visit( *this );
-        m_Stream << " ) " << expression.m_Operation << " ( ";
-        expression.m_RightExpression->Visit( *this );
-        m_Stream << " )";
-    }
-
-    void HLSLPrinter::Visit( CallExpression & expression )
-    {
-        m_Stream << expression.m_Name << "(";
-
-        if( expression.m_ArgumentExpressionList )
-        {
-            expression.m_ArgumentExpressionList->Visit( *this );
-        }
-
-        m_Stream << ")";
-    }
-
-    void HLSLPrinter::Visit( ArgumentExpressionList & list )
-    {
-        size_t
-            index,
-            count;
-
-        count = list.m_ExpressionList.size();
-
-        for( index = 0; index < count; ++index )
-        {
-            if( index != 0 ) m_Stream << ", ";
-            list.m_ExpressionList[ index ]->Visit( *this );
-        }
-    }
-
-    void HLSLPrinter::Visit( Swizzle & swizzle )
-    {
-        m_Stream << "." << swizzle.m_Swizzle;
-    }
-
-    void HLSLPrinter::Visit( PostfixSuffixCall & postfix_suffix )
-    {
-        m_Stream << ".";
-        postfix_suffix.m_CallExpression->Visit( *this );
-
-        if( postfix_suffix.m_Suffix )
-        {
-            postfix_suffix.m_Suffix->Visit( *this );
-        }
-    }
-
-    void HLSLPrinter::Visit( PostfixSuffixVariable & postfix_suffix )
-    {
-        m_Stream << ".";
-        postfix_suffix.m_VariableExpression->Visit( *this );
-
-        if( postfix_suffix.m_Suffix )
-        {
-            postfix_suffix.m_Suffix->Visit( *this );
-        }
-    }
-
-    void HLSLPrinter::Visit( ConstructorExpression & expression )
-    {
-        expression.m_Type->Visit( *this );
-        m_Stream << "(";
-
-        if( expression.m_ArgumentExpressionList )
-        {
-            expression.m_ArgumentExpressionList->Visit( *this );
-        }
-
-        m_Stream << ")";
-    }
-
-    void HLSLPrinter::Visit( ConditionalExpression & expression )
-    {
-        //:TODO: generate parenthesis only when required ( using operator precedence )
-        m_Stream << "( ";
-        expression.m_Condition->Visit( *this );
-        m_Stream << " ) ? ( ";
-        expression.m_IfTrue->Visit( *this );
-        m_Stream << " ) : ( ";
-        expression.m_IfFalse->Visit( *this );
-        m_Stream << " )";
-    }
-
-    void HLSLPrinter::Visit( LValueExpression & expression )
-    {
-        expression.m_VariableExpression->Visit( *this );
-
-        if( expression.m_Suffix )
-        {
-            expression.m_Suffix->Visit( *this );
-        }
-    }
-
-    void HLSLPrinter::Visit( PreModifyExpression & expression )
-    {
-        m_Stream << expression.m_Operator;
-        expression.m_Expression->Visit( *this );
-    }
-
-    void HLSLPrinter::Visit( PostModifyExpression & expression )
-    {
-        expression.m_Expression->Visit( *this );
-        m_Stream << expression.m_Operator;
-    }
-
-    void HLSLPrinter::Visit( CastExpression & expression )
-    {
-        m_Stream << "( ";
-        expression.m_Type->Visit( *this );
-
-        if( expression.m_ArraySize != -1 )
-        {
-            m_Stream << "[" << expression.m_ArraySize << "]";
-        }
-
-        m_Stream <<" )( ";
-
-        expression.m_Expression->Visit( *this );
-
-        m_Stream << " )";
-    }
-
-    void HLSLPrinter::Visit( AssignmentExpression & expression )
-    {
-        expression.m_LValueExpression->Visit( *this );
-        m_Stream << " " << expression.m_Operator << " ";
-        expression.m_Expression->Visit( *this );
-    }
-
-    void HLSLPrinter::Visit( PostfixExpression & expression )
-    {
-        expression.m_Expression->Visit( *this );
-
-        if( expression.m_Suffix )
-        {
-            expression.m_Suffix->Visit( *this );
-        }
-    }
-
-    void HLSLPrinter::Visit( ReturnStatement & statement )
-    {
-        m_Stream << "return";
-
-        if( statement.m_Expression )
-        {
-            m_Stream << " ";
-            statement.m_Expression->Visit( *this );
-        }
-
-        m_Stream << ";" << endl_ind;
-    }
-
-    void HLSLPrinter::Visit( BreakStatement & /*statement*/ )
-    {
-        m_Stream << "break;" << endl_ind;
-    }
-
-    void HLSLPrinter::Visit( ContinueStatement & /*statement*/ )
-    {
-        m_Stream << "continue;" << endl_ind;
-    }
-
-    void HLSLPrinter::Visit( DiscardStatement & /*statement*/ )
+    void HLSLPrinter::Visit( const DiscardStatement & /*statement*/ )
     {
         m_Stream << "discard;" << endl_ind;
     }
-
-    void HLSLPrinter::Visit( EmptyStatement & /*statement*/ )
-    {
-        m_Stream << ";" << endl_ind;
-    }
-
-    void HLSLPrinter::Visit( ExpressionStatement & statement )
-    {
-        statement.m_Expression->Visit( *this );
-        m_Stream << ";" << endl_ind;
-    }
-
-    void HLSLPrinter::Visit( IfStatement & statement )
-    {
-        m_Stream << "if( ";
-        statement.m_Condition->Visit( *this );
-        m_Stream << " ) ";
-        statement.m_ThenStatement->Visit( *this );
-
-        if( statement.m_ElseStatement)
-        {
-            m_Stream << "else ";
-            statement.m_ElseStatement->Visit( *this );
-        }
-    }
-
-    void HLSLPrinter::Visit( WhileStatement & statement )
-    {
-        m_Stream << "while( ";
-        statement.m_Condition->Visit( *this );
-        m_Stream << " ) ";
-        statement.m_Statement->Visit( *this );
-    }
-
-    void HLSLPrinter::Visit( DoWhileStatement & statement )
-    {
-        m_Stream << "do ";
-        statement.m_Statement->Visit( *this );
-        m_Stream << "while( ";
-        statement.m_Condition->Visit( *this );
-        m_Stream << " );\n";
-    }
-
-    void HLSLPrinter::Visit( BlockStatement & statement )
-    {
-        if( statement.m_StatementTable.empty() )
-        {
-            m_Stream << "{}" << endl_ind;
-        }
-        else
-        {
-            m_Stream << "{" << inc_ind << endl_ind;
-
-            std::vector< Base::ObjectRef<Statement> >::iterator
-                it, end = statement.m_StatementTable.end();
-
-            for ( it = statement.m_StatementTable.begin(); it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-
-            m_Stream << dec_ind << endl_ind << "}" << endl_ind;
-        }
-    }
-
-    void HLSLPrinter::Visit( AssignmentStatement & statement )
-    {
-        statement.m_Expression->Visit( *this );
-        m_Stream << ";" << endl_ind;
-    }
-
-    void HLSLPrinter::Visit( VariableDeclarationStatement & statement )
-    {
-        {
-            std::vector< Base::ObjectRef<StorageClass> >::iterator it, end;
-            it = statement.m_StorageClass.begin();
-            end = statement.m_StorageClass.end();
-            bool first = true;
-            for( ;it != end; ++it )
-            {
-                if(!first) m_Stream << "," << endl_ind;
-                first = false;
-                (*it)->Visit( *this );
-            }
-        }
-
-        {
-            std::vector< Base::ObjectRef<TypeModifier> >::iterator it, end;
-            it = statement.m_TypeModifier.begin();
-            end = statement.m_TypeModifier.end();
-
-            for( ;it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-        }
-
-        m_Stream << statement.m_Type->m_Name;
-
-        {
-            std::vector< Base::ObjectRef<VariableDeclarationBody> >::iterator it, end;
-            it = statement.m_BodyTable.begin();
-            end = statement.m_BodyTable.end();
-
-            m_Stream << inc_ind << endl_ind;
-
-            for( ;it != end; ++it )
-            {
-                (*it)->Visit( *this );
-            }
-
-            m_Stream << dec_ind;
-        }
-
-        m_Stream << ";" << endl_ind;
-    }
-
 }

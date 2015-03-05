@@ -66,7 +66,7 @@ TEST_CASE( "Variables are printed", "[ast][hlsl][printer]" )
         CHECK( output.str() == "test" );
     }
 
-    SECTION( "Float are printed" )
+    SECTION( "Subscripts are printed" )
     {
         AST::VariableExpression
             node( "test" );

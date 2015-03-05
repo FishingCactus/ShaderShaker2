@@ -17,6 +17,9 @@
         struct TypeModifier;
         struct StorageClass;
         struct VariableDeclarationBody;
+        struct InitialValue;
+        struct Annotations;
+        struct AnnotationEntry;
         struct TextureDeclaration;
         struct SamplerDeclaration;
         struct SamplerBody;
@@ -69,6 +72,9 @@
             virtual void Visit( TypeModifier & modifier ) = 0;
             virtual void Visit( StorageClass & storage_class ) = 0;
             virtual void Visit( VariableDeclarationBody & body ) = 0;
+            virtual void Visit( InitialValue & initial_value ) = 0;
+            virtual void Visit( Annotations & annotations ) = 0;
+            virtual void Visit( AnnotationEntry & annotation_entry ) = 0;
             virtual void Visit( TextureDeclaration & declaration ) = 0;
             virtual void Visit( SamplerDeclaration & declaration ) = 0;
             virtual void Visit( SamplerBody & body ) = 0;
@@ -111,6 +117,19 @@
             virtual void Visit( AssignmentStatement & statement ) = 0;
             virtual void Visit( VariableDeclarationStatement & statement ) = 0;
         };
+
+        template< class _Table_ >
+        void VisitTable( Visitor & visitor, _Table_ & table )
+        {
+            typename _Table_::iterator
+                it = table.begin(),
+                end = table.end();
+
+            for( ; it != end; ++it )
+            {
+                (*it)->Visit( visitor );
+            }
+        }
     }
 
 #endif
