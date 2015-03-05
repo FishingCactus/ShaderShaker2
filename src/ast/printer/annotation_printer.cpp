@@ -17,7 +17,7 @@ namespace AST
         m_Stream
             << "\"annotations\":{";
 
-        std::copy( annotations.m_AnnotationTable.begin(), annotations.m_AnnotationTable.end(), std::ostream_iterator< AnnotationEntry >( m_Stream, "," ) );
+        VisitTable( *this, annotations.m_AnnotationTable );
 
         m_Stream << "}";
     }
