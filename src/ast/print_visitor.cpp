@@ -21,7 +21,7 @@ namespace AST
         }
     }
 
-    void PrintVisitor::Visit( Node & node )
+    void PrintVisitor::Visit( Node & /*node*/ )
     {
         assert(! "Some node type might not be supported in the visitor" );
 
@@ -464,22 +464,22 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( BreakStatement & statement )
+    void PrintVisitor::Visit( BreakStatement & /*statement*/ )
     {
         std::cout << "BreakStatement{}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( ContinueStatement & statement )
+    void PrintVisitor::Visit( ContinueStatement & /*statement*/ )
     {
         std::cout << "ContinueStatement{}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( DiscardStatement & statement )
+    void PrintVisitor::Visit( DiscardStatement & /*statement*/ )
     {
         std::cout << "DiscardStatement{}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( EmptyStatement & statement )
+    void PrintVisitor::Visit( EmptyStatement & /*statement*/ )
     {
         std::cout << "EmptyStatement{}" << endl_ind;
     }
