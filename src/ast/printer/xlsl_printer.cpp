@@ -7,7 +7,7 @@
 namespace AST
 {
 
-    void XLSLPrinter::Visit( const Node & node )
+    void XLSLPrinter::Visit( const Node & /*node*/ )
     {
         assert( !"Unsupported node type, implement in base class" );
     }
@@ -240,17 +240,17 @@ namespace AST
         m_Stream << ";" << endl_ind;
     }
 
-    void XLSLPrinter::Visit( const BreakStatement & statement )
+    void XLSLPrinter::Visit( const BreakStatement & /*statement*/ )
     {
         m_Stream << "break;" << endl_ind;
     }
 
-    void XLSLPrinter::Visit( const ContinueStatement & statement )
+    void XLSLPrinter::Visit( const ContinueStatement & /*statement*/ )
     {
         m_Stream << "continue;" << endl_ind;
     }
 
-    void XLSLPrinter::Visit( const EmptyStatement & statement )
+    void XLSLPrinter::Visit( const EmptyStatement & /*statement*/ )
     {
         m_Stream << ";" << endl_ind;
     }
