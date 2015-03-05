@@ -7,7 +7,7 @@
 
 namespace AST
 {
-    void AnnotationPrinter::Visit( const Node & node )
+    void AnnotationPrinter::Visit( const Node & /*node*/ )
     {
         assert( !"Unsupported node type, implement in base class" );
     }

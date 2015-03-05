@@ -67,6 +67,8 @@
 
         private:
 
+            AnnotationPrinter & operator =( const AnnotationPrinter & );
+
             std::ostream
                 & m_Stream;
         };
