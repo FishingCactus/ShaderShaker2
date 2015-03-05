@@ -14,10 +14,13 @@ namespace AST
 
     void AnnotationPrinter::Visit( const Annotations & annotations )
     {
+        VisitorStreamArrayItemSeparator< Annotations::AnnotationTableType >
+            separator( m_Stream );
+
         m_Stream
             << "\"annotations\":{";
 
-        VisitTable( *this, annotations.m_AnnotationTable );
+        VisitTable( *this, annotations.m_AnnotationTable, separator );
 
         m_Stream << "}";
     }

@@ -10,11 +10,13 @@
         {
             AST_HandleVisitor()
 
+            typedef std::vector< Base::ObjectRef< AnnotationEntry> > AnnotationTableType;
+
             void AddEntry( AnnotationEntry * entry ) { m_AnnotationTable.emplace_back( entry ); }
 
             virtual Annotations * Clone() const override;
 
-            std::vector< Base::ObjectRef< AnnotationEntry> >
+            AnnotationTableType
                 m_AnnotationTable;
         };
 

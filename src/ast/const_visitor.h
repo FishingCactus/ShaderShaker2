@@ -1,6 +1,7 @@
 #ifndef CONST_VISITOR_H
     #define CONST_VISITOR_H
 
+    #include "visitor_item_separator.h"
 
     namespace AST
     {
@@ -64,8 +65,8 @@
             virtual void Visit( const struct VariableDeclarationStatement & statement ) = 0;
         };
 
-        template< class _Table_ >
-        void VisitTable( ConstVisitor & visitor, _Table_ & table )
+        template< class _Table_, typename _Separator_ >
+        void VisitTable( ConstVisitor & visitor, _Table_ & table, _Separator_ & separator )
         {
             typename _Table_::const_iterator
                 it = table.cbegin(),
@@ -73,7 +74,20 @@
 
             for( ; it != end; ++it )
             {
-                (*it)->Visit( visitor );
+                separator( visitor, table, it );
+            }
+        }
+
+        template< class _Table_ >
+        void VisitTable( ConstVisitor & visitor, _Table_ & table )
+        {
+            typename _Table_::const_iterator
+                it = table.cbegin(),
+                end = table.cend();
+
+            for ( ; it != end; ++it )
+            {
+                ( *it )->Visit( visitor );
             }
         }
     }
