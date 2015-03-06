@@ -41,7 +41,7 @@
 
             const AST::TranslationUnit & GetTranslationUnit() const { return *m_TranslationUnit; }
 
-		private:
+        private:
 
 			Base::ObjectRef<AST::TranslationUnit>
 				m_TranslationUnit;
