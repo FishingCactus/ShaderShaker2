@@ -3,11 +3,20 @@
 
 int main( int argc, char* const argv[] )
 {
-  // global setup...
+    Catch::Session
+        session;
+    int
+        result;
 
-  int result = Catch::Session().run( argc, argv );
+    result = session.applyCommandLine( argc, argv );
 
-  // global clean-up...
+    if ( result == 0 )
+    {
+        if ( Catch::isDebuggerActive() )
+            session.config().useStream( "debug" );
 
-  return result;
+        result = session.run();
+    }
+
+    return result;
 }
