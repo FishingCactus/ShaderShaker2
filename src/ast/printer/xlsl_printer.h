@@ -16,6 +16,7 @@
             virtual void Visit( const Node & node ) override;
             virtual void Visit( const TranslationUnit & translation_unit ) override;
             virtual void Visit( const VariableDeclaration & variable_declaration ) override;
+            virtual void Visit( const Type & type ) override;
             virtual void Visit( const IntrinsicType & type ) override;
             virtual void Visit( const UserDefinedType & type ) override;
             virtual void Visit( const SamplerType & type ) override;

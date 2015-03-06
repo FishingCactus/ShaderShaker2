@@ -30,13 +30,18 @@ namespace AST
         if ( !variable_declaration.m_TypeModifier.empty() )
             m_Stream << " ";
 
-        m_Stream << variable_declaration.m_Type->m_Name;
+        variable_declaration.m_Type->Visit( *this );
 
         m_Stream << inc_ind << endl_ind;
         VisitTable( *this, variable_declaration.m_BodyTable, ",", true );
         m_Stream << dec_ind;
 
         m_Stream << ";" << endl_ind;
+    }
+
+    void XLSLPrinter::Visit( const Type & type )
+    {
+        m_Stream << type.m_Name;
     }
 
     void XLSLPrinter::Visit( const IntrinsicType & type )
@@ -317,7 +322,7 @@ namespace AST
     void XLSLPrinter::Visit( const VariableDeclarationStatement & statement )
     {
         VisitTable( *this, statement.m_StorageClass, " ", false );
-        
+
         if ( !statement.m_StorageClass.empty() )
             m_Stream << " ";
 
@@ -326,7 +331,7 @@ namespace AST
         if ( !statement.m_TypeModifier.empty() )
             m_Stream << " ";
 
-        m_Stream << statement.m_Type->m_Name;
+        statement.m_Type->Visit( *this );
 
         m_Stream << inc_ind << endl_ind;
         VisitTable( *this, statement.m_BodyTable, ",", true );

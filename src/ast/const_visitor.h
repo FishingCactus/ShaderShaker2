@@ -66,7 +66,8 @@
             virtual void Visit( const Node & node ) = 0;
             virtual void Visit( const TranslationUnit & translation_unit ) = 0;
             virtual void Visit( const VariableDeclaration & variable_declaration ) = 0;
-            virtual void Visit( const IntrinsicType & type ) = 0;
+            virtual void Visit( const Type & type ) = 0;
+            virtual void Visit( const IntrinsicType & type ) { Visit( ( const Type & ) type ); }
             virtual void Visit( const UserDefinedType & type ) = 0;
             virtual void Visit( const SamplerType & type ) = 0;
             virtual void Visit( const TypeModifier & modifier ) = 0;

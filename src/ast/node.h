@@ -250,6 +250,8 @@
 
         struct Type : Node
         {
+            AST_HandleVisitor()
+
             Type() {}
             Type( const std::string & name ) : m_Name( name ) {}
 

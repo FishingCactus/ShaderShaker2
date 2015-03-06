@@ -13,6 +13,7 @@
             virtual void Visit( Node & /*node*/ ) override {}
             virtual void Visit( TranslationUnit & /*translation_unit*/ ) override {}
             virtual void Visit( VariableDeclaration & /*variable_declaration*/ ) override {}
+            virtual void Visit( Type & /*type*/ ) override {}
             virtual void Visit( IntrinsicType & /*type*/ ) override {}
             virtual void Visit( UserDefinedType & /*type*/ ) override {}
             virtual void Visit( SamplerType & /*type*/ ) override {}

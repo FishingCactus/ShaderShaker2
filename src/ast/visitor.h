@@ -66,7 +66,8 @@
             virtual void Visit( Node & node ) = 0;
             virtual void Visit( TranslationUnit & translation_unit ) = 0;
             virtual void Visit( VariableDeclaration & variable_declaration ) = 0;
-            virtual void Visit( IntrinsicType & type ) = 0;
+            virtual void Visit( Type & type ) = 0;
+            virtual void Visit( IntrinsicType & type ) { Visit( ( Type & ) type ); }
             virtual void Visit( UserDefinedType & type ) = 0;
             virtual void Visit( SamplerType & type ) = 0;
             virtual void Visit( TypeModifier & modifier ) = 0;
