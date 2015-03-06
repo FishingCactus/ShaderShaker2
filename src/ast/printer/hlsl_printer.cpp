@@ -33,6 +33,11 @@ namespace AST
         }
     }
 
+    void HLSLPrinter::Visit( const Type & type )
+    {
+        m_Stream << type.m_Name;
+    }
+
     void HLSLPrinter::Visit( const InitialValue & initial_value )
     {
         if ( initial_value.m_Vector )

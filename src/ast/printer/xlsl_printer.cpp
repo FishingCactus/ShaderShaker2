@@ -39,16 +39,6 @@ namespace AST
         m_Stream << ";" << endl_ind;
     }
 
-    void XLSLPrinter::Visit( const Type & type )
-    {
-        m_Stream << type.m_Name;
-    }
-
-    void XLSLPrinter::Visit( const IntrinsicType & type )
-    {
-        m_Stream << type.m_Name;
-    }
-
     void XLSLPrinter::Visit( const UserDefinedType & type )
     {
         m_Stream << type.m_Name;

@@ -3,6 +3,7 @@
 
     #include "ast/printer/xlsl_printer.h"
     #include <ostream>
+    #include <map>
 
     namespace AST
     {
@@ -11,10 +12,11 @@
         {
         public:
 
-            GLSLPrinter( std::ostream & stream ) : XLSLPrinter( stream ){}
+            GLSLPrinter( std::ostream & stream );
 
             using XLSLPrinter::Visit;
             virtual void Visit( const VariableDeclarationBody & body ) override;
+            virtual void Visit( const Type & type ) override;
             virtual void Visit( const InitialValue & initial_value ) override;
             virtual void Visit( const Annotations & annotations ) override;
             virtual void Visit( const AnnotationEntry & annotation_entry ) override;
@@ -25,6 +27,16 @@
             virtual void Visit( const FunctionDeclaration & declaration ) override;
             virtual void Visit( const Argument & argument ) override;
             virtual void Visit( const DiscardStatement & statement ) override;
+
+        private:
+
+            void InitializeTypeLookupTable();
+
+            typedef std::map< std::string, std::string >
+                TypeLookupMap;
+
+            TypeLookupMap
+                m_TypeLookupMap;
         };
     }
 #endif

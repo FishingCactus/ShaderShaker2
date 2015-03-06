@@ -6,6 +6,13 @@
 
 namespace AST
 {
+    GLSLPrinter::GLSLPrinter( std::ostream & stream )
+        : XLSLPrinter( stream )
+    {
+        InitializeTypeLookupTable();
+
+    }
+
     void GLSLPrinter::Visit( const VariableDeclarationBody & body )
     {
         m_Stream << body.m_Name;
@@ -15,21 +22,27 @@ namespace AST
             m_Stream << "[" << body.m_ArraySize << "]";
         }
 
-        if( !body.m_Semantic.empty() )
-        {
-            m_Stream << " : " << body.m_Semantic;
-        }
-
-        if( body.m_Annotations )
-        {
-            body.m_Annotations->Visit( *this );
-        }
-
-        if( body.m_InitialValue )
+        if ( body.m_InitialValue )
         {
             m_Stream << " = ";
 
             body.m_InitialValue->Visit( *this );
+        }
+    }
+
+    void GLSLPrinter::Visit( const Type & type )
+    {
+        TypeLookupMap::const_iterator it;
+
+        it = m_TypeLookupMap.find( type.m_Name );
+
+        if ( it == m_TypeLookupMap.end() )
+        {
+            m_Stream << type.m_Name;
+        }
+        else
+        {
+            m_Stream << it->second;
         }
     }
 
@@ -48,32 +61,17 @@ namespace AST
         }
     }
 
-    void GLSLPrinter::Visit( const Annotations & annotations )
+    void GLSLPrinter::Visit( const Annotations & /*annotations*/ )
     {
-        m_Stream << " < ";
-        AST::VisitTable( *this, annotations.m_AnnotationTable );
-        m_Stream << ">";
     }
 
-    void GLSLPrinter::Visit( const AnnotationEntry & annotation_entry )
+    void GLSLPrinter::Visit( const AnnotationEntry & /*annotation_entry*/ )
     {
-        m_Stream << annotation_entry.m_Type << " " << annotation_entry.m_Name
-            << " = " << annotation_entry.m_Value << "; ";
     }
 
     void GLSLPrinter::Visit( const TextureDeclaration & declaration )
     {
         m_Stream << declaration.m_Type << " " << declaration.m_Name;
-
-        if( !declaration.m_Semantic.empty() )
-        {
-            m_Stream << " : " << declaration.m_Semantic;
-        }
-
-        if( declaration.m_Annotations )
-        {
-            declaration.m_Annotations->Visit( *this );
-        }
 
         m_Stream << ";" << endl_ind;
     }
@@ -206,5 +204,17 @@ namespace AST
     void GLSLPrinter::Visit( const DiscardStatement & /*statement*/ )
     {
         m_Stream << "discard;" << endl_ind;
+    }
+
+    void GLSLPrinter::InitializeTypeLookupTable()
+    {
+        // :TODO: support multiple GLSL versions
+
+        m_TypeLookupMap[ "int4" ] = "vec4";
+        m_TypeLookupMap[ "float2" ] = "vec2";
+        m_TypeLookupMap[ "float3" ] = "vec3";
+        m_TypeLookupMap[ "float4" ] = "vec4";
+        m_TypeLookupMap[ "float4x4" ] = "mat4";
+        m_TypeLookupMap[ "float4x3" ] = "mat4";
     }
 }

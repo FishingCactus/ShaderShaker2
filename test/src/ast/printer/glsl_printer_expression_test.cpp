@@ -1,9 +1,9 @@
 #include "catch.hpp"
 #include "ast/node.h"
-#include "ast/printer/hlsl_printer.h"
+#include "ast/printer/glsl_printer.h"
 #include <sstream>
 
-TEST_CASE( "Literals are printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] Literals are printed", "[ast][glsl][printer]" )
 {
 
     SECTION( "Integers are printed" )
@@ -12,7 +12,7 @@ TEST_CASE( "Literals are printed", "[ast][hlsl][printer]" )
             node( AST::LiteralExpression::Int, "123" );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -26,7 +26,7 @@ TEST_CASE( "Literals are printed", "[ast][hlsl][printer]" )
             node( AST::LiteralExpression::Float, "123.4f" );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -40,7 +40,7 @@ TEST_CASE( "Literals are printed", "[ast][hlsl][printer]" )
             node( AST::LiteralExpression::Int, "true" );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -49,7 +49,7 @@ TEST_CASE( "Literals are printed", "[ast][hlsl][printer]" )
     }
 }
 
-TEST_CASE( "Variables are printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] Variables are printed", "[ast][glsl][printer]" )
 {
 
     SECTION( "Simple variables are printed" )
@@ -58,7 +58,7 @@ TEST_CASE( "Variables are printed", "[ast][hlsl][printer]" )
             node( "test" );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -72,7 +72,7 @@ TEST_CASE( "Variables are printed", "[ast][hlsl][printer]" )
             node( "test" );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.m_SubscriptExpression = new AST::LiteralExpression( AST::LiteralExpression::Int, "1" );
@@ -83,7 +83,7 @@ TEST_CASE( "Variables are printed", "[ast][hlsl][printer]" )
     }
 }
 
-TEST_CASE( "Unary Operators are printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] Unary Operators are printed", "[ast][glsl][printer]" )
 {
 
     SECTION( "+ operator is printed" )
@@ -92,7 +92,7 @@ TEST_CASE( "Unary Operators are printed", "[ast][hlsl][printer]" )
             node( AST::UnaryOperationExpression::Plus, new AST::LiteralExpression( AST::LiteralExpression::Int, "1" ) );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -106,7 +106,7 @@ TEST_CASE( "Unary Operators are printed", "[ast][hlsl][printer]" )
             node( AST::UnaryOperationExpression::Minus, new AST::LiteralExpression( AST::LiteralExpression::Int, "1" ) );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -120,7 +120,7 @@ TEST_CASE( "Unary Operators are printed", "[ast][hlsl][printer]" )
             node( AST::UnaryOperationExpression::Not, new AST::LiteralExpression( AST::LiteralExpression::Int, "1" ) );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -134,7 +134,7 @@ TEST_CASE( "Unary Operators are printed", "[ast][hlsl][printer]" )
             node( AST::UnaryOperationExpression::BitwiseNot, new AST::LiteralExpression( AST::LiteralExpression::Int, "1" ) );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -144,7 +144,7 @@ TEST_CASE( "Unary Operators are printed", "[ast][hlsl][printer]" )
 
 }
 
-TEST_CASE( "Call expressions are printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] Call expressions are printed", "[ast][glsl][printer]" )
 {
 
     SECTION( "Simple call is printed" )
@@ -153,7 +153,7 @@ TEST_CASE( "Call expressions are printed", "[ast][hlsl][printer]" )
             node( "test", 0 );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -175,7 +175,7 @@ TEST_CASE( "Call expressions are printed", "[ast][hlsl][printer]" )
             node( "test", argument_list );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -184,7 +184,7 @@ TEST_CASE( "Call expressions are printed", "[ast][hlsl][printer]" )
     }
 }
 
-TEST_CASE( "Postfix Suffixes are printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] Postfix Suffixes are printed", "[ast][glsl][printer]" )
 {
 
     SECTION( "Swizzle is printed" )
@@ -193,7 +193,7 @@ TEST_CASE( "Postfix Suffixes are printed", "[ast][hlsl][printer]" )
             node( "xyzw" );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -207,7 +207,7 @@ TEST_CASE( "Postfix Suffixes are printed", "[ast][hlsl][printer]" )
             node( new AST::CallExpression( "test", 0 ), 0 );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -221,7 +221,7 @@ TEST_CASE( "Postfix Suffixes are printed", "[ast][hlsl][printer]" )
             node( new AST::CallExpression( "test", 0 ), new AST::Swizzle( "xxxx" ) );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -235,7 +235,7 @@ TEST_CASE( "Postfix Suffixes are printed", "[ast][hlsl][printer]" )
             node( new AST::VariableExpression( "test" ), 0 );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -249,7 +249,7 @@ TEST_CASE( "Postfix Suffixes are printed", "[ast][hlsl][printer]" )
             node( new AST::VariableExpression( "test" ), new AST::Swizzle( "xxxx" ) );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -258,7 +258,7 @@ TEST_CASE( "Postfix Suffixes are printed", "[ast][hlsl][printer]" )
     }
 }
 
-TEST_CASE( "Constructors are printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] Constructors are printed", "[ast][glsl][printer]" )
 {
 
     SECTION( "Simple constructor is printed" )
@@ -267,12 +267,12 @@ TEST_CASE( "Constructors are printed", "[ast][hlsl][printer]" )
             node( new AST::IntrinsicType( "float4" ), 0 );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
 
-        CHECK( output.str() == "float4()" );
+        CHECK( output.str() == "vec4()" );
     }
 
     SECTION( "Constructor with arguments is printed" )
@@ -290,23 +290,23 @@ TEST_CASE( "Constructors are printed", "[ast][hlsl][printer]" )
             node( new AST::IntrinsicType( "float4" ), argument_list );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
 
-        CHECK( output.str() == "float4(a, b, c, d)" );
+        CHECK( output.str() == "vec4(a, b, c, d)" );
     }
 }
 
-TEST_CASE( "Conditionnals expression are printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] Conditionnals expression are printed", "[ast][glsl][printer]" )
 {
 
     AST::ConditionalExpression
         node;
     std::ostringstream
         output;
-    AST::HLSLPrinter
+    AST::GLSLPrinter
         printer( output );
 
     node.m_Condition = new AST::VariableExpression( "a" );
@@ -318,20 +318,20 @@ TEST_CASE( "Conditionnals expression are printed", "[ast][hlsl][printer]" )
     CHECK( output.str() == "( a ) ? ( b ) : ( c )" );
 }
 
-TEST_CASE( "Types are printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] Types are printed", "[ast][glsl][printer]" )
 {
     SECTION( "Intrinsic type is printed" )
     {
         AST::IntrinsicType
-            node( "float4" );
+            node( "float" );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
 
-        CHECK( output.str() == "float4" );
+        CHECK( output.str() == "float" );
     }
 
     SECTION( "User defined type is printed" )
@@ -340,7 +340,7 @@ TEST_CASE( "Types are printed", "[ast][hlsl][printer]" )
             node( "VS_INPUT" );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -354,7 +354,7 @@ TEST_CASE( "Types are printed", "[ast][hlsl][printer]" )
             node( "texture2D" );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -363,7 +363,7 @@ TEST_CASE( "Types are printed", "[ast][hlsl][printer]" )
     }
 }
 
-TEST_CASE( "LValue expression are printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] LValue expression are printed", "[ast][glsl][printer]" )
 {
     SECTION( "LValue without postfix is printed" )
     {
@@ -371,7 +371,7 @@ TEST_CASE( "LValue expression are printed", "[ast][hlsl][printer]" )
             node( new AST::VariableExpression( "X" ), 0 );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -385,7 +385,7 @@ TEST_CASE( "LValue expression are printed", "[ast][hlsl][printer]" )
             node( new AST::VariableExpression( "X" ), new AST::Swizzle( "xyzw" ) );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -394,7 +394,7 @@ TEST_CASE( "LValue expression are printed", "[ast][hlsl][printer]" )
     }
 }
 
-TEST_CASE( "Premodify expression are printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] Premodify expression are printed", "[ast][glsl][printer]" )
 {
     SECTION( "++X is printed" )
     {
@@ -405,7 +405,7 @@ TEST_CASE( "Premodify expression are printed", "[ast][hlsl][printer]" )
                 );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -422,7 +422,7 @@ TEST_CASE( "Premodify expression are printed", "[ast][hlsl][printer]" )
                 );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -431,7 +431,7 @@ TEST_CASE( "Premodify expression are printed", "[ast][hlsl][printer]" )
     }
 }
 
-TEST_CASE( "Postmodify expression are printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] Postmodify expression are printed", "[ast][glsl][printer]" )
 {
     SECTION( "X++ is printed" )
     {
@@ -442,7 +442,7 @@ TEST_CASE( "Postmodify expression are printed", "[ast][hlsl][printer]" )
                 );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -459,7 +459,7 @@ TEST_CASE( "Postmodify expression are printed", "[ast][hlsl][printer]" )
                 );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -478,7 +478,7 @@ static std::string PrintBinaryOperator( AST::BinaryOperationExpression::Operatio
             );
     std::ostringstream
         output;
-    AST::HLSLPrinter
+    AST::GLSLPrinter
         printer( output );
 
     node.Visit( printer );
@@ -486,7 +486,7 @@ static std::string PrintBinaryOperator( AST::BinaryOperationExpression::Operatio
     return output.str();
 }
 
-TEST_CASE( "Binary operations are printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] Binary operations are printed", "[ast][glsl][printer]" )
 {
     CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::LogicalOr ) == "( X ) || ( Y )" );
     CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::LogicalAnd ) == "( X ) && ( Y )" );
@@ -508,7 +508,7 @@ TEST_CASE( "Binary operations are printed", "[ast][hlsl][printer]" )
     CHECK( PrintBinaryOperator( AST::BinaryOperationExpression::Modulo ) == "( X ) % ( Y )" );
 }
 
-TEST_CASE( "Cast expression is printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] Cast expression is printed", "[ast][glsl][printer]" )
 {
     SECTION( "Simple type cast is printed" )
     {
@@ -520,7 +520,7 @@ TEST_CASE( "Cast expression is printed", "[ast][hlsl][printer]" )
                 );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -538,7 +538,7 @@ TEST_CASE( "Cast expression is printed", "[ast][hlsl][printer]" )
                 );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -557,7 +557,7 @@ static std::string PrintAssignmentExpression( AST::AssignmentOperator operation 
             );
     std::ostringstream
         output;
-    AST::HLSLPrinter
+    AST::GLSLPrinter
         printer( output );
 
     node.Visit( printer );
@@ -565,7 +565,7 @@ static std::string PrintAssignmentExpression( AST::AssignmentOperator operation 
     return output.str();
 }
 
-TEST_CASE( "Assignment expression are printed", "[ast][hlsl][printer]" )
+TEST_CASE( "[GLSLPrinter] Assignment expression are printed", "[ast][glsl][printer]" )
 {
     CHECK( PrintAssignmentExpression( AST::AssignmentOperator_Assign ) == "X = Y" );
     CHECK( PrintAssignmentExpression( AST::AssignmentOperator_Multiply ) == "X *= Y" );
@@ -579,7 +579,7 @@ TEST_CASE( "Assignment expression are printed", "[ast][hlsl][printer]" )
     CHECK( PrintAssignmentExpression( AST::AssignmentOperator_RightShift ) == "X >>= Y" );
 }
 
-TEST_CASE( "Postfix expression are printed", "[ast][hlsl][printer]")
+TEST_CASE( "[GLSLPrinter] Postfix expression are printed", "[ast][glsl][printer]")
 {
     SECTION( "Empty postfix" )
     {
@@ -590,7 +590,7 @@ TEST_CASE( "Postfix expression are printed", "[ast][hlsl][printer]")
                 );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
@@ -607,7 +607,7 @@ TEST_CASE( "Postfix expression are printed", "[ast][hlsl][printer]")
                 );
         std::ostringstream
             output;
-        AST::HLSLPrinter
+        AST::GLSLPrinter
             printer( output );
 
         node.Visit( printer );
