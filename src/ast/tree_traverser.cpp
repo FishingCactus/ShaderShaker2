@@ -9,8 +9,8 @@ namespace AST
 
     void TreeTraverser::Visit( const TranslationUnit & translation_unit )
     {
-        AST::VisitTable( *this, translation_unit.m_GlobalDeclarationTable );
-        AST::VisitTable( *this, translation_unit.m_TechniqueTable );
+        VisitTable( *this, translation_unit.m_GlobalDeclarationTable );
+        VisitTable( *this, translation_unit.m_TechniqueTable );
     }
 
     void TreeTraverser::Visit( const VariableDeclaration & variable_declaration )
