@@ -65,31 +65,31 @@ namespace AST
         virtual void Visit( typename modifier::template m< struct BlockStatement>::type & statement ) = 0;
         virtual void Visit( typename modifier::template m< struct AssignmentStatement>::type & statement ) = 0;
         virtual void Visit( typename modifier::template m< struct VariableDeclarationStatement>::type & statement ) = 0;
-
-        template< class _Table_, typename _Separator_ >
-        void VisitTable( ConstVisitor & visitor, _Table_ & table, _Separator_ & separator )
-        {
-            typename _Table_::const_iterator
-                it = table.cbegin(),
-                end = table.cend();
-
-            for( ; it != end; ++it )
-            {
-                separator( visitor, table, it );
-            }
-        }
-
-        template< class _Table_ >
-        void VisitTable( ConstVisitor & visitor, _Table_ & table )
-        {
-            typename _Table_::const_iterator
-                it = table.cbegin(),
-                end = table.cend();
-
-            for ( ; it != end; ++it )
-            {
-                ( *it )->Visit( visitor );
-            }
-        }
     };
+
+    template< bool is_const, class _Table_, typename _Separator_ >
+    void VisitTable( VisitorBase< is_const > & visitor, _Table_ & table, _Separator_ & separator )
+    {
+        typename _Table_::const_iterator
+            it = table.cbegin(),
+            end = table.cend();
+
+        for ( ; it != end; ++it )
+        {
+            separator( visitor, table, it );
+        }
+    }
+
+    template< bool is_const, class _Table_ >
+    void VisitTable( VisitorBase< is_const > & visitor, _Table_ & table )
+    {
+        typename _Table_::const_iterator
+            it = table.cbegin(),
+            end = table.cend();
+
+        for ( ; it != end; ++it )
+        {
+            ( *it )->Visit( visitor );
+        }
+    }
 }
