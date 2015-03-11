@@ -6,30 +6,28 @@
 
     namespace AST
     {
-        class ConstVisitor;
-        
-        template< class _Table_ >
+        template< bool visitor_is_const, class _Table_ >
         class VisitorItemSeparator
         {
         public:
 
-            virtual void operator()( ConstVisitor & visitor, const _Table_ & /*table*/, const typename _Table_::const_iterator & current_iterator )
+            virtual void operator()( VisitorBase< visitor_is_const > & visitor, const _Table_ & /*table*/, const typename _Table_::const_iterator & current_iterator )
             {
                 ( *current_iterator )->Visit( visitor );
             }
         };
 
-        template< class _Table_ >
-        class VisitorStreamArrayItemSeparator : public VisitorItemSeparator< _Table_ >
+        template< bool visitor_is_const, class _Table_ >
+        class VisitorStreamArrayItemSeparator : public VisitorItemSeparator< visitor_is_const, _Table_ >
         {
         public:
             
             VisitorStreamArrayItemSeparator( std::ostream & stream, const std::string & separator = ",", const bool add_endl = false ) :
-                VisitorItemSeparator< _Table_ >(), m_Stream(stream), m_Separator(separator), m_AddEndl( add_endl )
+                VisitorItemSeparator< visitor_is_const, _Table_ >(), m_Stream(stream), m_Separator(separator), m_AddEndl( add_endl )
             {
             }
 
-            virtual void operator()( ConstVisitor & visitor, const  _Table_ & table, const typename _Table_::const_iterator & current_iterator ) override
+            virtual void operator()( VisitorBase< visitor_is_const > & visitor, const _Table_ & table, const typename _Table_::const_iterator & current_iterator ) override
             {
                 if ( current_iterator != table.begin() )
                 {

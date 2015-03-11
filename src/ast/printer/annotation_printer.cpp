@@ -4,6 +4,7 @@
 #include <utils/indentation.h>
 #include <ast/node.h>
 #include <algorithm>
+#include "ast/visitor_item_separator.h"
 
 namespace AST
 {
@@ -14,7 +15,7 @@ namespace AST
 
     void AnnotationPrinter::Visit( const Annotations & annotations )
     {
-        VisitorStreamArrayItemSeparator< Annotations::AnnotationTableType >
+        VisitorStreamArrayItemSeparator< true, Annotations::AnnotationTableType >
             separator( m_Stream );
 
         m_Stream
