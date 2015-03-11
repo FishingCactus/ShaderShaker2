@@ -21,6 +21,9 @@ namespace AST
         virtual void Visit( typename modifier::template m< struct TypeModifier>::type & modifier ) = 0;
         virtual void Visit( typename modifier::template m< struct StorageClass>::type & storage_class ) = 0;
         virtual void Visit( typename modifier::template m< struct VariableDeclarationBody>::type & body ) = 0;
+        virtual void Visit( typename modifier::template m< struct InitialValue>::type & initial_value ) = 0;
+        virtual void Visit( typename modifier::template m< struct Annotations>::type & annotations ) = 0;
+        virtual void Visit( typename modifier::template m< struct AnnotationEntry>::type & annotation_entry ) = 0;
         virtual void Visit( typename modifier::template m< struct TextureDeclaration>::type & declaration ) = 0;
         virtual void Visit( typename modifier::template m< struct SamplerDeclaration>::type & declaration ) = 0;
         virtual void Visit( typename modifier::template m< struct SamplerBody>::type & body ) = 0;
