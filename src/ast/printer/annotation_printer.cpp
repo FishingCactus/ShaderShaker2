@@ -15,7 +15,7 @@ namespace AST
 
     void AnnotationPrinter::Visit( const Annotations & annotations )
     {
-        VisitorStreamArrayItemSeparator< true, Annotations::AnnotationTableType >
+        VisitorStreamArrayItemSeparator< Annotations::AnnotationTableType >
             separator( m_Stream );
 
         m_Stream
