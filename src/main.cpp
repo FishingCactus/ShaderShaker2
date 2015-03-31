@@ -19,8 +19,28 @@ TCLAP::MultiArg<std::string> interpolator_semantic_argument(
 TCLAP::UnlabeledMultiArg<std::string> fragment_arguments( "fragment", "fragment file path", true, "filepath", cmd );
 TCLAP::ValueArg<std::string> generator_argument( "g", "generator", "generator to use", true, "hlsl", "", cmd ); 
 
+void generate_code(
+    Base::ObjectRef < AST::TranslationUnit > & generated_code,
+    std::vector < std::string > & used_semantic_set,
+    Base::ErrorHandlerInterface::Ref & error_handler,
+    const std::vector< Generation::FragmentDefinition::Ref > & definition_table
+    )
+{
+    Generation::CodeGenerator
+        code_generator;
+
+    code_generator.GenerateShader(
+        generated_code,
+        used_semantic_set,
+        definition_table,
+        semantic_argument.getValue(),
+        input_semantic_argument.getValue(),
+        *error_handler
+        );
+}
+
 bool generate_hlsl(
-    const std::vector<Base::ObjectRef<Generation::FragmentDefinition> > & definition_table
+    const std::vector< Generation::FragmentDefinition::Ref > & definition_table
     )
 {
     Base::ErrorHandlerInterface::Ref
@@ -32,17 +52,8 @@ bool generate_hlsl(
             generated_code;
         std::vector < std::string >
             used_semantic_set;
-        Generation::CodeGenerator
-            code_generator;
-
-        code_generator.GenerateShader(
-            generated_code,
-            used_semantic_set,
-            definition_table,
-            semantic_argument.getValue(),
-            input_semantic_argument.getValue(),
-            *error_handler
-            );
+        
+        generate_code( generated_code, used_semantic_set, error_handler, definition_table );
 
         AST::HLSLPrinter printer( std::cout );
 
@@ -87,26 +98,17 @@ bool generate_hlsl(
 }
 
 bool generate_annotations(
-    const std::vector<Base::ObjectRef<Generation::FragmentDefinition> > & definition_table 
+    const std::vector< Generation::FragmentDefinition::Ref > & definition_table 
     )
 {
+    Base::ErrorHandlerInterface::Ref
+        error_handler = new Base::ConsoleErrorHandler;
     Base::ObjectRef < AST::TranslationUnit >
         generated_code;
     std::vector < std::string >
         used_semantic_set;
-    Generation::CodeGenerator
-        code_generator;
-    Base::ErrorHandlerInterface::Ref
-        error_handler = new Base::ConsoleErrorHandler;
 
-    code_generator.GenerateShader(
-        generated_code,
-        used_semantic_set,
-        definition_table,
-        semantic_argument.getValue(),
-        input_semantic_argument.getValue(),
-        *error_handler
-        );
+    generate_code( generated_code, used_semantic_set, error_handler, definition_table );
 
     AST::AnnotationPrinter printer( std::cout );
 
@@ -120,7 +122,7 @@ int main( int argument_count, const char* argument_table[] )
     {
         cmd.parse( argument_count, argument_table );
 
-        std::vector<Base::ObjectRef<Generation::FragmentDefinition> > definition_table;
+        std::vector< Generation::FragmentDefinition::Ref > definition_table;
         std::vector<std::string>::const_iterator it, end;
         it = fragment_arguments.getValue().begin();
         end = fragment_arguments.getValue().end();
