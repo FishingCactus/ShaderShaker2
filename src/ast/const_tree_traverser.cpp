@@ -1,4 +1,4 @@
-#include "tree_traverser.h"
+#include "const_tree_traverser.h"
 
 #include <cassert>
 
@@ -7,49 +7,49 @@
 namespace AST
 {
 
-    void TreeTraverser::Visit( TranslationUnit & translation_unit )
+    void ConstTreeTraverser::Visit( const TranslationUnit & translation_unit )
     {
         VisitTable( *this, translation_unit.m_GlobalDeclarationTable );
         VisitTable( *this, translation_unit.m_TechniqueTable );
     }
 
-    void TreeTraverser::Visit( VariableDeclaration & variable_declaration )
+    void ConstTreeTraverser::Visit( const VariableDeclaration & variable_declaration )
     {
         VisitTable( *this, variable_declaration.m_StorageClass );
         VisitTable( *this, variable_declaration.m_TypeModifier );
         VisitTable( *this, variable_declaration.m_BodyTable );
     }
 
-    void TreeTraverser::Visit( IntrinsicType & /*type*/ )
+    void ConstTreeTraverser::Visit( const IntrinsicType & /*type*/ )
     {
     }
 
-    void TreeTraverser::Visit( UserDefinedType & /*type*/ )
+    void ConstTreeTraverser::Visit( const UserDefinedType & /*type*/ )
     {
     }
 
-    void TreeTraverser::Visit( SamplerType & /*type*/ )
+    void ConstTreeTraverser::Visit( const SamplerType & /*type*/ )
     {
     }
 
-    void TreeTraverser::Visit( TypeModifier & /*modifier*/ )
+    void ConstTreeTraverser::Visit( const TypeModifier & /*modifier*/ )
     {
     }
 
-    void TreeTraverser::Visit( StorageClass & /*storage_class*/ )
+    void ConstTreeTraverser::Visit( const StorageClass & /*storage_class*/ )
     {
     }
 
-    void TreeTraverser::Visit( ArgumentList & list )
+    void ConstTreeTraverser::Visit( const ArgumentList & list )
     {
         VisitTable( *this, list.m_ArgumentTable );
     }
 
-    void TreeTraverser::Visit( LiteralExpression & /*expression*/ )
+    void ConstTreeTraverser::Visit( const LiteralExpression & /*expression*/ )
     {
     }
 
-    void TreeTraverser::Visit( VariableExpression & expression )
+    void ConstTreeTraverser::Visit( const VariableExpression & expression )
     {
         if ( expression.m_SubscriptExpression )
         {
@@ -57,18 +57,18 @@ namespace AST
         }
     }
 
-    void TreeTraverser::Visit( UnaryOperationExpression & expression )
+    void ConstTreeTraverser::Visit( const UnaryOperationExpression & expression )
     {
         expression.m_Expression->Visit( *this );
     }
 
-    void TreeTraverser::Visit( BinaryOperationExpression & expression )
+    void ConstTreeTraverser::Visit( const BinaryOperationExpression & expression )
     {
         expression.m_LeftExpression->Visit( *this );
         expression.m_RightExpression->Visit( *this );
     }
 
-    void TreeTraverser::Visit( CallExpression & expression )
+    void ConstTreeTraverser::Visit( const CallExpression & expression )
     {
         if ( expression.m_ArgumentExpressionList )
         {
@@ -76,16 +76,16 @@ namespace AST
         }
     }
 
-    void TreeTraverser::Visit( ArgumentExpressionList & list )
+    void ConstTreeTraverser::Visit( const ArgumentExpressionList & list )
     {
         VisitTable( *this, list.m_ExpressionList );
     }
 
-    void TreeTraverser::Visit( Swizzle & /*swizzle*/ )
+    void ConstTreeTraverser::Visit( const Swizzle & /*swizzle*/ )
     {
     }
 
-    void TreeTraverser::Visit( PostfixSuffixCall & postfix_suffix )
+    void ConstTreeTraverser::Visit( const PostfixSuffixCall & postfix_suffix )
     {
         postfix_suffix.m_CallExpression->Visit( *this );
 
@@ -95,7 +95,7 @@ namespace AST
         }
     }
 
-    void TreeTraverser::Visit( PostfixSuffixVariable & postfix_suffix )
+    void ConstTreeTraverser::Visit( const PostfixSuffixVariable & postfix_suffix )
     {
         postfix_suffix.m_VariableExpression->Visit( *this );
 
@@ -105,7 +105,7 @@ namespace AST
         }
     }
 
-    void TreeTraverser::Visit( ConstructorExpression & expression )
+    void ConstTreeTraverser::Visit( const ConstructorExpression & expression )
     {
         expression.m_Type->Visit( *this );
 
@@ -115,14 +115,14 @@ namespace AST
         }
     }
 
-    void TreeTraverser::Visit( ConditionalExpression & expression )
+    void ConstTreeTraverser::Visit( const ConditionalExpression & expression )
     {
         expression.m_Condition->Visit( *this );
         expression.m_IfTrue->Visit( *this );
         expression.m_IfFalse->Visit( *this );
     }
 
-    void TreeTraverser::Visit( LValueExpression & expression )
+    void ConstTreeTraverser::Visit( const LValueExpression & expression )
     {
         expression.m_VariableExpression->Visit( *this );
 
@@ -132,29 +132,29 @@ namespace AST
         }
     }
 
-    void TreeTraverser::Visit( PreModifyExpression & expression )
+    void ConstTreeTraverser::Visit( const PreModifyExpression & expression )
     {
         expression.m_Expression->Visit( *this );
     }
 
-    void TreeTraverser::Visit( PostModifyExpression & expression )
+    void ConstTreeTraverser::Visit( const PostModifyExpression & expression )
     {
         expression.m_Expression->Visit( *this );
     }
 
-    void TreeTraverser::Visit( CastExpression & expression )
+    void ConstTreeTraverser::Visit( const CastExpression & expression )
     {
         expression.m_Type->Visit( *this );
         expression.m_Expression->Visit( *this );
     }
 
-    void TreeTraverser::Visit( AssignmentExpression & expression )
+    void ConstTreeTraverser::Visit( const AssignmentExpression & expression )
     {
         expression.m_LValueExpression->Visit( *this );
         expression.m_Expression->Visit( *this );
     }
 
-    void TreeTraverser::Visit( PostfixExpression & expression )
+    void ConstTreeTraverser::Visit( const PostfixExpression & expression )
     {
         expression.m_Expression->Visit( *this );
 
@@ -164,7 +164,7 @@ namespace AST
         }
     }
 
-    void TreeTraverser::Visit( ReturnStatement & statement )
+    void ConstTreeTraverser::Visit( const ReturnStatement & statement )
     {
         if ( statement.m_Expression )
         {
@@ -172,24 +172,24 @@ namespace AST
         }
     }
 
-    void TreeTraverser::Visit( BreakStatement & /*statement*/ )
+    void ConstTreeTraverser::Visit( const BreakStatement & /*statement*/ )
     {
     }
 
-    void TreeTraverser::Visit( ContinueStatement & /*statement*/ )
+    void ConstTreeTraverser::Visit( const ContinueStatement & /*statement*/ )
     {
     }
 
-    void TreeTraverser::Visit( EmptyStatement & /*statement*/ )
+    void ConstTreeTraverser::Visit( const EmptyStatement & /*statement*/ )
     {
     }
 
-    void TreeTraverser::Visit( ExpressionStatement & statement )
+    void ConstTreeTraverser::Visit( const ExpressionStatement & statement )
     {
         statement.m_Expression->Visit( *this );
     }
 
-    void TreeTraverser::Visit( IfStatement & statement )
+    void ConstTreeTraverser::Visit( const IfStatement & statement )
     {
         statement.m_Condition->Visit( *this );
         statement.m_ThenStatement->Visit( *this );
@@ -200,36 +200,36 @@ namespace AST
         }
     }
 
-    void TreeTraverser::Visit( WhileStatement & statement )
+    void ConstTreeTraverser::Visit( const WhileStatement & statement )
     {
         statement.m_Condition->Visit( *this );
         statement.m_Statement->Visit( *this );
     }
 
-    void TreeTraverser::Visit( DoWhileStatement & statement )
+    void ConstTreeTraverser::Visit( const DoWhileStatement & statement )
     {
         statement.m_Statement->Visit( *this );
         statement.m_Condition->Visit( *this );
     }
 
-    void TreeTraverser::Visit( BlockStatement & statement )
+    void ConstTreeTraverser::Visit( const BlockStatement & statement )
     {
         VisitTable( *this, statement.m_StatementTable );
     }
 
-    void TreeTraverser::Visit( AssignmentStatement & statement )
+    void ConstTreeTraverser::Visit( const AssignmentStatement & statement )
     {
         statement.m_Expression->Visit( *this );
     }
 
-    void TreeTraverser::Visit( VariableDeclarationStatement & statement )
+    void ConstTreeTraverser::Visit( const VariableDeclarationStatement & statement )
     {
         VisitTable( *this, statement.m_StorageClass );
         VisitTable( *this, statement.m_TypeModifier );
         VisitTable( *this, statement.m_BodyTable );
     }
 
-    void TreeTraverser::Visit( VariableDeclarationBody & body )
+    void ConstTreeTraverser::Visit( const VariableDeclarationBody & body )
     {
         if ( body.m_Annotations )
         {
@@ -242,7 +242,7 @@ namespace AST
         }
     }
 
-    void TreeTraverser::Visit( InitialValue & initial_value )
+    void ConstTreeTraverser::Visit( const InitialValue & initial_value )
     {
         if ( initial_value.m_Vector )
         {
@@ -255,16 +255,16 @@ namespace AST
         }
     }
 
-    void TreeTraverser::Visit( Annotations & annotations )
+    void ConstTreeTraverser::Visit( const Annotations & annotations )
     {
         VisitTable( *this, annotations.m_AnnotationTable );
     }
 
-    void TreeTraverser::Visit( AnnotationEntry & /*annotation_entry*/ )
+    void ConstTreeTraverser::Visit( const AnnotationEntry & /*annotation_entry*/ )
     {
     }
 
-    void TreeTraverser::Visit( TextureDeclaration & declaration )
+    void ConstTreeTraverser::Visit( const TextureDeclaration & declaration )
     {
         if ( declaration.m_Annotations )
         {
@@ -272,31 +272,31 @@ namespace AST
         }
     }
 
-    void TreeTraverser::Visit( SamplerDeclaration & declaration )
+    void ConstTreeTraverser::Visit( const SamplerDeclaration & declaration )
     {
         VisitTable( *this, declaration.m_BodyTable );
     }
 
-    void TreeTraverser::Visit( SamplerBody & /*body*/ )
+    void ConstTreeTraverser::Visit( const SamplerBody & /*body*/ )
     {
     }
 
-    void TreeTraverser::Visit( StructDefinition & definition )
+    void ConstTreeTraverser::Visit( const StructDefinition & definition )
     {
-        std::vector< StructDefinition::Member >::iterator it, end;
-        it = definition.m_MemberTable.begin();
-        end = definition.m_MemberTable.end();
+        std::vector< StructDefinition::Member >::const_iterator it, end;
+        it = definition.m_MemberTable.cbegin();
+        end = definition.m_MemberTable.cend();
 
         for ( ; it != end; ++it )
         {
-            StructDefinition::Member
+            const StructDefinition::Member
                 & member = ( *it );
 
             member.m_Type->Visit( *this );
         }
     }
 
-    void TreeTraverser::Visit( FunctionDeclaration & declaration )
+    void ConstTreeTraverser::Visit( const FunctionDeclaration & declaration )
     {
         VisitTable( *this, declaration.m_StorageClassTable );
 
@@ -313,7 +313,7 @@ namespace AST
         VisitTable( *this, declaration.m_StatementTable );
     }
 
-    void TreeTraverser::Visit( Argument & argument )
+    void ConstTreeTraverser::Visit( const Argument & argument )
     {
         if ( argument.m_TypeModifier )
         {
@@ -326,7 +326,7 @@ namespace AST
         }
     }
 
-    void TreeTraverser::Visit( DiscardStatement & /*statement*/ )
+    void ConstTreeTraverser::Visit( const DiscardStatement & /*statement*/ )
     {
     }
 }

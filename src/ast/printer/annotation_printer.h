@@ -1,27 +1,25 @@
-#ifndef ANNOTATION_PRINTER
-    #define ANNOTATION_PRINTER
+#pragma once
 
-    #include "ast/tree_traverser.h"
-    #include <ostream>
+#include "ast/const_tree_traverser.h"
+#include <iosfwd>
 
-    namespace AST
+namespace AST
+{
+    class AnnotationPrinter : public ConstTreeTraverser
     {
-        class AnnotationPrinter : public TreeTraverser
-        {
-        public:
+    public:
 
-            AnnotationPrinter( std::ostream & stream ) : m_Stream( stream ){}
+        AnnotationPrinter( std::ostream & stream ) : m_Stream( stream ){}
 
-            virtual void Visit( const Node & node ) override;
-            virtual void Visit( const Annotations & annotations ) override;
-            virtual void Visit( const AnnotationEntry & annotation_entry ) override;
+        virtual void Visit( const Node & node ) override;
+        virtual void Visit( const Annotations & annotations ) override;
+        virtual void Visit( const AnnotationEntry & annotation_entry ) override;
 
-        private:
+    private:
 
-            AnnotationPrinter & operator =( const AnnotationPrinter & );
+        AnnotationPrinter & operator =( const AnnotationPrinter & );
 
-            std::ostream
-                & m_Stream;
-        };
-    }
-#endif
+        std::ostream
+            & m_Stream;
+    };
+}

@@ -80,12 +80,25 @@ namespace AST
         }
     }
 
-    template< bool is_const, class _Table_ >
-    void VisitTable( VisitorBase< is_const > & visitor, _Table_ & table )
+    template< class _Table_ >
+    void VisitTable( VisitorBase< true > & visitor, _Table_ & table )
     {
         typename _Table_::const_iterator
             it = table.cbegin(),
             end = table.cend();
+
+        for ( ; it != end; ++it )
+        {
+            ( *it )->Visit( visitor );
+        }
+    }
+
+    template< class _Table_ >
+    void VisitTable( VisitorBase< false > & visitor, _Table_ & table )
+    {
+        typename _Table_::iterator
+            it = table.begin(),
+            end = table.end();
 
         for ( ; it != end; ++it )
         {
