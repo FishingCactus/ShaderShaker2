@@ -313,7 +313,7 @@
             AST_HandleVisitor()
 
             VariableDeclarationBody() : m_ArraySize( 0 ) {}
-            VariableDeclarationBody( const std::string & name ) : m_Name( name ){}
+            VariableDeclarationBody( const std::string & name ) : m_Name( name ), m_ArraySize( 0 ) {}
 
             virtual VariableDeclarationBody * Clone() const override;
 
