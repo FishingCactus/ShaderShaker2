@@ -29,6 +29,15 @@ namespace AST
         m_CurrentVariableDeclarationType = "";
     }
 
+    void VariableScopeBuilder::Visit( const VariableDeclarationStatement & node )
+    {
+        m_CurrentVariableDeclarationType = node.m_Type->m_Name;
+
+        ConstTreeTraverser::Visit( node );
+
+        m_CurrentVariableDeclarationType = "";
+    }
+
     void VariableScopeBuilder::Visit( const VariableDeclarationBody & node )
     {
         assert( !m_CurrentVariableDeclarationType.empty() );
@@ -64,7 +73,7 @@ namespace AST
     void VariableScopeBuilder::Visit( const StructDefinition & node )
     {
         NewScopeHelper
-            creation_helper( *this, node, node.m_Name, "void" );
+            creation_helper( *this, node, node.m_Name, "" );
 
         for ( auto member : node.m_MemberTable )
         {

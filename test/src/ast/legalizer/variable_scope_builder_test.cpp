@@ -13,6 +13,32 @@ static AST::TranslationUnit * ParseCode(
     return parser.m_Parser.translation_unit();
 }
 
+void CheckVariable(
+    const Base::ObjectRef< AST::ScopeBuilder::Variable > & variable,
+    const std::string & name,
+    const std::string & type
+    )
+{
+    CHECK( variable->m_Name == name );
+    CHECK( variable->m_Type == type );
+}
+
+void CheckScope(
+    const Base::ObjectRef< AST::ScopeBuilder::Scope > & scope,
+    const AST::ScopeBuilder::Scope & parent_scope,
+    const unsigned int children_scope_count,
+    const std::string & scope_name,
+    const std::string & scope_type,
+    const unsigned int variable_count
+    )
+{
+    CHECK( scope->m_Parent == &parent_scope );
+    CHECK( scope->m_Children.size() == children_scope_count );
+    CHECK( scope->m_Name == scope_name );
+    CHECK( scope->m_Type == scope_type );
+    CHECK( scope->m_Variables.size() == variable_count );
+}
+
 TEST_CASE( "GlobalScope", "Variables are correctly added to the global scope" )
 {
     SECTION( "One variable" )
@@ -23,8 +49,7 @@ TEST_CASE( "GlobalScope", "Variables are correctly added to the global scope" )
         unit->Visit( scope_builder );
 
         CHECK( scope_data.m_GlobalScope.m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Name == "f" );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Type == "float" );
+        CheckVariable( scope_data.m_GlobalScope.m_Variables[ 0 ], "f", "float" );
     }
 
     SECTION( "Multiple variables initialized in same expression" )
@@ -35,11 +60,8 @@ TEST_CASE( "GlobalScope", "Variables are correctly added to the global scope" )
         unit->Visit( scope_builder );
 
         CHECK( scope_data.m_GlobalScope.m_Variables.size() == 2 );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Name == "f1" );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Type == "float" );
-
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 1 ]->m_Name == "f2" );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 1 ]->m_Type == "float" );
+        CheckVariable( scope_data.m_GlobalScope.m_Variables[ 0 ], "f1", "float" );
+        CheckVariable( scope_data.m_GlobalScope.m_Variables[ 1 ], "f2", "float" );
     }
 
     SECTION( "Multiple variables initialized in multiple expressions" )
@@ -50,11 +72,8 @@ TEST_CASE( "GlobalScope", "Variables are correctly added to the global scope" )
         unit->Visit( scope_builder );
 
         CHECK( scope_data.m_GlobalScope.m_Variables.size() == 2 );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Name == "f1" );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Type == "float" );
-
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 1 ]->m_Name == "f2" );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 1 ]->m_Type == "float" );
+        CheckVariable( scope_data.m_GlobalScope.m_Variables[ 0 ], "f1", "float" );
+        CheckVariable( scope_data.m_GlobalScope.m_Variables[ 1 ], "f2", "float" );
     }
 
     SECTION( "Multiple variables of different types" )
@@ -65,11 +84,8 @@ TEST_CASE( "GlobalScope", "Variables are correctly added to the global scope" )
         unit->Visit( scope_builder );
 
         CHECK( scope_data.m_GlobalScope.m_Variables.size() == 2 );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Name == "f" );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Type == "float" );
-
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 1 ]->m_Name == "i" );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 1 ]->m_Type == "int" );
+        CheckVariable( scope_data.m_GlobalScope.m_Variables[ 0 ], "f", "float" );
+        CheckVariable( scope_data.m_GlobalScope.m_Variables[ 1 ], "i", "int" );
     }
 }
 
@@ -84,11 +100,7 @@ TEST_CASE( "FunctionScope", "Functions create a new child scope" )
 
         CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "foo" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.empty() );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "foo", "void", 0 );
     }
 
     SECTION( "Void function one argument" )
@@ -100,13 +112,8 @@ TEST_CASE( "FunctionScope", "Functions create a new child scope" )
 
         CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "foo" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "f" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "foo", "void", 1 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "f", "float" );
     }
 
     SECTION( "Void function multiple arguments" )
@@ -118,15 +125,38 @@ TEST_CASE( "FunctionScope", "Functions create a new child scope" )
 
         CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "foo" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 2 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "f" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ]->m_Name == "i" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ]->m_Type == "int" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "foo", "void", 2 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "f", "float" );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ], "i", "int" );
+    }
+
+    SECTION( "Function with one statement" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "void foo( float f ) { float g = 1.0f; }" );
+        AST::ScopeBuilder::ScopeData scope_data;
+        AST::VariableScopeBuilder scope_builder( scope_data );
+        unit->Visit( scope_builder );
+
+        CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "foo", "void", 2 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "f", "float" );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ], "g", "float" );
+    }
+
+    SECTION( "Function with multiple statements" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "void foo( float f ) { float g = 1.0f; int h = 3; }" );
+        AST::ScopeBuilder::ScopeData scope_data;
+        AST::VariableScopeBuilder scope_builder( scope_data );
+        unit->Visit( scope_builder );
+
+        CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "foo", "void", 3 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "f", "float" );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ], "g", "float" );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 2 ], "h", "int" );
     }
 
     SECTION( "Result function no argument" )
@@ -138,11 +168,7 @@ TEST_CASE( "FunctionScope", "Functions create a new child scope" )
 
         CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "foo" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "float" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.empty() );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "foo", "float", 0 );
     }
 
     SECTION( "Result function one argument" )
@@ -154,13 +180,8 @@ TEST_CASE( "FunctionScope", "Functions create a new child scope" )
 
         CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "foo" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "float" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "f" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "foo", "float", 1 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "f", "float" );
     }
 
     SECTION( "Result function multiple arguments" )
@@ -172,15 +193,9 @@ TEST_CASE( "FunctionScope", "Functions create a new child scope" )
 
         CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "foo" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "float" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 2 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "f" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ]->m_Name == "i" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ]->m_Type == "int" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "foo", "float", 2 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "f", "float" );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ], "i", "int" );
     }
 
     SECTION( "Multiple functions" )
@@ -193,21 +208,11 @@ TEST_CASE( "FunctionScope", "Functions create a new child scope" )
         CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 2 );
 
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "foo" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "float" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "i" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "int" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "foo", "float", 1 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "i", "int" );
 
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Name == "bar" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Type == "int" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 0 ]->m_Name == "f" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 0 ]->m_Type == "float" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 1 ], scope_data.m_GlobalScope, 0, "bar", "int", 1 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 0 ], "f", "float" );
     }
 
     SECTION( "Variable and function" )
@@ -218,17 +223,11 @@ TEST_CASE( "FunctionScope", "Functions create a new child scope" )
         unit->Visit( scope_builder );
 
         CHECK( scope_data.m_GlobalScope.m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Name == "f" );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Type == "float" );
+        CheckVariable( scope_data.m_GlobalScope.m_Variables[ 0 ], "f", "float" );
 
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "foo" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "float" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "i" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "int" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "foo", "float", 1 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "i", "int" );
     }
 }
 
@@ -243,13 +242,8 @@ TEST_CASE( "StructureScope", "Structure declarations create a new child scope" )
 
         CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "VS_OUTPUT" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "Position" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float4" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "VS_OUTPUT", "", 1 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "Position", "float4" );
     }
 
     SECTION( "Structure with multiple members" )
@@ -261,15 +255,9 @@ TEST_CASE( "StructureScope", "Structure declarations create a new child scope" )
 
         CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "VS_OUTPUT" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 2 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "Position" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float4" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ]->m_Name == "TexturePosition" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ]->m_Type == "float2" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "VS_OUTPUT", "", 2 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "Position", "float4" );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ], "TexturePosition", "float2" );
     }
 
     SECTION( "Multiple structures with multiple members" )
@@ -281,25 +269,13 @@ TEST_CASE( "StructureScope", "Structure declarations create a new child scope" )
 
         CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 2 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "VS_OUTPUT" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 2 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "Position" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float4" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ]->m_Name == "TexturePosition" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ]->m_Type == "float2" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "VS_OUTPUT", "", 2 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "Position", "float4" );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ], "TexturePosition", "float2" );
 
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Name == "PS_OUTPUT" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Type == "void" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables.size() == 2 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 0 ]->m_Name == "Position" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 0 ]->m_Type == "float4" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 1 ]->m_Name == "Color" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 1 ]->m_Type == "float4" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 1 ], scope_data.m_GlobalScope, 0, "PS_OUTPUT", "", 2 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 0 ], "Position", "float4" );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 1 ], "Color", "float4" );
     }
 
     SECTION( "Structures with global variables" )
@@ -310,17 +286,11 @@ TEST_CASE( "StructureScope", "Structure declarations create a new child scope" )
         unit->Visit( scope_builder );
 
         CHECK( scope_data.m_GlobalScope.m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Name == "WvpXf" );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Type == "float4x4" );
+        CheckVariable( scope_data.m_GlobalScope.m_Variables[ 0 ], "WvpXf", "float4x4" );
 
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "VS_OUTPUT" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "Position" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float4" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "VS_OUTPUT", "", 1 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "Position", "float4" );
     }
 
     SECTION( "Multiple structures with functions" )
@@ -332,19 +302,10 @@ TEST_CASE( "StructureScope", "Structure declarations create a new child scope" )
 
         CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 2 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "VS_OUTPUT" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "Position" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float4" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "VS_OUTPUT", "", 1 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "Position", "float4" );
 
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Name == "foo" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Type == "float" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables.empty() );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 1 ], scope_data.m_GlobalScope, 0, "foo", "float", 0 );
     }
 
     SECTION( "Multiple structures with global variables and functions" )
@@ -355,24 +316,13 @@ TEST_CASE( "StructureScope", "Structure declarations create a new child scope" )
         unit->Visit( scope_builder );
 
         CHECK( scope_data.m_GlobalScope.m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Name == "WvpXf" );
-        CHECK( scope_data.m_GlobalScope.m_Variables[ 0 ]->m_Type == "float4x4" );
+        CheckVariable( scope_data.m_GlobalScope.m_Variables[ 0 ], "WvpXf", "float4x4" );
 
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 2 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Name == "VS_OUTPUT" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "Position" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float4" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "VS_OUTPUT", "", 1 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "Position", "float4" );
 
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Parent == &scope_data.m_GlobalScope );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Children.empty() );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Name == "foo" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Type == "float" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables.size() == 1 );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 0 ]->m_Name == "i" );
-        CHECK( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 0 ]->m_Type == "int" );
+        CheckScope( scope_data.m_GlobalScope.m_Children[ 1 ], scope_data.m_GlobalScope, 0, "foo", "float", 1 );
+        CheckVariable( scope_data.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 0 ], "i", "int" );
     }
 }

@@ -61,6 +61,7 @@ namespace AST
         virtual void Visit( const Node & node ) override;
         virtual void Visit( const TranslationUnit & node ) override;
         virtual void Visit( const VariableDeclaration & node ) override;
+        virtual void Visit( const VariableDeclarationStatement & node ) override;
         virtual void Visit( const VariableDeclarationBody & node ) override;
         virtual void Visit( const FunctionDeclaration & node ) override;
         virtual void Visit( const Argument & node ) override;
