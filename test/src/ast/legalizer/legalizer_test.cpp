@@ -1,6 +1,7 @@
 #include "catch.hpp"
 #include "ast/node.h"
 #include "ast/legalizer/legalizer.h"
+#include "../../parser/parser_helper.h"
 #include <sstream>
 
 TEST_CASE( "Legalizer", "" )

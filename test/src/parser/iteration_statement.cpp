@@ -25,7 +25,6 @@ TEST_CASE( "Iteration statements are parsed", "[parser]" )
 
     SECTION( "Do while is parsed" )
     {
-
         AST::DoWhileStatement * do_while_statement;
         const char code[] = " do ; while( 1 );";
         Parser parser( code, sizeof( code ) - 1 );
