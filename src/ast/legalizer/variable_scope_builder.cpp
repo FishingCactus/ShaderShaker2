@@ -4,10 +4,10 @@
 
 namespace AST
 {
-    VariableScopeBuilder::VariableScopeBuilder() 
-        : m_CurrentVariable( nullptr ) 
+    VariableScopeBuilder::VariableScopeBuilder( ScopeBuilder::ScopeData & scope_data )
+        : m_ScopeData( scope_data )
     {
-        m_CurrentScope = &m_GlobalScope;
+        m_ScopeStack.push( &scope_data.m_GlobalScope );
     }
 
     void VariableScopeBuilder::Visit( const Node & /*node*/ )
@@ -45,7 +45,7 @@ namespace AST
     void VariableScopeBuilder::Visit( const FunctionDeclaration & node )
     {
         NewScopeHelper
-            creation_helper( *this, node.m_Name, node.m_Type ? node.m_Type->m_Name : "void" );
+            creation_helper( *this, node, node.m_Name, node.m_Type ? node.m_Type->m_Name : "void" );
 
         ConstTreeTraverser::Visit( node );
     }
@@ -64,7 +64,7 @@ namespace AST
     void VariableScopeBuilder::Visit( const StructDefinition & node )
     {
         NewScopeHelper
-            creation_helper( *this, node.m_Name, "void" );
+            creation_helper( *this, node, node.m_Name, "void" );
 
         for ( auto member : node.m_MemberTable )
         {
@@ -92,6 +92,6 @@ namespace AST
 
     ScopeBuilder::Scope & VariableScopeBuilder::GetCurrentScope()
     {
-        return *m_CurrentScope;
+        return *m_ScopeStack.top();
     }
 }

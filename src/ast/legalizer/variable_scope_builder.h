@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <stack>
+#include <map>
 
 namespace AST
 {
@@ -43,13 +44,19 @@ namespace AST
 
             Variable& operator =( const Variable & );
         };
+
+        struct ScopeData
+        {
+            Scope m_GlobalScope;
+            std::map< AST::Node *, Scope * > m_ScopeMap;
+        };
     }
 
     class VariableScopeBuilder : public ConstTreeTraverser
     {
     public:
 
-        VariableScopeBuilder();
+        VariableScopeBuilder( ScopeBuilder::ScopeData & scope_builder_data );
 
         virtual void Visit( const Node & node ) override;
         virtual void Visit( const TranslationUnit & node ) override;
@@ -59,13 +66,11 @@ namespace AST
         virtual void Visit( const Argument & node ) override;
         virtual void Visit( const StructDefinition & node ) override;
 
-        ScopeBuilder::Scope m_GlobalScope;
-
     private:
 
         struct NewScopeHelper
         {
-            NewScopeHelper( VariableScopeBuilder & builder, const std::string & scope_name, const std::string & scope_type )
+            NewScopeHelper( VariableScopeBuilder & builder, const Node & node, const std::string & scope_name, const std::string & scope_type )
                 : m_Builder( builder )
             {
                 ScopeBuilder::Scope
@@ -74,12 +79,13 @@ namespace AST
                 scope->m_Name = scope_name;
                 scope->m_Type = scope_type;
 
-                m_Builder.m_CurrentScope = scope;
+                m_Builder.m_ScopeData.m_ScopeMap.insert( std::make_pair( const_cast< Node * >( &node ), scope ) );
+                m_Builder.m_ScopeStack.push( scope );
             }
 
             ~NewScopeHelper()
             {
-                m_Builder.m_CurrentScope = &*m_Builder.m_CurrentScope->m_Parent;
+                m_Builder.m_ScopeStack.pop();
             }
 
         private:
@@ -94,8 +100,8 @@ namespace AST
         ScopeBuilder::Variable * AddVariableToCurrentScope();
         ScopeBuilder::Scope & GetCurrentScope();
 
-        ScopeBuilder::Scope * m_CurrentScope;
-        ScopeBuilder::Variable * m_CurrentVariable;
+        ScopeBuilder::ScopeData & m_ScopeData;
+        std::stack< ScopeBuilder::Scope * > m_ScopeStack;
         std::string m_CurrentVariableDeclarationType;
     };
 }
