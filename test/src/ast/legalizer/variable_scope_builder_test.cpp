@@ -153,10 +153,97 @@ TEST_CASE( "FunctionScope", "Functions create a new child scope" )
 
         CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
         CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
-        CheckScope( scope_data.m_GlobalScope.m_Children[ 0 ], scope_data.m_GlobalScope, 0, "foo", "void", 3 );
-        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ], "f", "float" );
-        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ], "g", "float" );
-        CheckVariable( scope_data.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 2 ], "h", "int" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > function_scope = scope_data.m_GlobalScope.m_Children[ 0 ];
+        CheckScope( function_scope, scope_data.m_GlobalScope, 0, "foo", "void", 3 );
+        CheckVariable( function_scope->m_Variables[ 0 ], "f", "float" );
+        CheckVariable( function_scope->m_Variables[ 1 ], "g", "float" );
+        CheckVariable( function_scope->m_Variables[ 2 ], "h", "int" );
+    }
+
+    SECTION( "Function with block" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "void foo( float f ) { { float g = 1.0f; } }" );
+        AST::ScopeBuilder::ScopeData scope_data;
+        AST::VariableScopeBuilder scope_builder( scope_data );
+        unit->Visit( scope_builder );
+
+        CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > function_scope = scope_data.m_GlobalScope.m_Children[ 0 ];
+        CheckScope( function_scope, scope_data.m_GlobalScope, 1, "foo", "void", 1 );
+        CheckVariable( function_scope->m_Variables[ 0 ], "f", "float" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > block_scope = function_scope->m_Children[ 0 ];
+        CheckScope( block_scope, *scope_data.m_GlobalScope.m_Children[ 0 ], 0, "", "block", 1 );
+        CheckVariable( block_scope->m_Variables[ 0 ], "g", "float" );
+    }
+
+    SECTION( "Function with multiple blocks" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "void foo( float f ) { { float g = 1.0f; } { float h = 1.0f; } }" );
+        AST::ScopeBuilder::ScopeData scope_data;
+        AST::VariableScopeBuilder scope_builder( scope_data );
+        unit->Visit( scope_builder );
+
+        CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > function_scope = scope_data.m_GlobalScope.m_Children[ 0 ];
+        CheckScope( function_scope, scope_data.m_GlobalScope, 2, "foo", "void", 1 );
+        CheckVariable( function_scope->m_Variables[ 0 ], "f", "float" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > block_scope_1 = function_scope->m_Children[ 0 ];
+        CheckScope( block_scope_1, *function_scope, 0, "", "block", 1 );
+        CheckVariable( block_scope_1->m_Variables[ 0 ], "g", "float" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > block_scope_2 = function_scope->m_Children[ 1 ];
+        CheckScope( block_scope_2, *function_scope, 0, "", "block", 1 );
+        CheckVariable( block_scope_2->m_Variables[ 0 ], "h", "float" );
+    }
+
+    SECTION( "Function with nested blocks" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "void foo( float f ) { { float g = 1.0f; { float h = 1.0f; } } }" );
+        AST::ScopeBuilder::ScopeData scope_data;
+        AST::VariableScopeBuilder scope_builder( scope_data );
+        unit->Visit( scope_builder );
+
+        CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > function_scope = scope_data.m_GlobalScope.m_Children[ 0 ];
+        CheckScope( function_scope, scope_data.m_GlobalScope, 1, "foo", "void", 1 );
+        CheckVariable( function_scope->m_Variables[ 0 ], "f", "float" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > block_scope = function_scope->m_Children[ 0 ];
+        CheckScope( block_scope, *function_scope, 1, "", "block", 1 );
+        CheckVariable( block_scope->m_Variables[ 0 ], "g", "float" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > nested_block_scope = block_scope->m_Children[ 0 ];
+        CheckScope( nested_block_scope, *block_scope, 0, "", "block", 1 );
+        CheckVariable( nested_block_scope->m_Variables[ 0 ], "h", "float" );
+    }
+
+    SECTION( "Function with nested blocks and variable redefinition" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "void foo( float f ) { { float f = 2.0f; { float f = 3.0f; } } }" );
+        AST::ScopeBuilder::ScopeData scope_data;
+        AST::VariableScopeBuilder scope_builder( scope_data );
+        unit->Visit( scope_builder );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > function_scope = scope_data.m_GlobalScope.m_Children[ 0 ];
+        CheckScope( function_scope, scope_data.m_GlobalScope, 1, "foo", "void", 1 );
+        CheckVariable( function_scope->m_Variables[ 0 ], "f", "float" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > block_scope = function_scope->m_Children[ 0 ];
+        CheckScope( block_scope, *function_scope, 1, "", "block", 1 );
+        CheckVariable( block_scope->m_Variables[ 0 ], "f", "float" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > nested_block_scope = block_scope->m_Children[ 0 ];
+        CheckScope( nested_block_scope, *block_scope, 0, "", "block", 1 );
+        CheckVariable( nested_block_scope->m_Variables[ 0 ], "f", "float" );
     }
 
     SECTION( "Result function no argument" )

@@ -87,6 +87,14 @@ namespace AST
         ConstTreeTraverser::Visit( node );
     }
 
+    void VariableScopeBuilder::Visit( const BlockStatement & node )
+    {
+        NewScopeHelper
+            creation_helper( *this, node, "", "block" );
+
+        ConstTreeTraverser::Visit( node );
+    }
+
     ScopeBuilder::Variable * VariableScopeBuilder::AddVariableToCurrentScope()
     {
         ScopeBuilder::Scope

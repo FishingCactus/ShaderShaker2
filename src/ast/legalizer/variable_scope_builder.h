@@ -66,6 +66,7 @@ namespace AST
         virtual void Visit( const FunctionDeclaration & node ) override;
         virtual void Visit( const Argument & node ) override;
         virtual void Visit( const StructDefinition & node ) override;
+        virtual void Visit( const BlockStatement & node ) override;
 
     private:
 
