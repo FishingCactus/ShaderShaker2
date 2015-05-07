@@ -83,4 +83,31 @@ TEST_CASE( "Legalizer", "" )
         CHECK( literal_expression2->m_Value == "456.0f" );
     }
 
+    SECTION( "Vector components are converted" )
+    {
+        AST::VariableDeclaration
+            node;
+
+        node.SetType( new AST::Type( "float4" ) );
+        node.AddBody( new AST::VariableDeclarationBody( "view_space_light_direction" ) );
+        node.m_BodyTable.back()->m_InitialValue = new AST::InitialValue();
+        node.m_BodyTable.back()->m_InitialValue->m_Vector = true;
+        node.m_BodyTable.back()->m_InitialValue->AddExpression( new AST::LiteralExpression( AST::LiteralExpression::Float, "0.0f" ) );
+        auto literal_expression1 = new AST::LiteralExpression( AST::LiteralExpression::Int, "0" );
+        node.m_BodyTable.back()->m_InitialValue->AddExpression( literal_expression1 );
+        node.m_BodyTable.back()->m_InitialValue->AddExpression( new AST::LiteralExpression( AST::LiteralExpression::Float, "1.0f" ) );
+        auto literal_expression2 = new AST::LiteralExpression( AST::LiteralExpression::Float, "1" );
+        node.m_BodyTable.back()->m_InitialValue->AddExpression( literal_expression2 );
+
+        AST::Legalizer
+            legalizer;
+
+        node.Visit( legalizer );
+
+        CHECK( literal_expression1->m_Type == AST::LiteralExpression::Float );
+        CHECK( literal_expression1->m_Value == "0.0f" );
+
+        CHECK( literal_expression2->m_Type == AST::LiteralExpression::Float );
+        CHECK( literal_expression2->m_Value == "1.0f" );
+    }
 }
