@@ -4,6 +4,14 @@
 
 namespace AST
 {
+    bool VariableDeclationNeedsFloatConversions( const VariableDeclaration & variable_declaration )
+    {
+        const std::string
+            & variable_type = variable_declaration.m_Type->m_Name;
+
+        return variable_type.find_first_of( "float" ) != std::string::npos;
+    }
+
     void Legalizer::Visit( Node & /*node*/ )
     {
         assert( !"Unsupported node type, implement in base class" );
@@ -22,14 +30,12 @@ namespace AST
     {
         if ( m_CurrentVariableDeclaration )
         {
-            const std::string
-                & variable_type = m_CurrentVariableDeclaration->m_Type->m_Name;
-            
-            if ( variable_type == "float"
-                 && node.m_Type == LiteralExpression::Int
-                 )
+            if ( VariableDeclationNeedsFloatConversions( *m_CurrentVariableDeclaration ) )
             {
-                node.m_Type = LiteralExpression::Float;
+                if ( node.m_Type == LiteralExpression::Int )
+                {
+                    node.m_Type = LiteralExpression::Float;
+                }
 
                 if ( node.m_Value.find_last_of( '.' ) == std::string::npos )
                 {
