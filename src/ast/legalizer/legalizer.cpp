@@ -45,6 +45,15 @@ namespace AST
                 {
                     node.m_Value.append( "f" );
                 }
+                else
+                {
+                    size_t pos = node.m_Value.find_last_of( ".f" );
+
+                    if ( pos != std::string::npos )
+                    {
+                        node.m_Value = node.m_Value.substr( 0, pos - 1 ) + ".0f";
+                    }
+                }
             }
         }
 
