@@ -219,3 +219,142 @@ TEST_CASE( "FunctionScope", "Functions create a new child scope" )
         CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "int" );
     }
 }
+
+TEST_CASE( "StructureScope", "Structure declarations create a new child scope" )
+{
+    SECTION( "Structure with one member" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "struct VS_OUTPUT { float4 Position; };" );
+        AST::VariableScopeBuilder scope_builder;
+        unit->Visit( scope_builder );
+
+        CHECK( scope_builder.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_builder.m_GlobalScope.m_Children.size() == 1 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_builder.m_GlobalScope );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Name == "VS_OUTPUT" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 1 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "Position" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float4" );
+    }
+
+    SECTION( "Structure with multiple members" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "struct VS_OUTPUT { float4 Position; float2 TexturePosition; };" );
+        AST::VariableScopeBuilder scope_builder;
+        unit->Visit( scope_builder );
+
+        CHECK( scope_builder.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_builder.m_GlobalScope.m_Children.size() == 1 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_builder.m_GlobalScope );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Name == "VS_OUTPUT" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 2 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "Position" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float4" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ]->m_Name == "TexturePosition" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ]->m_Type == "float2" );
+    }
+
+    SECTION( "Multiple structures with multiple members" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "struct VS_OUTPUT { float4 Position; float2 TexturePosition; }; struct PS_OUTPUT { float4 Position; float4 Color; };" );
+        AST::VariableScopeBuilder scope_builder;
+        unit->Visit( scope_builder );
+
+        CHECK( scope_builder.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_builder.m_GlobalScope.m_Children.size() == 2 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_builder.m_GlobalScope );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Name == "VS_OUTPUT" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 2 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "Position" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float4" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ]->m_Name == "TexturePosition" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 1 ]->m_Type == "float2" );
+
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Parent == &scope_builder.m_GlobalScope );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Children.empty() );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Name == "PS_OUTPUT" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Type == "void" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Variables.size() == 2 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 0 ]->m_Name == "Position" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 0 ]->m_Type == "float4" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 1 ]->m_Name == "Color" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 1 ]->m_Type == "float4" );
+    }
+
+    SECTION( "Structures with global variables" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "struct VS_OUTPUT { float4 Position; }; float4x4 WvpXf;" );
+        AST::VariableScopeBuilder scope_builder;
+        unit->Visit( scope_builder );
+
+        CHECK( scope_builder.m_GlobalScope.m_Variables.size() == 1 );
+        CHECK( scope_builder.m_GlobalScope.m_Variables[ 0 ]->m_Name == "WvpXf" );
+        CHECK( scope_builder.m_GlobalScope.m_Variables[ 0 ]->m_Type == "float4x4" );
+
+        CHECK( scope_builder.m_GlobalScope.m_Children.size() == 1 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_builder.m_GlobalScope );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Name == "VS_OUTPUT" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 1 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "Position" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float4" );
+    }
+
+    SECTION( "Multiple structures with functions" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "struct VS_OUTPUT { float4 Position; }; float foo() { return 1.0f; }" );
+        AST::VariableScopeBuilder scope_builder;
+        unit->Visit( scope_builder );
+
+        CHECK( scope_builder.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_builder.m_GlobalScope.m_Children.size() == 2 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_builder.m_GlobalScope );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Name == "VS_OUTPUT" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 1 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "Position" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float4" );
+
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Parent == &scope_builder.m_GlobalScope );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Children.empty() );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Name == "foo" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Type == "float" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Variables.empty() );
+    }
+
+    SECTION( "Multiple structures with global variables and functions" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "struct VS_OUTPUT { float4 Position; }; float foo( int i ) { return 1.0f; } float4x4 WvpXf;" );
+        AST::VariableScopeBuilder scope_builder;
+        unit->Visit( scope_builder );
+
+        CHECK( scope_builder.m_GlobalScope.m_Variables.size() == 1 );
+        CHECK( scope_builder.m_GlobalScope.m_Variables[ 0 ]->m_Name == "WvpXf" );
+        CHECK( scope_builder.m_GlobalScope.m_Variables[ 0 ]->m_Type == "float4x4" );
+
+        CHECK( scope_builder.m_GlobalScope.m_Children.size() == 2 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Parent == &scope_builder.m_GlobalScope );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Children.empty() );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Name == "VS_OUTPUT" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Type == "void" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables.size() == 1 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Name == "Position" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 0 ]->m_Variables[ 0 ]->m_Type == "float4" );
+
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Parent == &scope_builder.m_GlobalScope );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Children.empty() );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Name == "foo" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Type == "float" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Variables.size() == 1 );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 0 ]->m_Name == "i" );
+        CHECK( scope_builder.m_GlobalScope.m_Children[ 1 ]->m_Variables[ 0 ]->m_Type == "int" );
+    }
+}
