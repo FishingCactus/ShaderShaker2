@@ -57,6 +57,7 @@ namespace AST
         virtual void Visit( const VariableDeclarationBody & node ) override;
         virtual void Visit( const FunctionDeclaration & node ) override;
         virtual void Visit( const Argument & node ) override;
+        virtual void Visit( const StructDefinition & node ) override;
 
         ScopeBuilder::Scope m_GlobalScope;
 

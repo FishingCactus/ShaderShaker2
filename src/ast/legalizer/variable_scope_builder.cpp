@@ -61,6 +61,23 @@ namespace AST
         ConstTreeTraverser::Visit( node );
     }
 
+    void VariableScopeBuilder::Visit( const StructDefinition & node )
+    {
+        NewScopeHelper
+            creation_helper( *this, node.m_Name, "void" );
+
+        for ( auto member : node.m_MemberTable )
+        {
+            ScopeBuilder::Variable
+                * argument_variable = AddVariableToCurrentScope();
+
+            argument_variable->m_Name = member.m_Name;
+            argument_variable->m_Type = member.m_Type->m_Name;
+        }
+
+        ConstTreeTraverser::Visit( node );
+    }
+
     ScopeBuilder::Variable * VariableScopeBuilder::AddVariableToCurrentScope()
     {
         ScopeBuilder::Scope
