@@ -214,9 +214,19 @@ namespace AST
 
     void TreeTraverser::Visit( ForStatement & statement )
     {
-        statement.m_InitStatement->Visit( *this );
-        statement.m_EqualityExpression->Visit( *this );
-        statement.m_ModifyExpression->Visit( *this );
+        if ( statement.m_InitStatement )
+        {
+            statement.m_InitStatement->Visit( *this );
+        }
+        if ( statement.m_EqualityExpression )
+        {
+            statement.m_EqualityExpression->Visit( *this );
+        }
+        if ( statement.m_ModifyExpression )
+        {
+            statement.m_ModifyExpression->Visit( *this );
+        }
+
         statement.m_Statement->Visit( *this );
     }
 
