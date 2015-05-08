@@ -2,10 +2,12 @@
     #define HLSL_H
 
     namespace AST{ struct TranslationUnit; }
+    #include <base/object_ref.h>
+    #include <string>
 
     namespace HLSL
     {
-        AST::TranslationUnit * ParseHLSL( const char * filename );
+        Base::ObjectRef<AST::TranslationUnit> ParseHLSL( const std::string & filename );
     }
 
 #endif

@@ -66,13 +66,14 @@ namespace Generation
             m_FunctionDeclarationTable;
     };
 
-    void FragmentDefinition::GenerateFragment(
-        Base::ObjectRef<FragmentDefinition> & fragment_definition,
+    Base::ObjectRef<FragmentDefinition> FragmentDefinition::GenerateFragment(
         AST::TranslationUnit & translation_unit
         )
     {
         GetFunctionVisitor
             visitor;
+        Base::ObjectRef<FragmentDefinition>
+            fragment_definition;
 
         translation_unit.Visit( visitor );
 
@@ -91,6 +92,7 @@ namespace Generation
             fragment_definition->m_FunctionDefinitionTable.push_back(function_definition);
         }
 
+        return fragment_definition;
     }
 
     bool FragmentDefinition::FindFunctionDefinition(

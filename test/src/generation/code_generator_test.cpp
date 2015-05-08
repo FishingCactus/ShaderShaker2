@@ -56,7 +56,7 @@ namespace
             Base::ObjectRef<Generation::FragmentDefinition>
                 definition;
 
-            Generation::FragmentDefinition::GenerateFragment( definition, *translation_unit );
+            definition = Generation::FragmentDefinition::GenerateFragment( *translation_unit );
 
             definition_table.push_back( definition );
         }
