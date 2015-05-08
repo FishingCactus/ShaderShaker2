@@ -66,6 +66,10 @@ namespace AST
         virtual void Visit( const FunctionDeclaration & node ) override;
         virtual void Visit( const Argument & node ) override;
         virtual void Visit( const StructDefinition & node ) override;
+        virtual void Visit( const IfStatement & node ) override;
+        virtual void Visit( const WhileStatement & node ) override;
+        virtual void Visit( const DoWhileStatement & node ) override;
+        virtual void Visit( const ForStatement & node ) override;
         virtual void Visit( const BlockStatement & node ) override;
 
     private:
@@ -104,6 +108,7 @@ namespace AST
 
         ScopeBuilder::ScopeData & m_ScopeData;
         std::stack< ScopeBuilder::Scope * > m_ScopeStack;
-        std::string m_CurrentVariableDeclarationType;
+        std::string m_CurrentVariableDeclarationType, m_CurrentScopeBlockName;
+        bool m_CancelNextBlockScope;
     };
 }

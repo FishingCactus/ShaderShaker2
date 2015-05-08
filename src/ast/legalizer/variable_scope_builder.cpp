@@ -5,7 +5,7 @@
 namespace AST
 {
     VariableScopeBuilder::VariableScopeBuilder( ScopeBuilder::ScopeData & scope_data )
-        : m_ScopeData( scope_data )
+        : m_ScopeData(scope_data), m_CancelNextBlockScope( false )
     {
         m_ScopeStack.push( &scope_data.m_GlobalScope );
     }
@@ -87,12 +87,79 @@ namespace AST
         ConstTreeTraverser::Visit( node );
     }
 
-    void VariableScopeBuilder::Visit( const BlockStatement & node )
+    void VariableScopeBuilder::Visit( const IfStatement & node )
+    {
+        node.m_Condition->Visit( *this );
+
+        m_CurrentScopeBlockName = "if";
+        node.m_ThenStatement->Visit( *this );
+
+        if ( node.m_ElseStatement )
+        {
+            m_CurrentScopeBlockName = "else";
+            node.m_ElseStatement->Visit( *this );
+        }
+
+        m_CurrentScopeBlockName = "";
+    }
+
+    void VariableScopeBuilder::Visit( const ForStatement & node )
     {
         NewScopeHelper
-            creation_helper( *this, node, "", "block" );
+            creation_helper( *this, node, "for", "block" );
 
-        ConstTreeTraverser::Visit( node );
+        if ( node.m_InitStatement )
+        {
+            node.m_InitStatement->Visit( *this );
+        }
+        if ( node.m_EqualityExpression )
+        {
+            node.m_EqualityExpression->Visit( *this );
+        }
+        if ( node.m_ModifyExpression )
+        {
+            node.m_ModifyExpression->Visit( *this );
+        }
+
+        m_CancelNextBlockScope = true;
+        node.m_Statement->Visit( *this );
+    }
+
+    void VariableScopeBuilder::Visit( const WhileStatement & node )
+    {
+        NewScopeHelper
+            creation_helper( *this, node, "while", "block" );
+
+        // Don't visit condition, as we don't support constructions like while ( float f = 1.0f ) {}
+
+        m_CancelNextBlockScope = true;
+        node.m_Statement->Visit( *this );
+    }
+
+    void VariableScopeBuilder::Visit( const DoWhileStatement & node )
+    {
+        NewScopeHelper
+            creation_helper( *this, node, "do", "block" );
+
+        m_CancelNextBlockScope = true;
+
+        node.m_Statement->Visit( *this );
+    }
+
+    void VariableScopeBuilder::Visit( const BlockStatement & node )
+    {
+        if ( !m_CancelNextBlockScope )
+        {
+            NewScopeHelper
+                creation_helper( *this, node, m_CurrentScopeBlockName, "block" );
+
+            ConstTreeTraverser::Visit( node );
+        }
+        else
+        {
+            m_CancelNextBlockScope = false;
+            ConstTreeTraverser::Visit( node );
+        }
     }
 
     ScopeBuilder::Variable * VariableScopeBuilder::AddVariableToCurrentScope()

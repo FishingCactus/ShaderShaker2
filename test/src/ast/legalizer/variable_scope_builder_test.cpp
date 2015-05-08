@@ -233,6 +233,9 @@ TEST_CASE( "FunctionScope", "Functions create a new child scope" )
         AST::VariableScopeBuilder scope_builder( scope_data );
         unit->Visit( scope_builder );
 
+        CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
+
         Base::ObjectRef< AST::ScopeBuilder::Scope > function_scope = scope_data.m_GlobalScope.m_Children[ 0 ];
         CheckScope( function_scope, scope_data.m_GlobalScope, 1, "foo", "void", 1 );
         CheckVariable( function_scope->m_Variables[ 0 ], "f", "float" );
@@ -244,6 +247,125 @@ TEST_CASE( "FunctionScope", "Functions create a new child scope" )
         Base::ObjectRef< AST::ScopeBuilder::Scope > nested_block_scope = block_scope->m_Children[ 0 ];
         CheckScope( nested_block_scope, *block_scope, 0, "", "block", 1 );
         CheckVariable( nested_block_scope->m_Variables[ 0 ], "f", "float" );
+    }
+
+    SECTION( "Function with if statement" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "void foo( float f ) { if ( f > 0.5f ) { float g = 1.0f; } }" );
+        AST::ScopeBuilder::ScopeData scope_data;
+        AST::VariableScopeBuilder scope_builder( scope_data );
+        unit->Visit( scope_builder );
+
+        CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > function_scope = scope_data.m_GlobalScope.m_Children[ 0 ];
+        CheckScope( function_scope, scope_data.m_GlobalScope, 1, "foo", "void", 1 );
+        CheckVariable( function_scope->m_Variables[ 0 ], "f", "float" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > if_scope = function_scope->m_Children[ 0 ];
+        CheckScope( if_scope, *function_scope, 0, "if", "block", 1 );
+        CheckVariable( if_scope->m_Variables[ 0 ], "g", "float" );
+    }
+
+    SECTION( "Function with if / else statement" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "void foo( float f ) { if ( f > 0.5f ) { float f = 1.0f; } else { float f = bar(); } }" );
+        AST::ScopeBuilder::ScopeData scope_data;
+        AST::VariableScopeBuilder scope_builder( scope_data );
+        unit->Visit( scope_builder );
+
+        CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > function_scope = scope_data.m_GlobalScope.m_Children[ 0 ];
+        CheckScope( function_scope, scope_data.m_GlobalScope, 2, "foo", "void", 1 );
+        CheckVariable( function_scope->m_Variables[ 0 ], "f", "float" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > if_scope = function_scope->m_Children[ 0 ];
+        CheckScope( if_scope, *function_scope, 0, "if", "block", 1 );
+        CheckVariable( if_scope->m_Variables[ 0 ], "f", "float" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > else_scope = function_scope->m_Children[ 1 ];
+        CheckScope( else_scope, *function_scope, 0, "else", "block", 1 );
+        CheckVariable( else_scope->m_Variables[ 0 ], "f", "float" );
+    }
+
+    SECTION( "Function with for statement" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "void foo( float f ) { for ( int i = 0; i < 10; i++ ) { float g = 1.0f; } }" );
+        AST::ScopeBuilder::ScopeData scope_data;
+        AST::VariableScopeBuilder scope_builder( scope_data );
+        unit->Visit( scope_builder );
+
+        CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > function_scope = scope_data.m_GlobalScope.m_Children[ 0 ];
+        CheckScope( function_scope, scope_data.m_GlobalScope, 1, "foo", "void", 1 );
+        CheckVariable( function_scope->m_Variables[ 0 ], "f", "float" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > for_scope = function_scope->m_Children[ 0 ];
+        CheckScope( for_scope, *function_scope, 0, "for", "block", 2 );
+        CheckVariable( for_scope->m_Variables[ 0 ], "i", "int" );
+        CheckVariable( for_scope->m_Variables[ 1 ], "g", "float" );
+    }
+
+    SECTION( "Function with for statement without init statement" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "void foo( int i ) { for ( ; i < 10; i++ ) { float g = 1.0f; } }" );
+        AST::ScopeBuilder::ScopeData scope_data;
+        AST::VariableScopeBuilder scope_builder( scope_data );
+        unit->Visit( scope_builder );
+
+        CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > function_scope = scope_data.m_GlobalScope.m_Children[ 0 ];
+        CheckScope( function_scope, scope_data.m_GlobalScope, 1, "foo", "void", 1 );
+        CheckVariable( function_scope->m_Variables[ 0 ], "i", "int" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > for_scope = function_scope->m_Children[ 0 ];
+        CheckScope( for_scope, *function_scope, 0, "for", "block", 1 );
+        CheckVariable( for_scope->m_Variables[ 0 ], "g", "float" );
+    }
+
+    SECTION( "Function with while statement" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "void foo( float f ) { while ( f < 10.0f ) { float g = 1.0f; f++; } }" );
+        AST::ScopeBuilder::ScopeData scope_data;
+        AST::VariableScopeBuilder scope_builder( scope_data );
+        unit->Visit( scope_builder );
+
+        CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > function_scope = scope_data.m_GlobalScope.m_Children[ 0 ];
+        CheckScope( function_scope, scope_data.m_GlobalScope, 1, "foo", "void", 1 );
+        CheckVariable( function_scope->m_Variables[ 0 ], "f", "float" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > while_scope = function_scope->m_Children[ 0 ];
+        CheckScope( while_scope, *function_scope, 0, "while", "block", 1 );
+        CheckVariable( while_scope->m_Variables[ 0 ], "g", "float" );
+    }
+
+    SECTION( "Function with dowhile statement" )
+    {
+        AST::TranslationUnit * unit = ParseCode( "void foo( float f ) { do { float g = 1.0f; } while ( true ); }" );
+        AST::ScopeBuilder::ScopeData scope_data;
+        AST::VariableScopeBuilder scope_builder( scope_data );
+        unit->Visit( scope_builder );
+
+        CHECK( scope_data.m_GlobalScope.m_Variables.empty() );
+        CHECK( scope_data.m_GlobalScope.m_Children.size() == 1 );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > function_scope = scope_data.m_GlobalScope.m_Children[ 0 ];
+        CheckScope( function_scope, scope_data.m_GlobalScope, 1, "foo", "void", 1 );
+        CheckVariable( function_scope->m_Variables[ 0 ], "f", "float" );
+
+        Base::ObjectRef< AST::ScopeBuilder::Scope > while_scope = function_scope->m_Children[ 0 ];
+        CheckScope( while_scope, *function_scope, 0, "do", "block", 1 );
+        CheckVariable( while_scope->m_Variables[ 0 ], "g", "float" );
     }
 
     SECTION( "Result function no argument" )
