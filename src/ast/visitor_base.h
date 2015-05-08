@@ -8,8 +8,8 @@ namespace AST
     class VisitorBase
     {
         struct identity{ template<typename T> struct m{typedef T type;}; };
-        struct add_const{ template<typename T> using m = std::add_const<T>; };
-        using modifier = typename std::conditional<is_const, add_const, identity>::type;
+        struct add_const{ template<typename T> struct m : std::add_const<T>{}; };
+        typedef typename std::conditional<is_const, add_const, identity>::type modifier;
 
     public:
         virtual void Visit( typename modifier::template m< struct Node>::type & node ) = 0;
