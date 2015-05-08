@@ -42,7 +42,6 @@ TEST_CASE( "Iteration statements are parsed", "[parser]" )
 
     SECTION( "For is parsed" )
     {
-
         AST::ForStatement * for_statement;
         const char code[] = "for( int i = 0; i <  b; ++i );";
         Parser parser( code, sizeof( code ) - 1 );
@@ -57,6 +56,82 @@ TEST_CASE( "Iteration statements are parsed", "[parser]" )
         CHECK( for_statement->m_InitStatement );
         CHECK( for_statement->m_EqualityExpression );
         CHECK( for_statement->m_ModifyExpression );
+        CHECK( for_statement->m_Statement );
+    }
+
+    SECTION( "For with no init is parsed" )
+    {
+        AST::ForStatement * for_statement;
+        const char code[] = "for( ; i <  b; ++i );";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        statement = parser.m_Parser.iteration_statement();
+
+        REQUIRE( statement );
+
+        for_statement = dynamic_cast< AST::ForStatement* >( statement );
+
+        REQUIRE( for_statement );
+        CHECK_FALSE( for_statement->m_InitStatement );
+        CHECK( for_statement->m_EqualityExpression );
+        CHECK( for_statement->m_ModifyExpression );
+        CHECK( for_statement->m_Statement );
+    }
+
+    SECTION( "For with no comparison is parsed" )
+    {
+        AST::ForStatement * for_statement;
+        const char code[] = "for( int i = 0 ; ; ++i );";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        statement = parser.m_Parser.iteration_statement();
+
+        REQUIRE( statement );
+
+        for_statement = dynamic_cast< AST::ForStatement* >( statement );
+
+        REQUIRE( for_statement );
+        CHECK( for_statement->m_InitStatement );
+        CHECK_FALSE( for_statement->m_EqualityExpression );
+        CHECK( for_statement->m_ModifyExpression );
+        CHECK( for_statement->m_Statement );
+    }
+
+    SECTION( "For with no modify is parsed" )
+    {
+        AST::ForStatement * for_statement;
+        const char code[] = "for( int i = 0 ; i < 10; );";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        statement = parser.m_Parser.iteration_statement();
+
+        REQUIRE( statement );
+
+        for_statement = dynamic_cast< AST::ForStatement* >( statement );
+
+        REQUIRE( for_statement );
+        CHECK( for_statement->m_InitStatement );
+        CHECK( for_statement->m_EqualityExpression );
+        CHECK_FALSE( for_statement->m_ModifyExpression );
+        CHECK( for_statement->m_Statement );
+    }
+
+    SECTION( "Empty For is parsed" )
+    {
+        AST::ForStatement * for_statement;
+        const char code[] = "for( ; ; );";
+        Parser parser( code, sizeof( code ) - 1 );
+
+        statement = parser.m_Parser.iteration_statement();
+
+        REQUIRE( statement );
+
+        for_statement = dynamic_cast< AST::ForStatement* >( statement );
+
+        REQUIRE( for_statement );
+        CHECK_FALSE( for_statement->m_InitStatement );
+        CHECK_FALSE( for_statement->m_EqualityExpression );
+        CHECK_FALSE( for_statement->m_ModifyExpression );
         CHECK( for_statement->m_Statement );
     }
 

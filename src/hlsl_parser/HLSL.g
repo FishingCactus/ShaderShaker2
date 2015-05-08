@@ -213,12 +213,12 @@ if_statement returns [ AST::IfStatement * _statement = 0 ] @init{ AST::Statement
         { _statement = new AST::IfStatement( $expression.exp, $a.statement, else_statement ); }
     ;
 
-iteration_statement returns [ AST::Statement * _statement = 0 ] @init{ AST::Statement * init_statement = 0; }
+iteration_statement returns [ AST::Statement * _statement = 0 ] @init{ AST::Statement * init_statement = 0; AST::Expression * eq_expression = 0; AST::Expression * mod_expression = 0; }
     : WHILE LPAREN expression RPAREN statement { _statement = new AST::WhileStatement( $expression.exp, $statement.statement ); }
     | DO statement WHILE LPAREN expression RPAREN SEMI  { _statement = new AST::DoWhileStatement( $expression.exp, $statement.statement ); }
-    | FOR LPAREN ( a=assignment_statement {init_statement=$a.statement;} | b=local_variable_declaration{init_statement=$b.statement;} )
-        equality_expression SEMI modify_expression RPAREN statement
-        { _statement = new AST::ForStatement( init_statement, $equality_expression.exp, $modify_expression.exp, $statement.statement ); }
+    | FOR LPAREN ( a=assignment_statement {init_statement=$a.statement;} | b=local_variable_declaration{init_statement=$b.statement;} | SEMI )
+        ( equality_expression{eq_expression=$equality_expression.exp;} )? SEMI ( modify_expression{mod_expression=$modify_expression.exp;} )? RPAREN statement
+        { _statement = new AST::ForStatement( init_statement, eq_expression, mod_expression, $statement.statement ); }
     ;
 
 modify_expression returns [ AST::Expression * exp = 0 ]
