@@ -60,6 +60,7 @@
             virtual void Visit( IfStatement & /*statement*/ ) override {}
             virtual void Visit( WhileStatement & /*statement*/ ) override {}
             virtual void Visit( DoWhileStatement & /*statement*/ ) override {}
+            virtual void Visit( ForStatement & /*statement*/ ) override {}
             virtual void Visit( BlockStatement & /*statement*/ ) override {}
             virtual void Visit( AssignmentStatement & /*statement*/ ) override {}
             virtual void Visit( VariableDeclarationStatement & /*statement*/ ) override {}

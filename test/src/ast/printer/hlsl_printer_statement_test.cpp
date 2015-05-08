@@ -1,6 +1,7 @@
 #include "catch.hpp"
 #include "ast/node.h"
 #include "ast/printer/hlsl_printer.h"
+#include "ast/assignment_operator.h"
 #include <sstream>
 
 TEST_CASE( "Returns are printed", "[ast][hlsl][printer]" )
@@ -169,7 +170,6 @@ TEST_CASE( "While statement is printed", "[ast][hlsl][printer]" )
 
 TEST_CASE( "Do While statement is printed", "[ast][hlsl][printer]" )
 {
-
     AST::DoWhileStatement
         node(
             new AST::VariableExpression( "a" ),
@@ -184,6 +184,41 @@ TEST_CASE( "Do While statement is printed", "[ast][hlsl][printer]" )
 
     CHECK( output.str() == "do Function();\nwhile( a );\n" );
 }
+
+TEST_CASE( "For statement is printed", "[ast][hlsl][printer]" )
+{
+    auto variable_declaration = new AST::VariableDeclarationStatement();
+    variable_declaration->SetType( new AST::Type( "int" ) );
+    auto variable_declaration_body = new AST::VariableDeclarationBody( "X" );
+    variable_declaration_body->m_InitialValue = new AST::InitialValue;
+    variable_declaration_body->m_InitialValue->m_Vector = false;
+    variable_declaration_body->m_InitialValue->m_ExpressionTable.push_back( new AST::LiteralExpression( AST::LiteralExpression::Int, "0" ) );
+    variable_declaration->AddBody( variable_declaration_body );
+
+    AST::ForStatement
+        node(
+            variable_declaration,
+            new AST::BinaryOperationExpression(
+                AST::BinaryOperationExpression::LessThan,
+                new AST::VariableExpression( "X" ),
+                new AST::VariableExpression( "10" )
+                ),
+            new AST::PreModifyExpression(
+                AST::SelfModifyOperator_PlusPlus,
+                new AST::LValueExpression( new AST::VariableExpression( "X" ), 0 )
+            ),
+            new AST::ExpressionStatement( new AST::CallExpression( "Function", 0 ) )
+        );
+    std::ostringstream
+        output;
+    AST::HLSLPrinter
+        printer( output );
+
+    node.Visit( printer );
+
+    CHECK( output.str() == "for ( int\n\tX = 0;\n( X ) < ( 10 ); ++X )\nFunction();\n" );
+}
+
 
 TEST_CASE( "Block statements are printed", "[ast][hlsl][printer]" )
 {

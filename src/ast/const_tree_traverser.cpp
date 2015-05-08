@@ -212,6 +212,14 @@ namespace AST
         statement.m_Condition->Visit( *this );
     }
 
+    void ConstTreeTraverser::Visit( const ForStatement & statement )
+    {
+        statement.m_InitStatement->Visit( *this );
+        statement.m_EqualityExpression->Visit( *this );
+        statement.m_ModifyExpression->Visit( *this );
+        statement.m_Statement->Visit( *this );
+    }
+
     void ConstTreeTraverser::Visit( const BlockStatement & statement )
     {
         VisitTable( *this, statement.m_StatementTable );

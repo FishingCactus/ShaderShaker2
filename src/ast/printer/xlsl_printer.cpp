@@ -292,6 +292,17 @@ namespace AST
         m_Stream << " );\n";
     }
 
+    void XLSLPrinter::Visit( const ForStatement & statement )
+    {
+        m_Stream << "for ( ";
+        statement.m_InitStatement->Visit( *this );
+        statement.m_EqualityExpression->Visit( *this );
+        m_Stream << "; ";
+        statement.m_ModifyExpression->Visit( *this );
+        m_Stream << " )\n";
+        statement.m_Statement->Visit( *this );
+    }
+
     void XLSLPrinter::Visit( const BlockStatement & statement )
     {
         if( statement.m_StatementTable.empty() )

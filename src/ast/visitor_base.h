@@ -62,6 +62,7 @@ namespace AST
         virtual void Visit( typename modifier::template m< struct IfStatement>::type & statement ) = 0;
         virtual void Visit( typename modifier::template m< struct WhileStatement>::type & statement ) = 0;
         virtual void Visit( typename modifier::template m< struct DoWhileStatement>::type & statement ) = 0;
+        virtual void Visit( typename modifier::template m< struct ForStatement>::type & statement ) = 0;
         virtual void Visit( typename modifier::template m< struct BlockStatement>::type & statement ) = 0;
         virtual void Visit( typename modifier::template m< struct AssignmentStatement>::type & statement ) = 0;
         virtual void Visit( typename modifier::template m< struct VariableDeclarationStatement>::type & statement ) = 0;

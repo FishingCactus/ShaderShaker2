@@ -49,6 +49,7 @@
             virtual void Visit( const IfStatement & statement ) override;
             virtual void Visit( const WhileStatement & statement ) override;
             virtual void Visit( const DoWhileStatement & statement ) override;
+            virtual void Visit( const ForStatement & statement ) override;
             virtual void Visit( const BlockStatement & statement ) override;
             virtual void Visit( const AssignmentStatement & statement ) override;
             virtual void Visit( const VariableDeclarationStatement & statement ) override;

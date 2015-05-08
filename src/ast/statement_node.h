@@ -119,6 +119,8 @@
 
         struct ForStatement : Statement
         {
+            AST_HandleVisitor()
+
             ForStatement() {}
             ForStatement( Statement * init_statement, Expression * equality_expression, Expression * modify_expression, Statement * statement ) :
                 m_InitStatement( init_statement ), m_Statement( statement ),
