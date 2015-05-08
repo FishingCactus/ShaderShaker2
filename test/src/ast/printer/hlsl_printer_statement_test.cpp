@@ -3,6 +3,7 @@
 #include "ast/printer/hlsl_printer.h"
 #include "ast/assignment_operator.h"
 #include <sstream>
+#include "../../helper/test_helper.h"
 
 TEST_CASE( "Returns are printed", "[ast][hlsl][printer]" )
 {
@@ -185,7 +186,7 @@ TEST_CASE( "Do While statement is printed", "[ast][hlsl][printer]" )
     CHECK( output.str() == "do Function();\nwhile( a );\n" );
 }
 
-TEST_CASE( "For statement is printed", "[ast][hlsl][printer]" )
+AST::VariableDeclarationStatement * GetForVariableDeclationStatement()
 {
     auto variable_declaration = new AST::VariableDeclarationStatement();
     variable_declaration->SetType( new AST::Type( "int" ) );
@@ -195,18 +196,33 @@ TEST_CASE( "For statement is printed", "[ast][hlsl][printer]" )
     variable_declaration_body->m_InitialValue->m_ExpressionTable.push_back( new AST::LiteralExpression( AST::LiteralExpression::Int, "0" ) );
     variable_declaration->AddBody( variable_declaration_body );
 
+    return variable_declaration;
+}
+
+AST::BinaryOperationExpression * GetForEqualityExpression()
+{
+    return new AST::BinaryOperationExpression(
+        AST::BinaryOperationExpression::LessThan,
+        new AST::VariableExpression( "X" ),
+        new AST::VariableExpression( "10" )
+        );
+}
+
+AST::PreModifyExpression * GetForModifyExpression()
+{
+    return new AST::PreModifyExpression(
+        AST::SelfModifyOperator_PlusPlus,
+        new AST::LValueExpression( new AST::VariableExpression( "X" ), 0 )
+        );
+}
+
+TEST_CASE( "For statement is printed", "[ast][hlsl][printer]" )
+{
     AST::ForStatement
         node(
-            variable_declaration,
-            new AST::BinaryOperationExpression(
-                AST::BinaryOperationExpression::LessThan,
-                new AST::VariableExpression( "X" ),
-                new AST::VariableExpression( "10" )
-                ),
-            new AST::PreModifyExpression(
-                AST::SelfModifyOperator_PlusPlus,
-                new AST::LValueExpression( new AST::VariableExpression( "X" ), 0 )
-            ),
+            GetForVariableDeclationStatement(),
+            GetForEqualityExpression(),
+            GetForModifyExpression(),
             new AST::ExpressionStatement( new AST::CallExpression( "Function", 0 ) )
         );
     std::ostringstream
@@ -216,9 +232,84 @@ TEST_CASE( "For statement is printed", "[ast][hlsl][printer]" )
 
     node.Visit( printer );
 
-    CHECK( output.str() == "for ( int\n\tX = 0;\n( X ) < ( 10 ); ++X )\nFunction();\n" );
+    CHECK( TestHelper::GetCleanedString( output.str() ) == TestHelper::GetCleanedString( "for ( int X = 0;\n( X ) < ( 10 ); ++X )\nFunction();\n" ) );
 }
 
+TEST_CASE( "For statement with empty initialization is printed", "[ast][hlsl][printer]" )
+{
+    AST::ForStatement
+        node(
+        nullptr,
+        GetForEqualityExpression(),
+        GetForModifyExpression(),
+        new AST::ExpressionStatement( new AST::CallExpression( "Function", 0 ) )
+        );
+    std::ostringstream
+        output;
+    AST::HLSLPrinter
+        printer( output );
+
+    node.Visit( printer );
+
+    CHECK( TestHelper::GetCleanedString( output.str() ) == TestHelper::GetCleanedString( "for ( ;( X ) < ( 10 ); ++X )\nFunction();\n" ) );
+}
+
+TEST_CASE( "For statement with empty equality expression is printed", "[ast][hlsl][printer]" )
+{
+    AST::ForStatement
+        node(
+        GetForVariableDeclationStatement(),
+        nullptr,
+        GetForModifyExpression(),
+        new AST::ExpressionStatement( new AST::CallExpression( "Function", 0 ) )
+        );
+    std::ostringstream
+        output;
+    AST::HLSLPrinter
+        printer( output );
+
+    node.Visit( printer );
+
+    TestHelper::GetCleanedString( output.str() ) == TestHelper::GetCleanedString( "for ( int\n\tX = 0;\n; ++X )\nFunction();\n" );
+}
+
+TEST_CASE( "For statement with empty modifier expression is printed", "[ast][hlsl][printer]" )
+{
+    AST::ForStatement
+        node(
+        GetForVariableDeclationStatement(),
+        GetForEqualityExpression(),
+        nullptr,
+        new AST::ExpressionStatement( new AST::CallExpression( "Function", 0 ) )
+        );
+    std::ostringstream
+        output;
+    AST::HLSLPrinter
+        printer( output );
+
+    node.Visit( printer );
+
+    TestHelper::GetCleanedString( output.str() ) == TestHelper::GetCleanedString( "for ( int\n\tX = 0;\n( X ) < ( 10 ); )\nFunction();\n" );
+}
+
+TEST_CASE( "For statement with all empty expressions is printed", "[ast][hlsl][printer]" )
+{
+    AST::ForStatement
+        node(
+        nullptr,
+        nullptr,
+        nullptr,
+        new AST::ExpressionStatement( new AST::CallExpression( "Function", 0 ) )
+        );
+    std::ostringstream
+        output;
+    AST::HLSLPrinter
+        printer( output );
+
+    node.Visit( printer );
+
+    TestHelper::GetCleanedString( output.str() ) == TestHelper::GetCleanedString( "for ( ;; )\nFunction();\n" );
+}
 
 TEST_CASE( "Block statements are printed", "[ast][hlsl][printer]" )
 {

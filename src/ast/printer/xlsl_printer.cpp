@@ -295,10 +295,24 @@ namespace AST
     void XLSLPrinter::Visit( const ForStatement & statement )
     {
         m_Stream << "for ( ";
-        statement.m_InitStatement->Visit( *this );
-        statement.m_EqualityExpression->Visit( *this );
+        if ( statement.m_InitStatement )
+        {
+            statement.m_InitStatement->Visit( *this );
+        }
+        else
+        {
+            m_Stream << ";";
+        }
+
+        if ( statement.m_EqualityExpression )
+        {
+            statement.m_EqualityExpression->Visit( *this );
+        }
         m_Stream << "; ";
-        statement.m_ModifyExpression->Visit( *this );
+        if ( statement.m_ModifyExpression )
+        {
+            statement.m_ModifyExpression->Visit( *this );
+        }
         m_Stream << " )\n";
         statement.m_Statement->Visit( *this );
     }
