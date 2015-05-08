@@ -1,27 +1,27 @@
 #ifndef OBJECT_H
-	#define OBJECT_H
+    #define OBJECT_H
 
-	namespace Base
-	{
-		class Object
-		{
-		public:
+    namespace Base
+    {
+        class Object
+        {
+        public:
 
-			Object() : m_ReferenceCount( 0 ) {}
+            Object() : m_ReferenceCount( 0 ) {}
 
-			void AddRef() const;
-			void RemoveRef() const;
+            void AddRef() const;
+            void RemoveRef() const;
 
-		protected:
+        protected:
 
-			virtual ~Object();
+            virtual ~Object();
 
-		private:
+        private:
 
-			mutable int
-				m_ReferenceCount;
-		};
-	}
+            mutable int
+                m_ReferenceCount;
+        };
+    }
 
 
 #endif
