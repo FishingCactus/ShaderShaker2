@@ -1,33 +1,32 @@
 #ifndef FRAGMENT_DEFINITION_H
     #define FRAGMENT_DEFINITION_H
 
-	#include <memory>
+    #include <memory>
     #include <vector>
     #include <set>
     #include "base/object.h"
     #include "base/object_ref.h"
 
-	namespace AST
-	{
-		struct TranslationUnit;
-	}
+    namespace AST
+    {
+        struct TranslationUnit;
+    }
 
-	namespace Generation
-	{
-		class FunctionDefinition;
+    namespace Generation
+    {
+        class FunctionDefinition;
 
-		class FragmentDefinition : public Base::Object
-		{
+        class FragmentDefinition : public Base::Object
+        {
 
-		public:
+        public:
 
             typedef Base::ObjectRef<FragmentDefinition>
                 Ref;
 
-			static void GenerateFragment(
-				Base::ObjectRef<FragmentDefinition> & definition,
-				AST::TranslationUnit & translation_unit
-				);
+            static Base::ObjectRef<FragmentDefinition> GenerateFragment(
+                AST::TranslationUnit & translation_unit
+                );
 
             bool FindFunctionDefinition(
                 Base::ObjectRef<FunctionDefinition> & definition,
@@ -41,15 +40,15 @@
 
             const AST::TranslationUnit & GetTranslationUnit() const { return *m_TranslationUnit; }
 
-		private:
+        private:
 
-			Base::ObjectRef<AST::TranslationUnit>
-				m_TranslationUnit;
-			std::vector<Base::ObjectRef<FunctionDefinition> >
-				m_FunctionDefinitionTable;
+            Base::ObjectRef<AST::TranslationUnit>
+                m_TranslationUnit;
+            std::vector<Base::ObjectRef<FunctionDefinition> >
+                m_FunctionDefinitionTable;
 
-		};
+        };
 
-	}
+    }
 
 #endif
