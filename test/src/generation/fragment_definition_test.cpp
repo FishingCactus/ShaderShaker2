@@ -16,7 +16,7 @@ TEST_CASE( "Fragment definition are created", "[generation][fragment]" )
 
         Base::ObjectRef<Generation::FragmentDefinition> fragment_definition;
 
-        Generation::FragmentDefinition::GenerateFragment( fragment_definition, *translation_unit );
+        fragment_definition = Generation::FragmentDefinition::GenerateFragment( *translation_unit );
 
         REQUIRE( fragment_definition );
 
@@ -39,7 +39,7 @@ TEST_CASE( "Fragment definition are created", "[generation][fragment]" )
 
         Base::ObjectRef<Generation::FragmentDefinition> fragment_definition;
 
-        Generation::FragmentDefinition::GenerateFragment( fragment_definition, *translation_unit );
+        fragment_definition = Generation::FragmentDefinition::GenerateFragment( *translation_unit );
 
         REQUIRE( fragment_definition );
 
@@ -63,7 +63,7 @@ TEST_CASE( "Fragment definition are created", "[generation][fragment]" )
 
         Base::ObjectRef<Generation::FragmentDefinition> fragment_definition;
 
-        Generation::FragmentDefinition::GenerateFragment( fragment_definition, *translation_unit );
+        fragment_definition = Generation::FragmentDefinition::GenerateFragment( *translation_unit );
 
         REQUIRE( fragment_definition );
 
@@ -87,7 +87,7 @@ TEST_CASE( "Fragment definition are created", "[generation][fragment]" )
 
         Base::ObjectRef<Generation::FragmentDefinition> fragment_definition;
 
-        Generation::FragmentDefinition::GenerateFragment( fragment_definition, *translation_unit );
+        fragment_definition = Generation::FragmentDefinition::GenerateFragment( *translation_unit );
 
         REQUIRE( fragment_definition );
 
@@ -109,7 +109,7 @@ TEST_CASE( "Fragment definition are created", "[generation][fragment]" )
 
         Base::ObjectRef<Generation::FragmentDefinition> fragment_definition;
 
-        Generation::FragmentDefinition::GenerateFragment( fragment_definition, *translation_unit );
+        fragment_definition = Generation::FragmentDefinition::GenerateFragment( *translation_unit );
 
         REQUIRE( fragment_definition );
 
@@ -131,7 +131,7 @@ TEST_CASE( "Fragment definition are created", "[generation][fragment]" )
 
         Base::ObjectRef<Generation::FragmentDefinition> fragment_definition;
 
-        Generation::FragmentDefinition::GenerateFragment( fragment_definition, *translation_unit );
+        fragment_definition = Generation::FragmentDefinition::GenerateFragment( *translation_unit );
 
         REQUIRE( fragment_definition );
 
@@ -155,7 +155,7 @@ TEST_CASE( "Fragment definition are created", "[generation][fragment]" )
 
         Base::ObjectRef<Generation::FragmentDefinition> fragment_definition;
 
-        Generation::FragmentDefinition::GenerateFragment( fragment_definition, *translation_unit );
+        fragment_definition = Generation::FragmentDefinition::GenerateFragment( *translation_unit );
 
         REQUIRE( fragment_definition );
 

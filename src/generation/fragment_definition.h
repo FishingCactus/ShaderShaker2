@@ -24,8 +24,7 @@
             typedef Base::ObjectRef<FragmentDefinition>
                 Ref;
 
-            static void GenerateFragment(
-                Base::ObjectRef<FragmentDefinition> & definition,
+            static Base::ObjectRef<FragmentDefinition> GenerateFragment(
                 AST::TranslationUnit & translation_unit
                 );
 
@@ -47,6 +46,7 @@
                 m_TranslationUnit;
             std::vector<Base::ObjectRef<FunctionDefinition> >
                 m_FunctionDefinitionTable;
+
         };
 
     }

@@ -136,7 +136,7 @@ int main( int argument_count, const char* argument_table[] )
 
             translation_unit = HLSL::ParseHLSL( (*it).c_str() );
 
-            Generation::FragmentDefinition::GenerateFragment( definition, *translation_unit );
+            definition = Generation::FragmentDefinition::GenerateFragment( *translation_unit );
 
             definition_table.push_back( definition );
         }
