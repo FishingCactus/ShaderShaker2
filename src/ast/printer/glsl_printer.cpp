@@ -30,7 +30,7 @@ namespace AST
         }
     }
 
-    void GLSLPrinter::Visit( const Type & type )
+    void GLSLPrinter::Visit( const IntrinsicType & type )
     {
         TypeLookupMap::const_iterator it;
 

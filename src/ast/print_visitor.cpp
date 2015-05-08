@@ -41,11 +41,6 @@ namespace AST
         std::cout << dec_ind << endl_ind << "}" << endl_ind;
     }
 
-    void PrintVisitor::Visit( const Type & type )
-    {
-        std::cout << "Type{ " << type.m_Name << " }" << endl_ind;
-    }
-
     void PrintVisitor::Visit( const IntrinsicType & type )
     {
         std::cout << "IntrinsicType{ " << type.m_Name << " }" << endl_ind;

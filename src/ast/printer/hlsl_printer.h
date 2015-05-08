@@ -15,7 +15,6 @@
 
             using XLSLPrinter::Visit;
             virtual void Visit( const VariableDeclarationBody & body ) override;
-            virtual void Visit( const Type & type ) override;
             virtual void Visit( const InitialValue & initial_value ) override;
             virtual void Visit( const Annotations & annotations ) override;
             virtual void Visit( const AnnotationEntry & annotation_entry ) override;
