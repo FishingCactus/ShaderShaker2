@@ -40,12 +40,10 @@ void generate_code(
 }
 
 bool generate_hlsl(
-    const std::vector< Generation::FragmentDefinition::Ref > & definition_table
+    const std::vector< Generation::FragmentDefinition::Ref > & definition_table,
+    Base::ErrorHandlerInterface::Ref & error_handler
     )
 {
-    Base::ErrorHandlerInterface::Ref
-        error_handler = new Base::ConsoleErrorHandler;
-
     if ( !interpolator_semantic_argument.isSet() )
     {
         Base::ObjectRef < AST::TranslationUnit >
@@ -98,11 +96,10 @@ bool generate_hlsl(
 }
 
 bool generate_annotations(
-    const std::vector< Generation::FragmentDefinition::Ref > & definition_table
+    const std::vector< Generation::FragmentDefinition::Ref > & definition_table,
+    Base::ErrorHandlerInterface::Ref & error_handler
     )
 {
-    Base::ErrorHandlerInterface::Ref
-        error_handler = new Base::ConsoleErrorHandler;
     Base::ObjectRef < AST::TranslationUnit >
         generated_code;
     std::vector < std::string >
@@ -118,8 +115,12 @@ bool generate_annotations(
 
 int main( int argument_count, const char* argument_table[] )
 {
+    Base::ErrorHandlerInterface::Ref
+        error_handler = new Base::ConsoleErrorHandler;
+
     try
     {
+
         cmd.parse( argument_count, argument_table );
 
         std::vector< Generation::FragmentDefinition::Ref > definition_table;
@@ -143,26 +144,34 @@ int main( int argument_count, const char* argument_table[] )
 
         if ( generator_argument.getValue().substr(0,1) == "a" )
         {
-            if ( !generate_annotations( definition_table ) )
+            if ( !generate_annotations( definition_table, error_handler ) )
             {
+                error_handler->ReportError( "Failed to generate annotations", "" );
                 return 1;
             }
         }
         else if ( generator_argument.getValue().substr(0,1) == "h" )
         {
-            if ( !generate_hlsl( definition_table ) )
+            if ( !generate_hlsl( definition_table, error_handler ) )
             {
+                error_handler->ReportError( "Failed to generate hlsl", "" );
                 return 1;
             }
         }
         else
         {
-            std::cerr << "error: Unknown generator:" << generator_argument.getValue() << std::endl;
+            std::stringstream
+                stream;
+            stream << "error: Unknown generator:" << generator_argument.getValue();
+            error_handler->ReportError( stream.str(), "" );
         }
     }
     catch( TCLAP::ArgException &e )
     {
-        std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+        std::stringstream
+            stream;
+        stream << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+        error_handler->ReportError( stream.str(), "" );
     }
 
     return 0;
