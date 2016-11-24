@@ -9,7 +9,6 @@ solution "ShaderShaker"
 
     targetname  "shader_shaker"
     language    "C++"
-    flags       { "ExtraWarnings" }
     includedirs { "include", "contrib/catch", "contrib/antlr", "src" }
 
     files
@@ -26,6 +25,8 @@ solution "ShaderShaker"
 
     end
 
+    configuration "not gmake"
+        flags       { "ExtraWarnings" }
     configuration "Debug"
         defines     { "_DEBUG" }
         flags       { "Symbols" }
