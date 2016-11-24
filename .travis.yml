@@ -6,16 +6,10 @@ install: sudo apt-get install --force-yes make premake4
 compiler:
   - gcc
   - clang
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-    - os: osx
-      osx_image: xcode8
-  exclude:
-    - os: osx
-      compiler: gcc
-
+dist:
+    trusty
 # Change this to your needs
 before_script: pushd src/hlsl_parser/ && ./generate_parser.sh && popd
-script:  premake4 gmake && make -j 2
+script:
+  - premake4 gmake && make -j 2
+  - bin/release/test
