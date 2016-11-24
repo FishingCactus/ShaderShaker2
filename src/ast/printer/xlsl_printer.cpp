@@ -317,7 +317,7 @@ namespace AST
     void XLSLPrinter::Visit( const VariableDeclarationStatement & statement )
     {
         VisitTable( *this, statement.m_StorageClass, " ", false );
-        
+
         if ( !statement.m_StorageClass.empty() )
             m_Stream << " ";
 
@@ -332,31 +332,5 @@ namespace AST
         VisitTable( *this, statement.m_BodyTable, ",", true );
         m_Stream << dec_ind;
         m_Stream << ";" << endl_ind;
-    }
-
-    template< class _Table_ >
-    void XLSLPrinter::VisitTable( ConstVisitor & visitor, _Table_ & table, const char * separator_cstr, bool add_endl )
-    {
-        typename _Table_::const_iterator
-            it = table.cbegin(),
-            end = table.cend();
-        bool
-            first = true;
-
-        for( ;it != end; ++it )
-        {
-            if( !first )
-            {
-                m_Stream << separator_cstr;
-
-                if ( add_endl )
-                {
-                    m_Stream << endl_ind;
-                }
-            }
-
-            first = false;
-            (*it)->Visit( visitor );
-        }
     }
 }
