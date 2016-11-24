@@ -11,11 +11,6 @@ solution "ShaderShaker"
     language    "C++"
     includedirs { "include", "contrib/catch", "contrib/antlr", "src" }
 
-    files
-    {
-        "src/**.h", "src/**.cpp"
-    }
-
     if _OPTIONS[ "ios" ] then
         platforms { "ios" }
 
@@ -44,6 +39,8 @@ solution "ShaderShaker"
 
 project "ShaderShaker"
 
+    files { "src/**.h", "src/**.cpp", }
+
     kind        "ConsoleApp"
     includedirs "contrib/tclap/include"
 
@@ -54,6 +51,8 @@ project "ShaderShaker"
         targetdir   "bin/release"
 
 project "ShaderShakerDll"
+
+    files { "src/**.h", "src/**.cpp", }
 
     defines{ "SHADERSHAKER_IN_DLL" }
     kind "SharedLib"
@@ -67,6 +66,8 @@ project "ShaderShakerDll"
         targetdir   "bin/release_dll"
 
 project "ShaderShakerLib"
+
+    files { "src/**.h", "src/**.cpp", }
 
     defines{ "SHADERSHAKER_IN_LIB" }
     kind "StaticLib"
@@ -84,7 +85,8 @@ project "Test"
     kind "ConsoleApp"
     targetname  "test"
 
-    files{ "test/src/**.cpp" }
+    files { "src/**.h", "src/**.cpp", "test/src/**.cpp" }
+
     excludes{ "src/main.cpp" }
 
     configuration "Debug"
