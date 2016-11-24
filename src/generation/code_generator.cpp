@@ -375,11 +375,13 @@ namespace Generation
 
         if( !graph )
         {
+            m_ErrorHandler->ReportError( "Unable to generate graph.", "" );
             return;
         }
 
         if( !ValidatesGraph( *graph ) )
         {
+            m_ErrorHandler->ReportError( "Generate graph is invalid.", "" );
             return;
         }
 
@@ -387,6 +389,7 @@ namespace Generation
 
         if( !function )
         {
+            m_ErrorHandler->ReportError( "Unable to generate code from graph.", "" );
             return;
         }
 
