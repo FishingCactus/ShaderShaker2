@@ -17,7 +17,7 @@ TCLAP::MultiArg<std::string> interpolator_semantic_argument(
     "semantic used between PS and VS. If no interpolator semantic is given, only one program is generated",
     false, "string", cmd );
 TCLAP::UnlabeledMultiArg<std::string> fragment_arguments( "fragment", "fragment file path", true, "filepath", cmd );
-TCLAP::ValueArg<std::string> generator_argument( "g", "generator", "generator to use", true, "hlsl", "", cmd ); 
+TCLAP::ValueArg<std::string> generator_argument( "g", "generator", "generator to use", true, "hlsl", "", cmd );
 
 void generate_code(
     Base::ObjectRef < AST::TranslationUnit > & generated_code,
@@ -44,15 +44,15 @@ bool generate_hlsl(
     )
 {
     Base::ErrorHandlerInterface::Ref
-        error_handler = new Base::ConsoleErrorHandler; 
-    
+        error_handler = new Base::ConsoleErrorHandler;
+
     if ( !interpolator_semantic_argument.isSet() )
     {
         Base::ObjectRef < AST::TranslationUnit >
             generated_code;
         std::vector < std::string >
             used_semantic_set;
-        
+
         generate_code( generated_code, used_semantic_set, error_handler, definition_table );
 
         AST::HLSLPrinter printer( std::cout );
@@ -98,7 +98,7 @@ bool generate_hlsl(
 }
 
 bool generate_annotations(
-    const std::vector< Generation::FragmentDefinition::Ref > & definition_table 
+    const std::vector< Generation::FragmentDefinition::Ref > & definition_table
     )
 {
     Base::ErrorHandlerInterface::Ref
@@ -141,19 +141,23 @@ int main( int argument_count, const char* argument_table[] )
             definition_table.push_back( definition );
         }
 
-        if ( generator_argument.getValue() == "a" )
+        if ( generator_argument.getValue().substr(0,1) == "a" )
         {
             if ( !generate_annotations( definition_table ) )
             {
                 return 1;
             }
         }
-        else if ( generator_argument.getValue() == "h" )
+        else if ( generator_argument.getValue().substr(0,1) == "h" )
         {
             if ( !generate_hlsl( definition_table ) )
             {
                 return 1;
             }
+        }
+        else
+        {
+            std::cerr << "error: Unknown generator:" << generator_argument.getValue() << std::endl;
         }
     }
     catch( TCLAP::ArgException &e )
