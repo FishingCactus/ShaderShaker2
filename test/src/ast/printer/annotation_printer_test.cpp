@@ -29,7 +29,7 @@ TEST_CASE( "Annotations", "[ast][annotations][printer]" )
         AST::AnnotationPrinter
             printer( output );
 
-        node.AddEntry( new AST::AnnotationEntry() { "float", "Object", "10.0f" } );
+        node.AddEntry( new AST::AnnotationEntry( { "float", "Object", "10.0f" } ) );
         node.Visit( printer );
 
         CHECK( output.str() == R"("annotations":{"Object":{"type":"float","value":"10.0f"}})");
@@ -44,8 +44,8 @@ TEST_CASE( "Annotations", "[ast][annotations][printer]" )
         AST::AnnotationPrinter
             printer( output );
 
-        node.AddEntry( new AST::AnnotationEntry() { "float", "Object", "10.0f" } );
-        node.AddEntry( new AST::AnnotationEntry() { "string", "foo", "Hello" } );
+        node.AddEntry( new AST::AnnotationEntry( { "float", "Object", "10.0f" } ) );
+        node.AddEntry( new AST::AnnotationEntry( { "string", "foo", "Hello" } ) );
         node.Visit( printer );
 
         CHECK( output.str() == R"("annotations":{"Object":{"type":"float","value":"10.0f"},"foo":{"type":"string","value":"Hello"}})");
