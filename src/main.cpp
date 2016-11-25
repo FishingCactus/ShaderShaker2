@@ -17,7 +17,9 @@ TCLAP::MultiArg<std::string> interpolator_semantic_argument(
     "semantic used between PS and VS. If no interpolator semantic is given, only one program is generated",
     false, "string", cmd );
 TCLAP::UnlabeledMultiArg<std::string> fragment_arguments( "fragment", "fragment file path", true, "filepath", cmd );
-TCLAP::ValueArg<std::string> generator_argument( "g", "generator", "generator to use", true, "hlsl", "", cmd );
+std::vector<std::string> allowed_generator_arguments({"hlsl", "annotation"});
+TCLAP::ValuesConstraint<std::string> generator_constraint(allowed_generator_arguments);
+TCLAP::ValueArg<std::string> generator_argument( "g", "generator", "generator to use", true, "hlsl", &generator_constraint, cmd );
 
 void generate_code(
     Base::ObjectRef < AST::TranslationUnit > & generated_code,
@@ -142,7 +144,7 @@ int main( int argument_count, const char* argument_table[] )
             definition_table.push_back( definition );
         }
 
-        if ( generator_argument.getValue().substr(0,1) == "a" )
+        if ( generator_argument.getValue() == "annotation" )
         {
             if ( !generate_annotations( definition_table, error_handler ) )
             {
@@ -150,7 +152,7 @@ int main( int argument_count, const char* argument_table[] )
                 return 1;
             }
         }
-        else if ( generator_argument.getValue().substr(0,1) == "h" )
+        else if ( generator_argument.getValue() == "hlsl" )
         {
             if ( !generate_hlsl( definition_table, error_handler ) )
             {
