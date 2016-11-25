@@ -24,7 +24,7 @@ TCLAP::ValueArg<std::string> generator_argument( "g", "generator", "generator to
 void generate_code(
     Base::ObjectRef < AST::TranslationUnit > & generated_code,
     std::vector < std::string > & used_semantic_set,
-    Base::ErrorHandlerInterface::Ref & error_handler,
+    Base::ErrorHandlerInterface::Ref error_handler,
     const std::vector< Generation::FragmentDefinition::Ref > & definition_table
     )
 {
@@ -43,7 +43,7 @@ void generate_code(
 
 bool generate_hlsl(
     const std::vector< Generation::FragmentDefinition::Ref > & definition_table,
-    Base::ErrorHandlerInterface::Ref & error_handler
+    Base::ErrorHandlerInterface::Ref error_handler
     )
 {
     if ( !interpolator_semantic_argument.isSet() )
@@ -99,7 +99,7 @@ bool generate_hlsl(
 
 bool generate_annotations(
     const std::vector< Generation::FragmentDefinition::Ref > & definition_table,
-    Base::ErrorHandlerInterface::Ref & error_handler
+    Base::ErrorHandlerInterface::Ref error_handler
     )
 {
     Base::ObjectRef < AST::TranslationUnit >
@@ -174,7 +174,10 @@ int main( int argument_count, const char* argument_table[] )
             stream;
         stream << "error: " << e.error() << " for arg " << e.argId() << std::endl;
         error_handler->ReportError( stream.str(), "" );
+
+        return 1;
     }
+
 
     return 0;
 }
