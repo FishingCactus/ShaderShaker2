@@ -2,6 +2,7 @@
     #define XLSL_PRINTER
 
     #include "ast/const_visitor.h"
+    #include <utils/indentation.h>
     #include <ostream>
 
     namespace AST
@@ -58,7 +59,30 @@
             XLSLPrinter & operator =( const XLSLPrinter & other );
 
             template< class _Table_ >
-            void VisitTable( ConstVisitor & visitor, _Table_ & table, const char * separator_cstr, bool add_endl );
+            void VisitTable( ConstVisitor & visitor, _Table_ & table, const char * separator_cstr, bool add_endl )
+            {
+                typename _Table_::const_iterator
+                    it = table.cbegin(),
+                    end = table.cend();
+                bool
+                    first = true;
+
+                for( ;it != end; ++it )
+                {
+                    if( !first )
+                    {
+                        m_Stream << separator_cstr;
+
+                        if ( add_endl )
+                        {
+                            m_Stream << endl_ind;
+                        }
+                    }
+
+                    first = false;
+                    (*it)->Visit( visitor );
+                }
+            }
 
             std::ostream
                 & m_Stream;

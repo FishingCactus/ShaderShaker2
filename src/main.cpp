@@ -17,12 +17,14 @@ TCLAP::MultiArg<std::string> interpolator_semantic_argument(
     "semantic used between PS and VS. If no interpolator semantic is given, only one program is generated",
     false, "string", cmd );
 TCLAP::UnlabeledMultiArg<std::string> fragment_arguments( "fragment", "fragment file path", true, "filepath", cmd );
-TCLAP::ValueArg<std::string> generator_argument( "g", "generator", "generator to use", true, "hlsl", "", cmd ); 
+std::vector<std::string> allowed_generator_arguments({"hlsl", "annotation"});
+TCLAP::ValuesConstraint<std::string> generator_constraint(allowed_generator_arguments);
+TCLAP::ValueArg<std::string> generator_argument( "g", "generator", "generator to use", true, "hlsl", &generator_constraint, cmd );
 
 void generate_code(
     Base::ObjectRef < AST::TranslationUnit > & generated_code,
     std::vector < std::string > & used_semantic_set,
-    Base::ErrorHandlerInterface::Ref & error_handler,
+    Base::ErrorHandlerInterface::Ref error_handler,
     const std::vector< Generation::FragmentDefinition::Ref > & definition_table
     )
 {
@@ -40,19 +42,17 @@ void generate_code(
 }
 
 bool generate_hlsl(
-    const std::vector< Generation::FragmentDefinition::Ref > & definition_table
+    const std::vector< Generation::FragmentDefinition::Ref > & definition_table,
+    Base::ErrorHandlerInterface::Ref error_handler
     )
 {
-    Base::ErrorHandlerInterface::Ref
-        error_handler = new Base::ConsoleErrorHandler; 
-    
     if ( !interpolator_semantic_argument.isSet() )
     {
         Base::ObjectRef < AST::TranslationUnit >
             generated_code;
         std::vector < std::string >
             used_semantic_set;
-        
+
         generate_code( generated_code, used_semantic_set, error_handler, definition_table );
 
         AST::HLSLPrinter printer( std::cout );
@@ -98,11 +98,10 @@ bool generate_hlsl(
 }
 
 bool generate_annotations(
-    const std::vector< Generation::FragmentDefinition::Ref > & definition_table 
+    const std::vector< Generation::FragmentDefinition::Ref > & definition_table,
+    Base::ErrorHandlerInterface::Ref error_handler
     )
 {
-    Base::ErrorHandlerInterface::Ref
-        error_handler = new Base::ConsoleErrorHandler;
     Base::ObjectRef < AST::TranslationUnit >
         generated_code;
     std::vector < std::string >
@@ -118,8 +117,12 @@ bool generate_annotations(
 
 int main( int argument_count, const char* argument_table[] )
 {
+    Base::ErrorHandlerInterface::Ref
+        error_handler = new Base::ConsoleErrorHandler;
+
     try
     {
+
         cmd.parse( argument_count, argument_table );
 
         std::vector< Generation::FragmentDefinition::Ref > definition_table;
@@ -141,25 +144,40 @@ int main( int argument_count, const char* argument_table[] )
             definition_table.push_back( definition );
         }
 
-        if ( generator_argument.getValue() == "a" )
+        if ( generator_argument.getValue() == "annotation" )
         {
-            if ( !generate_annotations( definition_table ) )
+            if ( !generate_annotations( definition_table, error_handler ) )
             {
+                error_handler->ReportError( "Failed to generate annotations", "" );
                 return 1;
             }
         }
-        else if ( generator_argument.getValue() == "h" )
+        else if ( generator_argument.getValue() == "hlsl" )
         {
-            if ( !generate_hlsl( definition_table ) )
+            if ( !generate_hlsl( definition_table, error_handler ) )
             {
+                error_handler->ReportError( "Failed to generate hlsl", "" );
                 return 1;
             }
+        }
+        else
+        {
+            std::stringstream
+                stream;
+            stream << "error: Unknown generator:" << generator_argument.getValue();
+            error_handler->ReportError( stream.str(), "" );
         }
     }
     catch( TCLAP::ArgException &e )
     {
-        std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+        std::stringstream
+            stream;
+        stream << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+        error_handler->ReportError( stream.str(), "" );
+
+        return 1;
     }
+
 
     return 0;
 }
