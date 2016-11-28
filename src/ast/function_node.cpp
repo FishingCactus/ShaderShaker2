@@ -24,7 +24,10 @@ namespace AST
         }
         clone->m_Name = m_Name;
         clone->m_Semantic = m_Semantic;
-        clone->m_ArgumentList = m_ArgumentList->Clone();
+        if ( m_ArgumentList )
+        {
+            clone->m_ArgumentList = m_ArgumentList->Clone();
+        }
         CloneTable( StorageClass, m_StorageClassTable );
         CloneTable( Statement, m_StatementTable );
 

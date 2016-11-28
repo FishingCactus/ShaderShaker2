@@ -163,9 +163,17 @@ namespace AST
 
         clone->m_Name = m_Name;
         clone->m_Semantic = m_Semantic;
-        clone->m_InitialValue = m_InitialValue->Clone();
+        if( m_InitialValue )
+        {
+            clone->m_InitialValue = m_InitialValue->Clone();
+        }
+
         clone->m_ArraySize = m_ArraySize;
-        clone->m_Annotations = m_Annotations->Clone();
+
+        if ( m_Annotations )
+        {
+            clone->m_Annotations = m_Annotations->Clone();
+        }
 
         return clone;
     }

@@ -23,7 +23,10 @@ namespace Generation
 	{
 		function_declaration.m_Semantic.clear();
 
-		function_declaration.m_ArgumentList->Visit( *this );
+		if ( function_declaration.m_ArgumentList )
+		{
+			function_declaration.m_ArgumentList->Visit( *this );
+		}
 	}
 
 	void SemanticRemover::Visit( AST::ArgumentList & argument_list )
