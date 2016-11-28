@@ -22,7 +22,7 @@
         class VisitorStreamArrayItemSeparator : public VisitorItemSeparator< _Table_ >
         {
         public:
-            
+
             VisitorStreamArrayItemSeparator( std::ostream & stream, const std::string & separator = ",", const bool add_endl = false ) :
                 VisitorItemSeparator< _Table_ >(), m_Stream(stream), m_Separator(separator), m_AddEndl( add_endl )
             {

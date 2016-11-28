@@ -19,7 +19,7 @@ namespace AST
             separator( m_Stream );
 
         m_Stream
-            << "\"annotations\":{";
+            << "{";
 
         VisitTable( *this, annotations.m_AnnotationTable, separator );
 
@@ -43,4 +43,14 @@ namespace AST
                 << "\"value\":\"" << annotation_entry.m_Value << "\""
             << "}";
     }
+
+    void AnnotationPrinter::Visit( const VariableDeclarationBody & body )
+    {
+        if ( body.m_Semantic != "" )
+        {
+            m_Stream << "\"" << body.m_Semantic << "\":";
+        }
+        TreeTraverser::Visit(body);
+    }
+
 }

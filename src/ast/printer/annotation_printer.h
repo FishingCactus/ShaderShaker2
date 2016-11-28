@@ -15,6 +15,7 @@
             virtual void Visit( const Node & node ) override;
             virtual void Visit( const Annotations & annotations ) override;
             virtual void Visit( const AnnotationEntry & annotation_entry ) override;
+            virtual void Visit( const VariableDeclarationBody & body ) override;
 
         private:
 
