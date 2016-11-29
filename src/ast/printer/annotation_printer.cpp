@@ -50,7 +50,29 @@ namespace AST
         {
             m_Stream << "\"" << body.m_Semantic << "\":";
         }
+
         TreeTraverser::Visit(body);
+    }
+    void AnnotationPrinter::Visit( const TranslationUnit & translation_unit )
+    {
+        m_Stream << "annotations:";
+        VisitTable( *this, translation_unit.m_GlobalDeclarationTable, [&](VisitorBase<true> & visitor, const TranslationUnit::GlobalDeclarationType & table, const TranslationUnit::GlobalDeclarationType::const_iterator & current_iterator)
+        {
+            if ( current_iterator == table.begin() )
+            {
+                m_Stream << "{";
+            }
+            if ( table.end() - current_iterator == 1 )
+            {
+                m_Stream << "}";
+            }
+            if ( dynamic_cast<const VariableDeclaration* >( &**current_iterator ) && table.begin() != current_iterator ) {
+                m_Stream << ",";
+            }
+
+            ( *current_iterator )->Visit( visitor );
+        } );
+        VisitTable( *this, translation_unit.m_TechniqueTable );
     }
 
 }

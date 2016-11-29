@@ -80,6 +80,20 @@ namespace AST
         }
     }
 
+    template< bool is_const, class _Table_, typename _Separator_ >
+    void VisitTable( VisitorBase< is_const > & visitor, _Table_ & table, const _Separator_ & separator )
+    {
+        typename _Table_::const_iterator
+            it = table.cbegin(),
+            end = table.cend();
+
+        for ( ; it != end; ++it )
+        {
+            separator( visitor, table, it );
+        }
+    }
+
+
     template< bool is_const, class _Table_ >
     void VisitTable( VisitorBase< is_const > & visitor, _Table_ & table )
     {

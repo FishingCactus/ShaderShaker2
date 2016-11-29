@@ -82,6 +82,7 @@
         {
             AST_HandleVisitor()
 
+            typedef std::vector< Base::ObjectRef<GlobalDeclaration> > GlobalDeclarationType;
             void AddGlobalDeclaration( GlobalDeclaration * declaration )
             {
                 assert( declaration );
@@ -96,7 +97,7 @@
 
             virtual TranslationUnit * Clone() const override;
 
-            std::vector< Base::ObjectRef<GlobalDeclaration> >
+            GlobalDeclarationType
                 m_GlobalDeclarationTable;
             std::vector< Base::ObjectRef<Technique> >
                 m_TechniqueTable;
