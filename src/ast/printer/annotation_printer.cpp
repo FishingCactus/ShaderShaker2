@@ -36,11 +36,24 @@ namespace AST
             return;
         }
 
+        std::string
+            annotation_value;
+
+        if ( ( annotation_entry.m_Value[0] == '"' || annotation_entry.m_Value[0] == '\'' )
+        && ( annotation_entry.m_Value[annotation_entry.m_Value.length() - 1] == '"' || annotation_entry.m_Value[annotation_entry.m_Value.length() - 1] == '\'' ) )
+        {
+            annotation_value = annotation_entry.m_Value.substr(1);
+            annotation_value = annotation_value.substr(0, annotation_value.length() - 1);
+        }
+        else
+        {
+            annotation_value = annotation_entry.m_Value;
+        }
         m_Stream
             << "\"" << annotation_entry.m_Name << "\":"
             << "{"
                 << "\"type\":\"" << annotation_entry.m_Type << "\","
-                << "\"value\":\"" << annotation_entry.m_Value << "\""
+                << "\"value\":\"" << annotation_value << "\""
             << "}";
     }
 
@@ -55,7 +68,6 @@ namespace AST
     }
     void AnnotationPrinter::Visit( const TranslationUnit & translation_unit )
     {
-        m_Stream << "annotations:";
         VisitTable( *this, translation_unit.m_GlobalDeclarationTable, [&](VisitorBase<true> & visitor, const TranslationUnit::GlobalDeclarationType & table, const TranslationUnit::GlobalDeclarationType::const_iterator & current_iterator)
         {
             if ( current_iterator == table.begin() )
