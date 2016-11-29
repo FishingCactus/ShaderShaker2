@@ -6,7 +6,7 @@
 
 TEST_CASE( "Annotations", "[ast][annotations][printer]" )
 {
-    SECTION( "Empty annotations prints empty array" )
+    SECTION( "Empty annotations prints empty object" )
     {
         AST::Annotations
             node;
@@ -17,7 +17,7 @@ TEST_CASE( "Annotations", "[ast][annotations][printer]" )
 
         node.Visit( printer );
 
-        CHECK( output.str() == "\"annotations\":{}" );
+        CHECK( output.str() == "{}" );
     }
 
     SECTION( "Annotations with one entry prints 1 element" )
@@ -32,7 +32,7 @@ TEST_CASE( "Annotations", "[ast][annotations][printer]" )
         node.AddEntry( new AST::AnnotationEntry( { "float", "Object", "10.0f" } ) );
         node.Visit( printer );
 
-        CHECK( output.str() == R"("annotations":{"Object":{"type":"float","value":"10.0f"}})");
+        CHECK( output.str() == R"({"Object":{"type":"float","value":"10.0f"}})");
     }
 
     SECTION( "Annotations with multiple entries prints comma separated elements" )
@@ -48,7 +48,7 @@ TEST_CASE( "Annotations", "[ast][annotations][printer]" )
         node.AddEntry( new AST::AnnotationEntry( { "string", "foo", "Hello" } ) );
         node.Visit( printer );
 
-        CHECK( output.str() == R"("annotations":{"Object":{"type":"float","value":"10.0f"},"foo":{"type":"string","value":"Hello"}})");
+        CHECK( output.str() == R"({"Object":{"type":"float","value":"10.0f"},"foo":{"type":"string","value":"Hello"}})");
     }
 }
 
