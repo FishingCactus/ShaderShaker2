@@ -66,6 +66,17 @@ namespace AST
 
         TreeTraverser::Visit(body);
     }
+
+    void AnnotationPrinter::Visit( const TextureDeclaration & body )
+    {
+        if ( body.m_Annotations && body.m_Name != "" )
+        {
+            m_Stream << "\"" << body.m_Name << "\":";
+        }
+
+        TreeTraverser::Visit(body);
+    }
+
     void AnnotationPrinter::Visit( const TranslationUnit & translation_unit )
     {
         VisitTable( *this, translation_unit.m_GlobalDeclarationTable, [&](VisitorBase<true> & visitor, const TranslationUnit::GlobalDeclarationType & table, const TranslationUnit::GlobalDeclarationType::const_iterator & current_iterator)
@@ -78,7 +89,10 @@ namespace AST
             {
                 m_Stream << "}";
             }
-            if ( dynamic_cast<const VariableDeclaration* >( &**current_iterator ) && table.begin() != current_iterator ) {
+            if ( ( dynamic_cast<const VariableDeclaration* >( &**current_iterator )
+                || dynamic_cast<const TextureDeclaration* >( &**current_iterator ) )
+                && table.begin() != current_iterator )
+            {
                 m_Stream << ",";
             }
 
