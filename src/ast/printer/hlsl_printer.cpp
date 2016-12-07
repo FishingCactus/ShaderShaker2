@@ -132,8 +132,16 @@ namespace AST
                 {
                     m_Stream << " : " <<member.m_Semantic;
                 }
+
+                if( end - it == 1 )
+                {
+                    m_Stream << dec_ind;
+                }
+
+                m_Stream << ";" << endl_ind;
             }
         }
+        m_Stream << "}" << endl_ind;
 
     }
 

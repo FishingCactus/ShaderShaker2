@@ -348,6 +348,97 @@ TEST_CASE( "Types are printed", "[ast][hlsl][printer]" )
         CHECK( output.str() == "VS_INPUT" );
     }
 
+    SECTION( "Structs are printed" )
+    {
+        AST::StructDefinition
+            node( "VS_INPUT" );
+        std::ostringstream
+            output;
+        AST::HLSLPrinter
+            printer( output );
+
+        SECTION("Struct with simple members are printed")
+        {
+            node.AddMember("first_member", new AST::IntrinsicType("float4"), "", "");
+
+            SECTION("Struct with 1 member is printed")
+            {
+                node.Visit( printer );
+                CHECK( output.str() == " struct VS_INPUT\n{\n\tfloat4 first_member;\n}\n");
+            }
+            SECTION("Struct with 2 members is printed")
+            {
+                node.AddMember("second_member", new AST::IntrinsicType("float4"), "", "");
+                node.Visit( printer );
+                CHECK( output.str() == " struct VS_INPUT\n{\n\tfloat4 first_member;\n\tfloat4 second_member;\n}\n");
+            }
+        }
+
+        SECTION("Struct with members with interpolation modifiers are printed")
+        {
+            node.AddMember("first_member", new AST::IntrinsicType("float4"), "", "centroid");
+            SECTION("Struct with 1 member with interpolation modifier is printed")
+            {
+                node.Visit( printer );
+                CHECK( output.str() == " struct VS_INPUT\n{\n\tcentroid float4 first_member;\n}\n");
+            }
+            SECTION("Struct with 2 members is printed. 1 member with interpolation modifier")
+            {
+                node.AddMember("second_member", new AST::IntrinsicType("float4"), "", "");
+                node.Visit( printer );
+                CHECK( output.str() == " struct VS_INPUT\n{\n\tcentroid float4 first_member;\n\tfloat4 second_member;\n}\n");
+            }
+            SECTION("Struct with 2 members is printed. 2 member with interpolation modifier")
+            {
+                node.AddMember("second_member", new AST::IntrinsicType("float4"), "", "linear");
+                node.Visit( printer );
+                CHECK( output.str() == " struct VS_INPUT\n{\n\tcentroid float4 first_member;\n\tlinear float4 second_member;\n}\n");
+            }
+        }
+        SECTION("Struct with members with semantics are printed")
+        {
+            node.AddMember("first_member", new AST::IntrinsicType("float4"), "Semantic1", "");
+            SECTION("Struct with 1 member with a semantic is printed")
+            {
+                node.Visit( printer );
+                CHECK( output.str() == " struct VS_INPUT\n{\n\tfloat4 first_member : Semantic1;\n}\n");
+            }
+            SECTION("Struct with 2 members is printed. 1 member with a semantic")
+            {
+                node.AddMember("second_member", new AST::IntrinsicType("float4"), "", "");
+                node.Visit( printer );
+                CHECK( output.str() == " struct VS_INPUT\n{\n\tfloat4 first_member : Semantic1;\n\tfloat4 second_member;\n}\n");
+            }
+            SECTION("Struct with 2 members is printed. 2 member with semantics")
+            {
+                node.AddMember("second_member", new AST::IntrinsicType("float4"), "Semantic2", "");
+                node.Visit( printer );
+                CHECK( output.str() == " struct VS_INPUT\n{\n\tfloat4 first_member : Semantic1;\n\tfloat4 second_member : Semantic2;\n}\n");
+            }
+        }
+        SECTION("Struct with members with semantics and interpolation modifiers are printed")
+        {
+            node.AddMember("first_member", new AST::IntrinsicType("float4"), "Semantic1", "centroid");
+            SECTION("Struct with 1 member with a semantic is printed")
+            {
+                node.Visit( printer );
+                CHECK( output.str() == " struct VS_INPUT\n{\n\tcentroid float4 first_member : Semantic1;\n}\n");
+            }
+            SECTION("Struct with 2 members is printed. 1 member with a semantic, 1 with interpolation modifier")
+            {
+                node.AddMember("second_member", new AST::IntrinsicType("float4"), "Semantic2", "");
+                node.Visit( printer );
+                CHECK( output.str() == " struct VS_INPUT\n{\n\tcentroid float4 first_member : Semantic1;\n\tfloat4 second_member : Semantic2;\n}\n");
+            }
+            SECTION("Struct with 2 members is printed. 2 member with semantics and interpolation modifiers")
+            {
+                node.AddMember("second_member", new AST::IntrinsicType("float4"), "Semantic2", "linear");
+                node.Visit( printer );
+                CHECK( output.str() == " struct VS_INPUT\n{\n\tcentroid float4 first_member : Semantic1;\n\tlinear float4 second_member : Semantic2;\n}\n");
+            }
+        }
+    }
+
     SECTION( "Sampler type is printed" )
     {
         AST::IntrinsicType
