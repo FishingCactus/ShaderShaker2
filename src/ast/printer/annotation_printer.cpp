@@ -59,9 +59,9 @@ namespace AST
 
     void AnnotationPrinter::Visit( const VariableDeclarationBody & body )
     {
-        if ( body.m_Semantic != "" )
+        if ( body.m_Annotations && body.m_Name != "" )
         {
-            m_Stream << "\"" << body.m_Semantic << "\":";
+            m_Stream << "\"" << body.m_Name << "\":";
         }
 
         TreeTraverser::Visit(body);
