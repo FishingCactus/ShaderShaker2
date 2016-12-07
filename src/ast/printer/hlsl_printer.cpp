@@ -141,7 +141,7 @@ namespace AST
                 m_Stream << ";" << endl_ind;
             }
         }
-        m_Stream << "}" << endl_ind;
+        m_Stream << "};" << endl_ind;
 
     }
 
