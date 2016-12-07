@@ -106,7 +106,7 @@ namespace AST
 
     void HLSLPrinter::Visit( const StructDefinition & definition )
     {
-        m_Stream << " struct " << definition.m_Name << endl_ind;
+        m_Stream << "struct " << definition.m_Name << endl_ind;
         m_Stream << "{" << inc_ind << endl_ind;
 
         {
