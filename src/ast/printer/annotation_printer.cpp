@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <utils/indentation.h>
+#include <utils/string_helper.h>
 #include <ast/node.h>
 #include <algorithm>
 #include "ast/visitor_item_separator.h"
@@ -49,6 +50,9 @@ namespace AST
         {
             annotation_value = annotation_entry.m_Value;
         }
+
+        tolower_in_place( annotation_value );
+
         m_Stream
             << "\"" << annotation_entry.m_Name << "\":"
             << "{"
