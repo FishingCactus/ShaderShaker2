@@ -209,7 +209,9 @@
 
             virtual ArgumentExpressionList * Clone() const override;
 
-            std::vector<Base::ObjectRef<Expression> >
+            typedef std::vector<Base::ObjectRef<Expression> > VariableExpressionListType;
+
+            VariableExpressionListType
                 m_ExpressionList;
         };
 
