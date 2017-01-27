@@ -19,12 +19,8 @@ namespace AST
         VisitorStreamArrayItemSeparator< Annotations::AnnotationTableType >
             separator( m_Stream );
 
-        m_Stream
-            << "{";
-
         VisitTable( *this, annotations.m_AnnotationTable, separator );
 
-        m_Stream << "}";
     }
 
     void AnnotationPrinter::Visit( const AnnotationEntry & annotation_entry )
@@ -66,9 +62,65 @@ namespace AST
         if ( body.m_Annotations && body.m_Name != "" )
         {
             m_Stream << "\"" << body.m_Name << "\":";
+            m_Stream << "{";
+            TreeTraverser::Visit(body);
+            m_Stream << "}";
+        }
+        // :NOTE: No need to traverse the tree further, there are no annotations for this entry.
+    }
+
+    void AnnotationPrinter::Visit( const InitialValue & initial_value )
+    {
+        m_Stream << ",\"InitialValue\":";
+        m_InsideInitialValue = true;
+        TreeTraverser::Visit(initial_value);
+        m_InsideInitialValue = false;
+    }
+
+    void AnnotationPrinter::Visit( const ConstructorExpression & expression )
+    {
+        if ( m_InsideInitialValue )
+        {
+            m_Stream << "{";
+            m_Stream << "\"Constructor\":\"" << expression.m_Type->m_Name << "\"";
+            TreeTraverser::Visit(expression);
+            m_Stream << "}";
         }
 
-        TreeTraverser::Visit(body);
+    }
+
+    void AnnotationPrinter::Visit( const ArgumentExpressionList & list )
+    {
+        if ( m_InsideInitialValue )
+        {
+            m_Stream << ", \"Arguments\":";
+            VisitTable( *this, list.m_ExpressionList, [&](VisitorBase<true> & visitor, const ArgumentExpressionList::VariableExpressionListType & table, const ArgumentExpressionList::VariableExpressionListType::const_iterator & current_iterator)
+            {
+                if ( current_iterator == table.begin() )
+                {
+                    m_Stream << "[";
+                }
+                else
+                {
+                    m_Stream << ",";
+                }
+
+                ( * current_iterator )->Visit( visitor );
+
+                if ( table.end() - current_iterator == 1 )
+                {
+                    m_Stream << "]";
+                }
+            } );
+        }
+    }
+
+    void AnnotationPrinter::Visit( const LiteralExpression & expression )
+    {
+        if ( m_InsideInitialValue )
+        {
+            m_Stream << "\"" << expression.m_Value << "\"";
+        }
     }
 
     void AnnotationPrinter::Visit( const TextureDeclaration & body )
