@@ -73,6 +73,7 @@ namespace AST
     {
         m_Stream << ",\"InitialValue\":";
         m_InsideInitialValue = true;
+        // :TODO: Support the m_Vector property for initializers like = { 1.0f, 1.0f, 1.0f }
         TreeTraverser::Visit(initial_value);
         m_InsideInitialValue = false;
     }
